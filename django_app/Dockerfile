@@ -30,7 +30,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 # Sistem paketleri
-RUN apt-get update && apt-get install -y build-essential libpq-dev
+RUN apt-get update && apt-get install -y build-essential libpq-dev net-tools iputils-ping vim dialog
 
 # Bağımlılıkları yükle
 COPY requirements.txt .

@@ -182,6 +182,9 @@ STATIC_ROOT=os.path.join(BASE_DIR,"staticfiles") #python manage.py collectstatic
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+# WEBSOCKET_IP="localhost"
+# WEBSOCKET_IP="209.38.202.46"
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CSRF_COOKIE_HTTPONLY = True

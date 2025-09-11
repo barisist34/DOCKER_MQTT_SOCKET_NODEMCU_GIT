@@ -678,7 +678,10 @@ var device_id_js={{device_id}}
 var device_name_js="{{device_name}}"
 console.log(`device_id_js: ${device_id_js}`)
 console.log(`device_name_js: ${device_name_js}`)
-var websocket_url=`ws://localhost:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+//var websocket_url=`ws://localhost:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+var host_ip=window.location.host
+//var websocket_url=`ws://${host_ip}:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
 console.log(`websocket_url: ${websocket_url}`)
 const chatSocket = new WebSocket(websocket_url);
 //deneme
