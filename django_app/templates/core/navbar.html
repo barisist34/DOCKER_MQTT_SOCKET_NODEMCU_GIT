@@ -1,0 +1,56 @@
+
+    <!-- NAVBAR -->
+    <!-- <div class="container-fluid fix-div position-fixed px-0"> -->
+        {% comment %} class="container-fluid navbar navbar-expand-lg bg-warning border border-bottom border-dark position-fixed opacity-99 "> {% endcomment %}
+        <nav
+        class="container-fluid navbar navbar-expand-lg bg-warning border border-bottom border-dark  opacity-99 ">
+        <div class="container-fluid py-2 ">
+            <a class="navbar-brand" href="/app_monitor">Anasayfa</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown_hover">
+                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            LİNKLER
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="/app_monitor/arduino_serial_local-all">CIHAZ CONFIG</a></li>
+                          <li><a class="dropdown-item" href="/app_monitor/cihazlar_tum">TÜM CİHAZLAR</a></li>
+                          <li><a class="dropdown-item" href="/app_monitor/scheduler_cihaz">OLAYLAR</a></li>
+                        </ul>
+                      </li>
+
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href=" {{ request.user.profile }} ">Edit Profile</a></li>
+                          <li><a class="dropdown-item" href=" {{ request.user.profile }} ">All {{ request.user.profile }} Posts </a></li>
+                        </ul>
+                      </li>
+                      <li class="nav-item">
+                        <a class=" btn btn-dark text-light px-3 rounded-pill ms-3" href="{% url 'app_user_profile:logout_view' %} ">Çıkış</a>
+                    </li>
+
+                      {% else  %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'app_user_profile:login_view' %} ">Giriş</a>
+                    </li>
+                      <li class="nav-item">
+                        <a class=" btn btn-dark text-light px-3 rounded-pill ms-3" href="{% url 'app_user_profile:register_view' %} ">Kayıt Ol</a>
+                    </li>
+                    {% endif %}
+                    
+                  </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- NAVBAR END -->

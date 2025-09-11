@@ -1,0 +1,124 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %} <title>CONFIG SAYFASI</title> {% endblock title %}
+
+{% block content %}
+
+<div class="container">
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show col-sm-6 offset-sm-3" role="alert">
+<strong>{{ message|safe }}</strong> 
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="row">
+    <div class="col-sm-6">
+        <hr>
+        <form action="arduino_serial_local-all" method="get">
+            <select name="comport" id="comport">
+                <option  ></option>
+                <option value="COM1" >COM1</option>
+                <option value="COM2">COM2</option>
+                <option value="COM3" >COM3</option>
+                <option value="COM4" >COM4</option>
+                {% comment %} <option value="COM5" selected>COM5</option> {% endcomment %}
+                <option value="COM5" >COM5</option>
+                <option value="COM6">COM6</option>
+                <option value="COM7">COM7</option>
+                <option value="COM8">COM8</option>
+                <option value="COM9">COM9</option>
+                <option value="COM10">COM10</option>
+            </select>
+            <input type="submit" value="VERILERI AL">
+        </form>
+    {% comment %} <h6>Cihazdan gelen veri: {{value}} </h6> {% endcomment %}
+    
+    <hr>
+{% comment %}     
+    <form action="arduino_serial/all" method="get">
+    
+    <input type="submit" value="GONDER">
+    </form>
+    
+    COMPORT = {{comport}} {% endcomment %}
+    {% if comport == "COMxx" %}
+    <h3>COMPORT hatalı girdiniz... </h3>
+    {% endif %}
+    <h6>COMPORT: {{comport}} </h6>
+    <form action="arduino_serial_local-id" method="get" class="mt-2">
+        <input type="text" name="cihaz-id" id="cihaz-id" placeholder="Cihaz ID" value="{{device_id}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Cihaz ID">
+    </form>
+    <form action="arduino_serial_local-name" method="get" class="mt-2">
+        <input type="text" name="cihaz-adi" id="cihaz-adi" placeholder="Cihaz Adı" value="{{device_name}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Cihaz Adı">
+    </form>
+    <form action="arduino_serial_local-serverip" method="get" class="mt-2">
+        <input type="text" name="server-ip" id="server-ip" placeholder="Server IP-URL" value="{{server_ip}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Server IP-URL">
+    </form>
+    <form action="arduino_serial_local-serverport" method="get" class="mt-2">
+        <input type="text" name="server-port" id="server-port" placeholder="Server Port" value="{{server_port}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Server Port">
+    </form>
+
+    <form action="arduino_serial_local-cihazip" method="get" class="mt-2">
+        <input type="text" name="cihaz-ip" id="cihaz-ip" placeholder="Cihaz IP" value="{{device_ip}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Cihaz IP">
+    </form>
+    <form action="arduino_serial_local-cihazport" method="get" class="mt-2">
+        <input type="text" name="cihaz-port" id="cihaz-port" placeholder="Port" value="{{device_port}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Cihaz Port">
+    </form>
+    <form action="arduino_serial_local-gatewayip" method="get" class="mt-2">
+        <input type="text" name="default-gateway" id="default-gateway" placeholder="Default Gateway" value="{{ag_gecidi}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Default Gateway">
+    </form>
+    <form action="arduino_serial_local-ssid" method="get" class="mt-2">
+        <input type="text" name="cihaz-ssid" id="ssid" placeholder="SSID" value="{{device_ssid}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="SSID">
+    </form>
+    <form action="arduino_serial_local-password" method="get" class="mt-2">
+        <input type="text" name="cihaz-password" id="password" placeholder="Password" value="{{device_password}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Password">
+    </form>
+    <form action="arduino_serial_local-sure" method="get" class="mt-2">
+        <input type="text" name="cihaz-sure" id="sure" placeholder="Mesaj Süresi" value="{{device_sure}}" {% if "bağlayın" in device_id %}disabled{% endif %}>
+        <input type="submit" value="Mesaj Süresi">
+    </form>
+    <br>
+    <button class="btn btn-danger"><a href="arduino_serial_local-reset" class="text-white text-decoration-none">CIHAZ RESET</a></button>
+    <br>
+    <h4>{{reset_ok}} </h4>
+    </div>
+    <div class="col-sm-6 d-flex align-items-center">
+        <div class="row">
+        <div class="col-sm-12">
+        <form action="arduino_serial_local-fingerprint" method="get" class="mt-2">
+            <input type="text" name="fingerprint" id="fingerprint" placeholder="Server Fingerprint" value="{{fingerprint}}">
+            <input type="submit" value="Fingerprint Güncelle">
+        </form>
+        </div>
+        {% comment %} <button class="ms-3" on>Oku</button>
+        <input type="submit" value="FP Oku Submit"> {% endcomment %}
+        <div class="col-sm-12" >
+        <form action="arduino_serial_local-fingerprint_oku" method="get" class="mt-2">
+            <input class="mw-75" type="text" name="fingerprint_oku" id="fingerprint_oku" placeholder="Server Fingerprint" value="{{fingerprint_oku}}">
+            <input type="submit" value="Fingerprint Oku">
+        </form>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+<h5>BAĞLI PORTLAR</h5>
+<h6>{{port_listesi}} </h6>
+{% comment %} <h3>ARDUINO dan gelen veri: {{value|stringformat:"d"}} </h3> {% endcomment %}
+</div>
+
+{% endblock content %}

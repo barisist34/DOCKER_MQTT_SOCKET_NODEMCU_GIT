@@ -1,0 +1,9 @@
+docker build --tag docker_django_git .
+
+docker build --no-cache --tag docker_django_git .
+
+docker run --publish 9000:9000 docker_django_git
+
+docker run --publish 9000 docker_django_250817 (TEK 9000 girildiği şekilde dışardan container app ulaşabiliyoruz...)
+
+docker run --publish 9000:443 docker_django_250817

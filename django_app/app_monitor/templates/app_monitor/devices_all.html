@@ -1,0 +1,154 @@
+{% extends "core/base_without_navbar.html" %}
+{% comment %} {% extends "core/base.html" %} {% endcomment %}
+
+{% load static %}
+
+{% load template_tags %}
+
+{% block title %} <title>TUM CIHAZLAR</title> {% endblock title %}
+
+{% block content %}
+
+{% comment %} {% include "core/navbar.html" %} {% endcomment %}
+
+<div class="container">
+
+    <!-- NAVBAR -->
+    <!-- <div class="container-fluid fix-div position-fixed px-0"> -->
+        {% comment %} class="container-fluid navbar navbar-expand-lg bg-warning border border-bottom border-dark position-fixed opacity-99 "> {% endcomment %}
+        <nav
+        class="container-fluid navbar navbar-expand-lg bg-warning border border-bottom border-dark  opacity-99 ">
+        <div class="container-fluid py-2 ">
+            <a class="navbar-brand" href="/app_monitor">Anasayfa</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown_hover">
+                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        LİNKLER
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/app_monitor/arduino_serial_local-all">CIHAZ CONFIG</a></li>
+                        <li><a class="dropdown-item" href=" {{ request.user.profile }} ">TÜM CİHAZLAR</a></li>
+                        <li><a class="dropdown-item" href="/app_monitor/scheduler_cihaz">OLAYLAR</a></li>
+                    </ul>
+                </li>
+                
+                {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ request.user.username }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href=" {{ request.user.profile }} ">Edit Profile</a></li>
+                        <li><a class="dropdown-item" href=" {{ request.user.profile }} ">All {{ request.user.profile }} Posts </a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class=" btn btn-dark text-light px-3 rounded-pill ms-3" href="{% url 'app_user_profile:logout_view' %} ">Çıkış</a>
+                </li>
+                
+                {% else  %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'app_user_profile:login_view' %} ">Giriş</a>
+                </li>
+                <li class="nav-item">
+                    <a class=" btn btn-dark text-light px-3 rounded-pill ms-3" href="{% url 'app_user_profile:register_view' %} ">Kayıt Ol</a>
+                </li>
+                {% endif %}
+                
+            </ul>
+            
+        </div>
+    </div>
+</nav>
+
+<!-- NAVBAR END -->
+
+<h3 class="text-center">TUM CIHAZLAR</h3>
+
+<table class="table table-striped tablo-online">
+    <th>Cihaz Adı</th>
+    <th>Cihaz Id</th>
+    <th>Cihaz Port</th>
+    <th>Cihaz IP</th>
+    <th>Cihaz Fonksiyonu</th>
+    <th>Kayıt Sayısı</th>
+    <th>Online</th>
+    <th>Son Durum</th>
+    <th>Süre</th>
+    <th>İlk bağlantı</th>
+    {% for devices in devices_all %}
+    <tr class="device-row">
+        {% comment %} <td><a target="_blank" href="/app_monitor/cihazlar/{{devices.device_name}}/port={{devices.device_port}}/devid={{devices.device_id}}">{{devices.device_name}}</a>  </td> {% endcomment %}
+        {% comment %} <td>{{devices.device_name}}</td> {% endcomment %}
+        <td><a href="/app_monitor/cihazlar/cihaz_adi={{devices.device_name}}" target="_blank">{{devices.device_name}}</a></td>
+        {% comment %} <td> <a href="/app_monitor/cihazlar/port={{devices.device_port}}/{{devices.device_id}}" target="_blank">{{devices.device_id}}</a></td> {% endcomment %}
+        <td> <a href="/app_monitor/cihazlar/cihaz_id={{devices.device_id}}" target="_blank">{{devices.device_id}}</a></td>
+        {% comment %} <td>{{devices.device_port}} </td> {% endcomment %}
+        <td> <a href="/app_monitor/cihazlar/cihaz_port={{devices.device_port}}" target="_blank">{{devices.device_port}}</a></td>
+        <td>{{devices.device_ip}} </td>
+        <td>{{devices.device_function}} </td>
+        <td>{{devices.temperature_set.all.count}} </td>   <!-- device tan temperature modele geçiş, ana model**yardımcı model -->
+        <td>    <!-- ONLINE KONTROLU-->
+
+            {% if  devices.device_id in devices_online %}
+            <b class="b-online-check" style="background-color: green;padding: 5%;">ONLINE</b> 
+            <script>
+                //$(".b-online-check").addClass('bg-success');
+                //document.getElementsByClassName("b-online-check").style.color="red"
+            </script>
+            {% else %}
+            <b class="b-online-check" style="background-color: red;padding: 5%;">OFFLINE</b> 
+            {% endif %}
+           
+        </td>   <!-- ONLINE KONTROLU-->
+        <td>{{devices.temperature_set.last.date|date:"d-m-Y"}} {{devices.temperature_set.last.date|time:"H:i:s"}} </td>   
+        {% comment %} <td>{{devices.temperature_set.filter(device_name=devices.device_name).count}} </td> {% endcomment %}
+        <td>{{ devices.temperature_set.last.date|subtract_now_datetime }} </td>   
+        {% comment %} <td>{{ devices.temperature_set.last.date|subtract_datetime:devices.temperature_set.first.date }} -- {{ devices.temperature_set.last.date|subtract_now_datetime }} </td>    {% endcomment %}
+        <td>{{devices.temperature_set.first.date|date:"d-m-Y"}} {{devices.temperature_set.first.date|time:"H:i:s"}} </td>   
+    </tr>
+    {% endfor %}
+</table>
+
+</div>
+
+<script>
+    function online_control()
+{
+    $.ajax({        
+              url: 'cihazlar_tum',
+              // type: 'POST',
+              type: 'GET',
+              data:{
+              //SicaklikKayit:SicaklikKayit,
+              // csrfmiddlewaretoken: '{{ csrf_token }}',
+              // dataType: "json",
+              },
+              // beforeSend: function (xhr){
+              //   xhr.setRequestHeader('X-CSRFToken', csrftoken);
+              // },
+              success: function(response){
+              $('.container').html(response);
+              console.log("online cihaz durumu yenilendi...")
+              },
+                              failure: function() {
+                          alert("ajax reverse fail geldi");
+                            }               
+          });
+  }
+  $(document).ready(online_control()) // sayfa manuel refresh yapıldığında 60 saniye beklemeden ilk kayıdı yapabilmek için. 
+                                      //Birden fazla pencerede dashboard açılırsa otomatik 1den fazla kayıt yapılmış olur,hatalı işleme denk gelir.
+  $(document).ready(function(){
+    setInterval(online_control,20000);
+    });
+</script>
+
+{% comment %} <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> <!-- base.html kaldırılırsa yazılır--> {% endcomment %}
+
+{% endblock content %}

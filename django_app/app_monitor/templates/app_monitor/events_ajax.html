@@ -1,0 +1,97 @@
+
+{% comment %} <div class="row d-flex ">
+  <div class="col-sm-12">
+  <button class="btn btn-secondary btn-sm my-1 ms-3"  data-bs-toggle="button">  <a href=""></a> TOPLAM SAYI: {{events_total}} </button>
+  <button class="btn btn-danger btn-sm my-1">KESINTI: {{events_alarm1}} </button>
+  <button class="btn btn-info btn-sm">CIKIS ALARM: {{events_alarm2}} </button>
+  <button class="btn btn-success btn-sm">CLEAR: {{events_clear}} </button>
+  <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off">
+  <label class="btn btn-primary" for="btn-check">TOPLAM SAYI: {{events_total}} </label>
+</div>
+</div> {% endcomment %}
+
+  <div  class="row d-flex ">
+        <div class="col-sm-12">
+            <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()" disabled>
+            <label class="btn btn-secondary btn-sm my-2" for="btn-check-all">TOPLAM SAYI: {{events_total_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm1" onclick="buton_kontrol()" >
+            <label class="btn btn-danger btn-sm my-2" for="btn-check-alarm1">KESİNTİ: {{events_alarm1_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm2" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white"  for="btn-check-alarm2">ÇIKIŞ ALARM: {{events_alarm2_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm3" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white" style="background-color:orange" for="btn-check-alarm3">GİRİŞ ALARM: {{events_alarm3_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm-clear" onclick="buton_kontrol()" >
+            <label class="btn btn-success btn-sm" for="btn-check-alarm-clear">CLEAR ALARM: {{events_clear_count}} </label>
+        </div>
+      </div> 
+<p>events_ajax_number:{{events_ajax_number}} </p>
+<table class="table table-hover" data-click-to-select="true">
+    <thead>
+       <tr class="bg-primary px-5">
+         <th class="ps-5" scope="col">id</th>
+         <th scope="col">Cihaz Adı</th>
+         <th scope="col">Cihaz ID</th>
+         <th scope="col">Alarm ID</th>
+         <th scope="col">Alarm Name</th>
+         <th scope="col">Event Active</th>
+         <th scope="col">Start Time</th>
+         <th scope="col">Finish Time</th>
+         <th scope="col">Süre</th>
+         <th class="pe-5" scope="col">Info</th>
+       </tr>
+     </thead>
+   <tbody>
+    {% comment %} {% for event in events %} {% endcomment %}
+    {% for event in events_all %}
+    {% comment %} {% for event in events %} {% endcomment %}
+     {% comment %} <tr class="{% if event.event_active==True %}bg-danger{% else %}bg-success{% endif %}"> {% endcomment %}
+
+     <tr  
+     {% comment %} {% if event.event_active and event.alarm_id is 1 %}class="bg-danger ps-5"{% else %}class="bg-success"{% endif %}  {% endcomment %}
+     {% if event.event_active and event.alarm_id.alarm_id is 1 %}class="bg-danger ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 2 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 3 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 4 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 5 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 6 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 7 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 8 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 9 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 10 %}style="background-color:#f57242"{% endif %} 
+     {% if not event.event_active  %}class="bg-success ps-5"{% endif %} 
+     
+     style="margin:20%" >
+       <td class="ps-5" >{{event.id}}</td>
+       <td >{{event.device_name}}</td>
+       <td >{{event.device_id}}</td>
+       <td >{{event.alarm_id}}</td>
+       {% comment %} <td >{{event.alarm_name}}</td> {% endcomment %}
+       <td >{{event.alarm_id.alarm_name}}</td>
+       <td > {{event.event_active}}</td> <!--  -->  
+       {% comment %} <td >{{event.start_time|date:"D.d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td> {% endcomment %}
+       <td >{{event.start_time|date:"d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td>
+       <td >{{event.finish_time|date:"d.m.Y"}} {{event.finish_time|time:"H:i:s"}}</td>
+       {% comment %} <td >{{event.event_duration}}  </td> {% endcomment %}
+       <td >{{event.event_duration}}  </td>
+       {% comment %} <td > {% if event.event_duration is not None  %} {{event.event_duration|time:"H:i:s"}} {% endif %}    </td> {% endcomment %}
+       <td >{{event.info}}</td>
+
+     </tr>  
+     {% endfor %}
+   </tbody>
+  </table>
+
+  Alarm Sayısı: {{secilen_alarm_sayisi}} <br>
+  {% comment %} {{datetime_now}}  --- Last task: {{completed_task_time}} {% endcomment %}
+
+  <script>
+  $(document).ready(function(){
+    //$("#alarm-sayilari").hide();
+    $("#alarm-sayilari").remove();
+    //$("#alarm-sayilari").css("display":"none");
+    //$("#alarm-sayilari").css("visibility", "hidden");
+    //$("#alarm-sayilari").hide().css("visibility", "hidden");
+    //$("#alarm-sayilari").hide()
+    //$("#alarm-sayilari").css("display":"none");
+});
+</script>

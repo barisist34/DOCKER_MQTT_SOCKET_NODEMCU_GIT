@@ -1,0 +1,130 @@
+
+250108--
+Exception Value:	
+'utf-8' codec can't decode byte 0x82 in position 0: invalid start byte
+Unicode error hint
+The string that could not be encoded/decoded was: ���ssi
+
+C:\PROJECTC_ASUS\EGZERSIZLER\DJANGO\NODEMCU_DJANGO_IZLEME_PANELI_241118\app_monitor\views.py, line 786, in arduino_serial_local
+        value  = write_read(config_parameter) #241117
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ …
+Local vars
+Variable	Value
+cihazip	
+None
+cihazport	
+None
+comport	
+None
+config_parameter	
+'all'
+gatewayip	
+None
+id	
+None
+name	
+None
+password	
+None
+request	
+<WSGIRequest: GET '/app_monitor/arduino_serial_local-all'>
+serverip	
+None
+ssid	
+None
+
+C:\PROJECTC_ASUS\EGZERSIZLER\DJANGO\NODEMCU_DJANGO_IZLEME_PANELI_241118\app_monitor\views.py, line 967, in write_read
+    data = arduino.readline().decode('utf_8')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ …
+Local vars
+Variable	Value
+an	
+datetime.datetime(2025, 1, 8, 12, 13, 38, 643024)
+arduino	
+Serial<id=0x1642f231f30, open=True>(port='COM5', baudrate=9600, bytesize=8, parity='N', stopbits=1, timeout=0.5, xonxoff=False, rtscts=False, dsrdtr=False)
+comport	
+'COM5'
+config_parameter	
+'all'
+datetime_send	
+'Wed Jan  8 12:13:38 2025'
+
+//////////////////////////////////////////////////////////////
+Exception Type:	JSONDecodeError
+Exception Value:	
+Expecting value: line 1 column 1 (char 0)
+Exception Location:	C:\Users\baris\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py, line 355, in raw_decode
+Raised during:	app_monitor.views.arduino_serial_local
+
+C:\Users\baris\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py, line 355, in raw_decode
+            raise JSONDecodeError("Expecting value", s, err.value) from None
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ …
+Local vars
+Variable	Value
+idx	
+0
+s	
+'serialEvent girdi...\r\n'
+self	
+<json.decoder.JSONDecoder object at 0x000001642BEE0150>
+
+++++
+C:\PROJECTC_ASUS\EGZERSIZLER\DJANGO\NODEMCU_DJANGO_IZLEME_PANELI_241118\app_monitor\views.py, line 798, in arduino_serial_local
+        value_dict=json.loads(value)
+                        ^^^^^^^^^^^^^^^^^ …
+Local vars
+Variable	Value
+all_serial_ports	
+[<serial.tools.list_ports_common.ListPortInfo object at 0x000001642F7BEC10>]
+cihazip	
+None
+cihazport	
+None
+comport	
+None
+config_parameter	
+'all'
+gatewayip	
+None
+id	
+None
+myports	
+[('COM5',
+  'Silicon Labs CP210x USB to UART Bridge (COM5)',
+  'USB VID:PID=10C4:EA60 SER=0001 LOCATION=1-2')]
+name	
+None
+password	
+None
+port	
+<serial.tools.list_ports_common.ListPortInfo object at 0x000001642F7BC050>
+port_listesi	
+['COM5']
+request	
+<WSGIRequest: GET '/app_monitor/arduino_serial_local-all'>
+serverip	
+None
+ssid	
+None
+value	
+'serialEvent girdi...\r\n'
+
+////////////////////////////////////////
+Exception Type:	UnicodeDecodeError
+Exception Value:	
+'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+Exception Location:	C:\PROJECTC_ASUS\EGZERSIZLER\DJANGO\NODEMCU_DJANGO_IZLEME_PANELI_241118\app_monitor\views.py, line 967, in write_read
+Raised during:	app_monitor.views.arduino_serial_local
+
+C:\Users\baris\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py, line 55, in inner
+                response = get_response(request)
+                               ^^^^^^^^^^^^^^^^^^^^^ …
+Local vars
+Variable	Value
+exc	
+UnicodeDecodeError('utf-8', b'\x8a\xc2\xf0ssid_array:\r\n', 0, 1, 'invalid start byte')
+get_response	
+<bound method BaseHandler._get_response of <django.core.handlers.wsgi.WSGIHandler object at 0x000001642BE4CB90>>
+request	
+<WSGIRequest: GET '/app_monitor/arduino_serial_local-all'>
+

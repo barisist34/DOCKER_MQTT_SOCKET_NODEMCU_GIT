@@ -1,0 +1,1114 @@
+
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title > {{device_name}} Detayı</title>
+{% endblock title %} 
+
+{% block content %}
+
+<!-- <script src="{% static 'js/cikislar.js' %}"></script>   -->
+
+<script>
+
+  function cihazAdiAyarlaBaslat(){
+    //document.getElementById("tr-id-duzenle").style.display="block"
+    //document.getElementById("tr-id-duzenle").style.visibility="visible"
+    //$("#tr-id-duzenle").removeClass('border-secondary').addClass('d-block');
+    //$("#tr-id-duzenle").removeClass('d-none').addClass('d-block');
+    $("#tr-adi-duzenle").removeClass('d-none');
+    $("#cihazid-buton-ayarla").addClass('d-none');
+    $("#cihazadi-buton-ayarla").addClass('d-none');
+  }  
+  function cihazAdiIptal(){
+    $("#tr-adi-duzenle").addClass('d-none');
+    $("#cihazid-buton-ayarla").removeClass('d-none');
+    $("#cihazadi-buton-ayarla").removeClass('d-none');
+  }  
+
+  function cihazAdiAyarla(){
+    yeni_cihaz_adi=document.getElementById("cihaz-adi-ayarla").value;
+    console.log(" yeni_cihaz_adi :");
+    console.log(yeni_cihaz_adi)
+
+    $.ajax({        
+              //url: 'http://81.214.131.122:90/django_device',
+              //url: 'http://81.214.131.122:{{device_port}}/device_name_update',
+              url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/device_name_update',
+              //url: 'http://192.168.43.166:{{device_port}}/device_name_update',
+              // type: 'POST',
+              type: 'GET',
+              data:{
+                device_name:yeni_cihaz_adi,
+              },
+              success: function(response){
+                console.log("ajax success girdi...");
+                console.log(response);
+              console.log(response.CihazAdi);
+              var numara=response.No;
+              document.getElementById("cihaz-adi").innerHTML=String(response.CihazAdi);
+              $("#tr-adi-duzenle").addClass('d-none');
+              $("#cihazid-buton-ayarla").removeClass('d-none');
+              $("#cihazadi-buton-ayarla").removeClass('d-none');
+              },
+                              failure: function() {
+                          //alert("ajax reverse fail geldi");
+                          console.log("ajax failure girdi...")
+                            }               
+          });
+  }
+
+  function cihazIdAyarlaBaslat(){
+    //document.getElementById("tr-id-duzenle").style.display="block"
+    //document.getElementById("tr-id-duzenle").style.visibility="visible"
+    //$("#tr-id-duzenle").removeClass('border-secondary').addClass('d-block');
+    //$("#tr-id-duzenle").removeClass('d-none').addClass('d-block');
+    $("#tr-id-duzenle").removeClass('d-none');
+    $("#cihazid-buton-ayarla").addClass('d-none');
+    $("#cihazadi-buton-ayarla").addClass('d-none');
+  }
+  function cihazIdIptal(){
+    $("#tr-id-duzenle").addClass('d-none');
+    $("#cihazid-buton-ayarla").removeClass('d-none');
+    $("#cihazadi-buton-ayarla").removeClass('d-none');
+  }
+
+  function cihazIdAyarla(){
+    
+    yeni_cihaz_id=document.getElementById("cihaz-id-ayarla").value;
+    cihaz_id_dizi=[{% for devices in devices_all %}{{devices.device_id}},{% endfor %}]
+    console.log(`cihaz id ler: ${cihaz_id_dizi}`)
+    console.log(" yeni_cihaz_id :");
+    console.log(yeni_cihaz_id);
+    if (cihaz_id_dizi.includes(Number(yeni_cihaz_id))){
+    //if (cihaz_id_dizi.includes(6)){
+    //if (1)
+     //console.log(`${yeni_cihaz_id} : cihaz ID daha önce kullanılmış`);
+     //alert(`${yeni_cihaz_id} : cihaz ID daha önce kullanılmış`);
+     //document.getElementById("cihaz-id-ayarla").value=""
+     if (confirm(`${yeni_cihaz_id} ID si daha önce kullanılmış. Devam ederseniz değişiklik yapılacaktır!!!`)==true){
+      $.ajax({        
+        //url: 'http://81.214.131.122:90/django_device',
+        //url: 'http://81.214.131.122:{{device_port}}/device_id_update',
+        url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/device_id_update',
+        //url: 'http://192.168.43.166:{{device_port}}/device_id_update',
+        // type: 'POST',
+        type: 'GET',
+        data:{
+          device_id:yeni_cihaz_id,
+        },
+        success: function(response){
+          console.log("ajax success girdi...");
+          console.log(response);
+        console.log(response.CihazId);
+        var numara=response.No;
+        document.getElementById("cihaz-id").innerHTML=String(response.CihazId);
+        document.getElementById("cihaz-id-ayarla").value=""
+        //document.getElementById("tr-id-duzenle").style.display="none"
+        //document.getElementById("tr-id-duzenle").style.visibility="hidden"
+        $("#tr-id-duzenle").addClass('d-none');
+        $("#cihazid-buton-ayarla").removeClass('d-none');
+        $("#cihazadi-buton-ayarla").removeClass('d-none');
+        },
+                        failure: function() {
+                    //alert("ajax reverse fail geldi");
+                    console.log("ajax failure girdi...")
+                      }               
+    });
+     }
+          else {
+                 console.log(`${yeni_cihaz_id} : cihaz ID girişten temizlendi.`);
+                //alert(`${yeni_cihaz_id} : cihaz ID daha önce kullanılmış`);
+                document.getElementById("cihaz-id-ayarla").value=""
+                $("#tr-id-duzenle").addClass('d-none');
+                $("#cihazid-buton-ayarla").removeClass('d-none');
+                $("#cihazadi-buton-ayarla").removeClass('d-none');
+          } //else iç kısım id değiştirme
+    }
+    else {
+    $.ajax({        
+              //url: 'http://81.214.131.122:90/django_device',
+              //url: 'http://81.214.131.122:{{device_port}}/device_id_update',
+              url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/device_id_update',
+              //url: 'http://192.168.43.166:{{device_port}}/device_id_update',
+              // type: 'POST',
+              type: 'GET',
+              data:{
+                device_id:yeni_cihaz_id,
+              },
+              success: function(response){
+                console.log("ajax success girdi...");
+                console.log(response);
+              console.log(response.CihazId);
+              var numara=response.No;
+              document.getElementById("cihaz-id").innerHTML=String(response.CihazId);
+              },
+                              failure: function() {
+                          //alert("ajax reverse fail geldi");
+                          console.log("ajax failure girdi...")
+                            }               
+          });
+        } //else sonu yeni_cihaz_id
+      }
+
+
+  function cikisAyarla(butonno){
+    console.log("cikis1 buton value değeri: ")
+    //console.log(document.getElementById("cikis1").value)
+    console.log(document.getElementById("cikis0-buton").innerHTML)
+    var cikis0;
+    var cikis00;
+    var cikis01;
+    var cikis02;
+    var cikis03;
+    //switch (butonno) {
+    switch (butonno) {
+      case 0:
+        {
+          if (document.getElementById("cikis0-buton").innerHTML == "Aç"){
+          cikis0="HIGH";
+          }
+          else
+              cikis0="LOW";
+              }
+        break;
+      case 1:
+        {
+          if (document.getElementById("cikis00-buton").innerHTML == "Aç"){
+          //if (document.getElementById("cikis00-buton").innerHTML == "Aç" or  document.querySelector("#ul_sag_click>li:nth-child(1)").innerHTML== "Çıkış-00 AÇ"){
+            cikis00="HIGH";
+          }
+          else
+            cikis00="LOW";
+        }
+        break;
+      case 2:
+        {
+          if (document.getElementById("cikis01-buton").innerHTML == "Aç"){
+            cikis01="HIGH";
+          }
+          else if (document.getElementById("cikis01-buton").innerHTML == "Kapat")
+            cikis01="LOW";
+        }
+        break;
+      case 3:
+        {
+          if (document.getElementById("cikis02-buton").innerHTML == "Aç"){
+            cikis02="HIGH";
+          }
+          else
+            cikis02="LOW";
+        }
+        break;
+      case 4:
+        {
+          if (document.getElementById("cikis03-buton").innerHTML == "Aç"){
+            cikis03="HIGH";
+          }
+          else
+            cikis03="LOW";
+        }
+        break;
+    
+      default:
+        break;
+    }
+    var json_outputs={
+      "type":"output",
+      "output_number":butonno,
+      "cikis0":cikis0,
+      "cikis00":cikis00,
+      "cikis01":cikis01,
+      "cikis02":cikis02,
+      "cikis03":cikis03,
+    }
+    chatSocket.send(JSON.stringify(json_outputs));
+    console.log(`json_outputs CIKISAYARLA(): ${JSON.stringify(json_outputs)}`)
+}
+</script>
+
+<h3>no-cache_2</h3>
+<div class="container">
+  <div class="row">
+    <div class="col-7" style="height:95vh;overflow-y:auto">
+    {% comment %} <div style="height:600px; width:80%;overflow:scroll"> {% endcomment %}
+      <div class="row" >
+        {% comment %} <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name}} </h2></div> {% endcomment %}
+        {% if device_name != "x"  %}
+        <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name}} </h2></div>
+        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a id="id_cihaz_kayitlar" class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_adi={{device_name}}">{{device_name.capitalize}} Kayıtlar - SOKET </a> </h2></div>
+        {% else %}
+        <div  class="col-sm-6"><h2 id="device_name_baslik">Device ID:{{device_id}} </h2></div>
+        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a  class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_id={{device_id}}">Device ID:{{device_id}} Kayıtlar -SOKET </a> </h2></div>
+        {% endif %}
+      </div>
+      <input type="button" value="JS_ESP8266" onclick="js_to_esp8266_socket()">
+      <div id="output"></div>   {# OUTPUT FOR WEBSOCKET #}
+
+        <table class="table table-hover">
+          <th>Parametre</th>
+          <th>Değer</th>
+          <th></th>
+          <tr>
+            <td>Cihaz ID</td>
+            <td id="cihaz-id">
+            </td>
+            <td><button id="cihazid-buton-ayarla" class="btn btn-primary btn-sm" onclick="cihazIdAyarlaBaslat()">Düzenle</button>  
+            </td>
+          </tr>
+          <tr id="tr-id-duzenle" class="d-none"> <!-- style="visibility:hidden"  style="display:none"-->
+            <td>Cihaz ID Düzenle</td>
+
+            <td id="cihaz-id-duzenle" style="">
+            
+              <input type="text" id="cihaz-id-ayarla"></td>
+              <td>
+              <button id="cihazid-buton" class="btn btn-primary btn-sm me-2" onclick="cihazIdAyarla()" >Gönder</button>      
+              <button id="cihazid-buton" class="btn btn-primary btn-sm" onclick="cihazIdIptal()" >Iptal</button>      
+            </td>
+          </tr> 
+          <tr>
+          <tr>
+            <td>Cihaz Adı</td>
+            <td id="cihaz-adi">
+            </td>
+            <td><button id="cihazadi-buton-ayarla" class="btn btn-primary btn-sm" onclick="cihazAdiAyarlaBaslat()">Düzenle</button>  
+            </td>
+          </tr>
+          <tr id="tr-adi-duzenle" class="d-none">
+            <td>Cihaz Adı Düzenle</td>
+            <td id="cihaz-adi-duzenle">
+              <input type="text" id="cihaz-adi-ayarla">
+              <button id="cihazadi-buton" class="btn btn-primary btn-sm me-2" onclick="cihazAdiAyarla()">Gönder</button>      
+              <button id="cihazadi-buton" class="btn btn-primary btn-sm" onclick="cihazAdiIptal()">Iptal</button>      
+            </td>
+          </tr>
+          <tr>
+            <td>Cihaz IP</td>
+            <td id="cihaz-ip"></td>
+          </tr>
+          <tr>
+            <td>Cihaz Port</td>
+            <td id="cihaz-port"></td>
+          </tr>
+          <tr>
+            <td>Server IP</td>
+            <td id="server-ip"></td>
+          </tr>
+          <tr>
+            <td>Default Gateway</td>
+            <td id="default-gateway"></td>
+          </tr>
+          <tr>
+            <td>Sıcaklık</td>
+            <td id="cihaz-sicaklik"></td>
+          </tr>
+          <tr>
+            <td>Nem</td>
+            <td id="cihaz-nem"></td>
+          </tr>
+          <tr>
+            <td>Voltaj</td>
+            <td id="cihaz-voltaj"></td>
+          </tr>
+          <tr>
+            <td>Çıkış0</td>
+            <td id="cihaz-cikis0">
+              <button id="cikis0-buton" class="btn btn-primary btn-sm" onclick="cikisAyarla(0)">Aç</button>
+              <span id="cikis0-span"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Çıkış00</td>
+            <td id="cihaz-cikis00">
+              <button id="cikis00-buton" class="btn btn-primary btn-sm" onclick="cikisAyarla(1)">Aç</button>
+              <span id="cikis00-span"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Çıkış01</td>
+            <td id="cihaz-cikis01">
+              <button id="cikis01-buton" class="btn btn-primary btn-sm" onclick="cikisAyarla(2)">Aç</button>
+              <span id="cikis01-span"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Çıkış02</td>
+            <td id="cihaz-cikis02">
+              <button id="cikis02-buton" class="btn btn-primary btn-sm" onclick="cikisAyarla(3)">Aç</button>
+              <span id="cikis02-span"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Çıkış03</td>
+            <td id="cihaz-cikis3">
+              <button id="cikis03-buton" class="btn btn-primary btn-sm" onclick="cikisAyarla(4)">Aç</button>
+              <span id="cikis03-span"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Giriş00</td>
+            <td id="cihaz-giris0">
+              <span id="giris00-span" class="p-1 text-white"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Giriş01</td>
+            <td id="cihaz-giris1">
+              <span id="giris01-span" class="p-1 text-white"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Giriş02</td>
+            <td id="cihaz-giris2">
+              <span id="giris02-span" class="p-1 text-white"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Giriş03</td>
+            <td id="cihaz-giris3">
+              <span id="giris03-span" class="p-1 text-white"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Sinyal Seviye</td>
+            <td id="cihaz-rssi">
+            </td>
+          </tr>
+          <tr>
+            <td>Cihaz Çalışma Süresi</td>
+            <td id="cihaz-uptime">
+            </td>
+          </tr>
+
+        </table>
+        <h4>NOT:Cihaz ONLINE ise,sayfanın bağlanabilmesi için sayfa ayarlarından güvenli olmayan içeriğe izin verilmelidir.</h4>
+
+        {% comment %} <form id="form_refresh_page" action="/app_monitor/event_list_view" ></form> {% endcomment %}
+        <form id="form_refresh_page" action="/app_monitor/scheduler_cihaz" ></form>
+    </div>
+    <div class="col-5"> {% comment "svg cihaz görünümü" %}{% endcomment %}
+      <br>
+
+      {% comment %} <h2>SVG script Element</h2> {% endcomment %}
+  
+      <svg style="margin: 30px;" width="500" height="800" xmlns="http://www.w3.org/2000/svg">
+          <!-- <rect width="200" height="100" x="10" y="10" rx="20" ry="20" fill="blue" /> -->
+          <rect width="200" height="500" x="200" y="0" fill="blue" />
+          <line x1="400" y1="30" x2="450" y2="30" style="stroke:black;stroke-width:2" />
+          <text x="330" y="30" fill="white" stroke="white" font-size="20">Çıkış-00</text>
+          {% comment %} <circle id="circle1" cx="460" cy="30" r="10" style="fill:red;" oncontextmenu="output_menu1()" />  {% endcomment %}
+          <circle id="circle1" cx="460" cy="30" r="10" style="fill:red;"  /> 
+
+          <line x1="400" y1="60" x2="450" y2="60" style="stroke:black;stroke-width:2" />
+          <text x="330" y="60" fill="white" stroke="white" font-size="20">Çıkış-01</text>
+          <circle id="circle2"  cx="460" cy="60" r="10" style="fill:red;" />
+          
+          <line x1="400" y1="90" x2="450" y2="90" style="stroke:black;stroke-width:2" />
+          <a href="" onclick=""><text x="330" y="90" fill="white" stroke="white" font-size="20">Çıkış-02</text></a>
+          <circle id="circle3" cx="460" cy="90" r="10" fill="red" /> <!-- "fill" attribute olarak  kullanıldı -->
+          
+          <line x1="400" y1="120" x2="450" y2="120" style="stroke:black;stroke-width:2" />
+          <text x="330" y="120" fill="white" stroke="white" font-size="20">Çıkış-03</text>
+          <circle id="circle4" cx="460" cy="120" r="10" style="fill:red;" /> <!-- "fill" style olarak  kullanıldı -->
+          {% comment %} <text x="230" y="250" fill="pink" stroke="blue" font-size="35">Cihaz-x</text> {% endcomment %}
+          
+          <line x1="400" y1="380" x2="450" y2="380" style="stroke:black;stroke-width:2" />
+          <text x="330" y="380" fill="white" stroke="white" font-size="20">Giriş-00</text>
+          <circle id="circle5" cx="460" cy="380" r="10" style="fill:red;" />
+
+          <line x1="400" y1="410" x2="450" y2="410" style="stroke:black;stroke-width:2" />
+          <text x="330" y="410" fill="white" stroke="white" font-size="20">Giriş-01</text>
+          <circle id="circle6" cx="460" cy="410" r="10" style="fill:red;" />
+
+          <line x1="400" y1="440" x2="450" y2="440" style="stroke:black;stroke-width:2" />
+          <text x="330" y="440" fill="white" stroke="white" font-size="20">Giriş-02</text>
+          <circle id="circle7" cx="460" cy="440" r="10" style="fill:red;" />
+
+          <line x1="400" y1="470" x2="450" y2="470" style="stroke:black;stroke-width:2" />
+          <text x="330" y="470" fill="white" stroke="white" font-size="20">Giriş-03</text>
+          <circle id="circle8" cx="460" cy="470" r="10" style="fill:red;" />
+          
+          <text x="250" y="250" fill="pink" stroke="blue" font-size="35">{{device_name.capitalize}}</text>
+          Sorry, your browser does not support inline SVG.
+      </svg>
+  
+      {% comment %} <input type="button" value="Change Radius" onclick="changeRadius()" /> {% endcomment %}
+
+      <ul id="ul_sag_click" class="ul_sag_click">
+        <li style=""> <a href=""> sag_click_1 ... </a> </li>
+        <li>sag_click_2</li>
+      </ul> 
+      <ul id="ul_sag_click_01" class="ul_sag_click_01">
+        <li style=""> <a href=""> sag_click_1 ... </a> </li>
+        <li>sag_click_2</li>
+      </ul> 
+
+        <li id="li_01_open">li 01 ...</li>
+        <li id="li_01_close">li 01 ...</li>
+        <li></li>
+      {% comment %} <p id="p_contextmenu" style="position: absolute;">paragraf contextmenu için</p>       {% endcomment %}
+      <script>
+        const element_circle2=document.getElementById("circle2");
+        const list_event=document.getElementById("ul_sag_click")
+        const id_cihaz_kayitlar=document.getElementById("id_cihaz_kayitlar")
+        const p_contextmenu=document.getElementById("p_contextmenu")
+
+        $(document).bind("contextmenu",function(e){
+          //e.preventDefault()  // geçici olarak kapatıldı
+        }) // global contextmenu ayarı
+        $(document).bind("click",function(){
+          $('#ul_sag_click').hide()
+        })
+        $(document).bind("contextmenu",function(e){
+          //e.preventDefault()  // geçici olarak kapatıldı
+        }) // global contextmenu ayarı
+        $(document).bind("click",function(){
+          $('#ul_sag_click_01').hide()
+        })
+        //function circle3_oncontextmenu(){
+          //var x=e.offsetX  //bu satır javascript. e.pageX jquery
+          //var y=e.offsetY
+          var circle3_x=document.querySelector('#circle3').getBoundingClientRect().left
+          var circle3_y=document.querySelector('#circle3').getBoundingClientRect().top
+
+          $("#circle1").on("contextmenu",function(e){
+            e.preventDefault()
+            $('#ul_sag_click').css({
+              top:e.pageY,
+              left:e.pageX,
+              color:"white",
+            }).show()
+            $("#ul_sag_click>li:nth-child(1)").text("Çıkış-00 AÇ")
+            $("#ul_sag_click>li:nth-child(2)").text("Çıkış-00 KAPAT")
+          }
+          )
+          $("#circle2").on("contextmenu",function(e){
+            //$("li#li_01").prepend("01")
+            var li_01=document.createElement("li")
+            li_01.id="li_01"
+            li_01.innerHTML="li_01 innerHTML den gelen..."
+            console.log(`li_01.id: ${li_01.id},innerHTML: ${li_01.innerHTML}`)
+            e.preventDefault()
+            $('#ul_sag_click_01').css({
+            //$('#li_01_p').css({
+              top:e.pageY,
+              left:e.pageX,
+              //color:"white",
+              color:"black",
+            }).show()
+            //$("#ul_sag_click>li:nth-child(1)").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 AÇ...//</a>")
+            //$("#ul_sag_click>li:nth-child(2)").html(" <a  onclick='cikisAyarla(2)' > Çıkış-01 KAPAT...//</a>")
+            
+            if (document.getElementById("cikis01-buton").innerHTML=="Aç"){
+              //$("#ul_sag_click>li:nth-child(1)").show()
+            //$("#ul_sag_click>li:nth-child(1)").prop("disabled",false)
+            //$("#ul_sag_click>li:nth-child(2)").prop("disabled",true)
+            $("#ul_sag_click_01>li:nth-child(1)").html(" <a  onclick='cikisAyarla(2)' style='text-decoration:none;padding:10px'> Çıkış-01 AÇ</a>")
+            //$("#ul_sag_click>li:nth-child(2)").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
+            //$("#li_01_open").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 AÇ...//</a>")
+            //$("#li_01").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 AÇ...//</a>")
+            //$("#li_01").show()
+            console.log(`circle2 sağ click...`)
+            $("#ul_sag_click_01>li:nth-child(2)").hide()
+            
+          }
+          else{
+            $("#ul_sag_click_01>li:nth-child(1)").html(" <a onclick='cikisAyarla(2)' style='text-decoration:none'> Çıkış-01 KAPAT</a>")
+            //$("#li_01_close").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 KAPAT...//</a>")
+            //$("li").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
+            //$("#ul_sag_click>li:nth-child(2)").show()
+            //$("#ul_sag_click>li:nth-child(2)").prop("disabled",false)
+            //$("#ul_sag_click>li:nth-child(1)").prop("disabled",true)
+            //$("#ul_sag_click>li:nth-child(2)").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
+              //$("#ul_sag_click>li:nth-child(1)").hide()
+            }
+            
+            
+            
+            {% comment %} $("#ul_sag_click>li:nth-child(2)").text("Çıkış-01 KAPAT") {% endcomment %}
+          }
+          )
+          //$("#circle3").bind("contextmenu",function(e){
+          $("#circle3").on("contextmenu",function(e){
+            e.preventDefault()
+            var circle3_x=document.querySelector('#circle3').getBoundingClientRect().left
+          var circle3_y=document.querySelector('#circle3').getBoundingClientRect().top
+            //var x=e.pageX
+            //var y=e.pageY
+            var x=e.pageX + circle3_x
+            var y=e.pageY + circle3_y
+            $('#ul_sag_click').css({
+              top:e.pageY,
+              left:e.pageX,
+              color:"white",
+              display:"block",
+              //top:y,
+              //left:x
+            }).show()
+            //fadeIn(100,function(){
+              {% comment %} alert("tamam...") {% endcomment %}
+              //alert(`jquery fadein girdi... x: ${x}, y:${x}`)
+            //})
+          //alert(`circle3_oncontextmenu position x:${x},y:${y}`)
+          $("#ul_sag_click>li:nth-child(1)").text("Çıkış-02 AÇ")
+          $("#ul_sag_click>li:nth-child(2)").text("Çıkış-02 KAPAT")
+        })
+      //}
+      $("#circle4").on("contextmenu",function(e){
+        e.preventDefault()
+        $('#ul_sag_click').css({
+          top:e.pageY,
+          left:e.pageX,
+          color:"white",
+        }).show()
+        $("#ul_sag_click>li:nth-child(1)").text("Çıkış-03 AÇ")
+        $("#ul_sag_click>li:nth-child(2)").text("Çıkış-03 KAPAT")
+      }
+      )
+      
+        /*
+        $(function(){
+          $(document).bind("contextmenu",function(e){
+            e.preventDefault()
+            var x=e.pageX
+            var y=e.pageY
+            // herhangibir elemanın konumu*******************
+            //var p_contextmenu_position_x=document.querySelector('#p_contextmenu').getBoundingClientRect().left
+            //var p_contextmenu_position_y=document.querySelector('#p_contextmenu').getBoundingClientRect().top
+            //alert(`jquery bind girdi... x: ${x}, y:${x}`)
+            //alert(`jquery p_contextmenu_position_y... x: ${p_contextmenu_position_x}, y:${p_contextmenu_position_y}`)
+            $('#ul_sag_click').css({
+              top:e.pageY,
+              left:e.pageX
+            }).fadeIn(500,function(){
+              {% comment %} alert("tamam...") {% endcomment %}
+              //alert(`jquery fadein girdi... x: ${x}, y:${x}`)
+            })
+            {% comment %} alert("sağ tuş tıklandı...") {% endcomment %}
+            //alert(`jquery  girdi... x: ${x}, y:${y}`)
+          })
+          $(document).bind("click",function(){
+            $('#ul_sag_click').hide()
+          })
+        })  
+        */
+        /*element_circle2.addEventListener("contextmenu", (event)=>{
+          event.preventDefault();
+          event.stopPropagation();
+          const x = event.offsetX;
+          const y = event.offsetY - 15;
+          {% comment %} alert(`element_circle2.addEventListener  girdi... x: ${x}, y:${y}`) {% endcomment %}
+          list_event.style.display = "block";
+          list_event.style.top = y + "px";
+          list_event.style.left = x + "px";
+          alert(`element_circle2.addEventListener  girdi... x: ${x}, y:${y}`)
+        })*/
+
+        id_cihaz_kayitlar.addEventListener("contextmenu", (event)=>{
+          event.preventDefault();
+          event.stopPropagation();
+          const x = event.offsetX;
+          const y = event.offsetY - 15;
+          {% comment %} alert(`element_circle2.addEventListener  girdi... x: ${x}, y:${y}`) {% endcomment %}
+          
+          list_event.style.display = "block";
+          list_event.style.top = y + "px";
+          list_event.style.left = x + "px";
+          //document.addEventListener("click", onClickOutside);
+          //x=500;y=600;
+          p_contextmenu.style.display = "block";
+          p_contextmenu.style.top = y + "px";
+          p_contextmenu.style.left = x + "px";
+          console.log(`id_cihaz_kayitlar.addEventListener  girdi... x: ${x}, y:${y}`)
+          alert(`id_cihaz_kayitlar.addEventListener  girdi... x: ${x}, y:${y}`)
+        })
+          function changeRadius() {
+              document.getElementById("circle1").setAttribute("r", "10");
+              document.getElementById("circle2").setAttribute("r", "20");
+              document.getElementById("circle3").setAttribute("r", "30");
+              document.getElementById("circle4").setAttribute("r", "40");
+              // document.getElementById("circle4").setAttribute("fill", "blue");
+              document.getElementById("circle4").style.fill = "green";
+          }
+          /*
+          function output_menu1(){
+            document.getElementById("circle1").style.fill = "blue";
+          }
+          function output_menu2(){
+            document.getElementById("circle2").style.fill = "blue";
+          }*/
+      </script>
+    </div>
+  </div>
+</div>
+
+{% comment %} <iframe class="col-sm-12" src="" frameborder="0" name="baris">
+  <h3>IFRAME H3</h3>
+  IFRAME</iframe> {% endcomment %}
+
+<script> // IFRAME script
+//const iframeDocument = document.querySelector("iframe").contentDocument;
+
+//iframeDocument.body.style.backgroundColor = "blue";
+//var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris","popup");
+//var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris");
+//var iframe = document.querySelector("iframe");
+//iframe.contentDocument.location.href = "..."; // change the inner iframe's location
+//iframe.contentDocument.body.appendChild(open_return); // append a script inside the iframe
+//iframe.contentDocument.body.appendChild(yourScriptNode); // append a script inside the iframe
+</script>
+
+<script>
+var device_name;
+////////////// ESP8266 WEBSOCKET BAGLANTI
+/*
+const chatSocket = new WebSocket(
+    'ws://'
+    //+ window.location.host
+    //+ '//81.214.131.122:92'
+    + '//{{cihazlar_erisim_ip}}:' // socket grup tanımlaması yapılmadan önce direkt uç cihaza bağlanıyordu
+    + '{{device_port}}' // esp tarafında socket server kullanlıyordu
+    + '/'
+);*/
+//const chatSocket = new WebSocket('ws://localhost:8000/ws/device/');
+var device_id_js={{device_id}}
+var device_name_js="{{device_name}}"
+console.log(`device_id_js: ${device_id_js}`)
+console.log(`device_name_js: ${device_name_js}`)
+var websocket_url=`ws://localhost:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+console.log(`websocket_url: ${websocket_url}`)
+const chatSocket = new WebSocket(websocket_url);
+//deneme
+//const chatSocket = new WebSocket('ws://localhost:8000/ws/app_monitor_2/esp8266/abc/');
+
+chatSocket.onopen = function () {
+//chatSocket.send('__Connect__ ' + new Date()); 
+//chatSocket.send('__Connect__');
+chatSocket.send('{"type":"connect"}');
+console.log("arduino websocket connected...")
+//writeToScreen(`CONNECTED SOCKET ...: ${socket_address}`);
+};
+chatSocket.onerror = function (error) {
+console.log('WebSocket Error ', error);
+};
+
+chatSocket.onmessage = function (e) {
+console.log('Server chatSocket.onmessage: ', e.data);
+//writeToScreen(`ESP8266 gelen MESAJ ...: ${e.data}`);
+//writeToScreen(`${e.data}`);
+//console.log(`message_object:`)
+var e_data=e.data;
+message_object=JSON.parse(e_data)
+message_object_message=message_object.message
+message_object_message_json=JSON.parse(message_object_message)
+var message_type=message_object.type
+var xid
+console.log(`message_type: ${typeof message_object.message}`)
+console.log(`message_object: ${message_object}`)
+console.log(`message_object.message: ${message_object.message}; mesaj tipi:${typeof message_object.message}`)
+console.log(`message_object.message.type: ${message_object.message.type}`)
+console.log(`message_object.message["type"]: ${message_object.message["type"]}`)
+console.log(`message_object_message_json.type: ${message_object_message_json.type}`)
+console.log(`message_object_message_json["type"]: ${message_object_message_json["type"]}`)
+message_object_message_object=JSON.parse(message_object_message)
+console.log(`message_object.message_object: ${message_object_message_object}; mesaj tipi:${typeof message_object_message_object}`)
+console.log(`message_object.message_object["xid"]: ${message_object_message_object["xid"]}; mesaj tipi:${typeof message_object_message_object["xid"]}`)
+
+//console.log(message_object)
+//console.log(message_object)
+//var xid=e.data["xid"];
+
+    //if ( "CIHAZ_ALL" in message_object ){
+    //if ( "CIHAZ_ALL" in message_object ){
+    //if ( "CONNECTION" in message_object ){
+    //if ( "CONNECTION" or "CIHAZ_ALL"  in message_object_message_object ){
+    //if ( "CONNECTION" || "CIHAZ_ALL" || "CIKISLAR" in message_object_message ){
+    if ( ("CONNECTION" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
+      console.log("CONNECTION || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
+      var xid=message_object_message_object.xid;
+      //var sid=message_object_message_object.xid;
+      var xname=message_object_message_object.xname;
+      //var sname=message_object_message_object.xname;
+      var xip=message_object_message_object.xip;
+      var xsip=message_object_message_object.xsip;
+      //var xgip=message_object_message_object.xgip;
+      var xport=message_object_message_object.xport;
+      //var sport=message_object_message_object.xport;
+      var xtemp=message_object_message_object.xtemp;
+      var xhum=message_object_message_object.xhum;
+      var xvol=message_object_message_object.xvol;
+      var xrssi=message_object_message_object.xrssi;
+      var xutime=message_object_message_object.xutime;
+      var xo0=message_object_message_object.xo0;
+      var xo00=message_object_message_object.xo00;
+      var xo01=message_object_message_object.xo01;
+      var xo02=message_object_message_object.xo02;
+      var xo03=message_object_message_object.xo03;
+      var xi00=message_object_message_object.xi00;
+      var xi01=message_object_message_object.xi01;
+      var xi02=message_object_message_object.xi02;
+      var xi03=message_object_message_object.xi03;
+
+      document.getElementById("cihaz-id").innerHTML=xid;
+      document.getElementById("cihaz-adi").innerHTML=xname;
+      document.getElementById("cihaz-ip").innerHTML=xip;
+      document.getElementById("server-ip").innerHTML=xsip;
+      //document.getElementById("default-gateway").innerHTML=xgip;
+      document.getElementById("cihaz-port").innerHTML=xport;
+      document.getElementById("cihaz-sicaklik").innerHTML=xtemp;
+      document.getElementById("cihaz-nem").innerHTML=xhum;
+      document.getElementById("cihaz-voltaj").innerHTML=xvol;
+      document.getElementById("cihaz-rssi").innerHTML=xrssi+" dBm";
+      document.getElementById("cihaz-uptime").innerHTML=xutime;
+      //if ( message_type == "output" ){ // gelen mesaj output ise ajax çalıştır
+      //if ( message_object.message.type == "output" ){ // gelen mesaj output ise ajax çalıştır
+      //if ( message_object.message.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
+      if ( message_object_message_json.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
+        //////////////////////////////
+        {% include "js/output_soket_ajax.js" %} // CIKISLAR icin EVENT kayıdı ekleme için
+
+        console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`)
+        /////////////////////////////
+      }
+      if (xo0 == "1") {
+          document.getElementById("cikis0-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis0-buton").innerHTML="Kapat";
+          {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
+          }
+          else {
+          document.getElementById("cikis0-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis0-buton").innerHTML="Aç";            
+          {% comment %} document.getElementById("circle1").style.fill="green";{% endcomment %}
+          }
+      if (xo00 == "1") {
+          console.log("if xo00 girdi HIGH")
+          document.getElementById("cikis00-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis00-buton").innerHTML="Kapat";
+          document.getElementById("circle1").style.fill="green"
+          }
+          else {
+          console.log("if else xo00 girdi LOW")
+          document.getElementById("cikis00-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis00-buton").innerHTML="Aç";   
+          document.getElementById("circle1").style.fill="red"         
+          }
+      if (xo01 == "1") {
+          document.getElementById("cikis01-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis01-buton").innerHTML="Kapat";
+          document.getElementById("circle2").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis01-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis01-buton").innerHTML="Aç";  
+          document.getElementById("circle2").style.fill="red" 
+          }
+      if (xo02 == "1") {
+          document.getElementById("cikis02-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis02-buton").innerHTML="Kapat";
+          document.getElementById("circle3").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis02-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis02-buton").innerHTML="Aç"; 
+          document.getElementById("circle3").style.fill="red"           
+          }
+      if (xo03 == "1") {
+          document.getElementById("cikis03-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis03-buton").innerHTML="Kapat";
+          document.getElementById("circle4").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis03-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis03-buton").innerHTML="Aç";   
+          document.getElementById("circle4").style.fill="red"         
+          }
+      if (xi00 == "1") {
+          document.getElementById("giris00-span").innerHTML= "HIGH";
+          document.getElementById("giris00-span").style.backgroundColor="green"
+          document.getElementById("circle5").style.fill="green"
+          }
+          else {
+          document.getElementById("giris00-span").innerHTML= "LOW";
+          document.getElementById("giris00-span").style.backgroundColor="red"
+          document.getElementById("circle5").style.fill="red"
+          }
+      if (xi01 == "1") {
+          document.getElementById("giris01-span").innerHTML= "HIGH";
+          document.getElementById("giris01-span").style.backgroundColor="green"
+          document.getElementById("circle6").style.fill="green"
+          }
+          else {
+          document.getElementById("giris01-span").innerHTML= "LOW";
+          document.getElementById("giris01-span").style.backgroundColor="red"
+          document.getElementById("circle6").style.fill="red"
+          }
+      if (xi02 == "1") {
+          document.getElementById("giris02-span").innerHTML= "HIGH";
+          document.getElementById("giris02-span").style.backgroundColor="green"
+          document.getElementById("circle7").style.fill="green"
+          }
+          else {
+          document.getElementById("giris02-span").innerHTML= "LOW";
+          document.getElementById("giris02-span").style.backgroundColor="red"
+          document.getElementById("circle7").style.fill="red"
+          }
+      if (xi03 == "1") {
+          document.getElementById("giris03-span").innerHTML= "HIGH";
+          document.getElementById("giris03-span").style.backgroundColor="green"
+          document.getElementById("circle8").style.fill="green"
+          }
+          else {
+          document.getElementById("giris03-span").innerHTML= "LOW";
+          document.getElementById("giris03-span").style.backgroundColor="red"
+          document.getElementById("circle8").style.fill="red"
+          }
+      console.log(`xid e.data dan : ${xid}, typeof: ${typeof xid}`)
+        }// IF CIHAZ_ALL in e.data
+
+        if("INPUTLAR_JS" in message_object){
+          console.log("INPUTLAR if girdi...")
+          var si00=message_object.si00;
+          var si01=message_object.si01;
+          var si02=message_object.si02;
+          var si03=message_object.si03;
+      if (si00 == "1") {
+          document.getElementById("giris00-span").innerHTML= "HIGH";
+          document.getElementById("giris00-span").style.backgroundColor="green"
+          document.getElementById("circle5").style.fill="green"
+          }
+          else {
+          document.getElementById("giris00-span").innerHTML= "LOW";
+          document.getElementById("giris00-span").style.backgroundColor="red"
+          document.getElementById("circle5").style.fill="red"
+          }
+      if (si01 == "1") {
+          document.getElementById("giris01-span").innerHTML= "HIGH";
+          document.getElementById("giris01-span").style.backgroundColor="green"
+          document.getElementById("circle6").style.fill="green"
+          }
+          else {
+          document.getElementById("giris01-span").innerHTML= "LOW";
+          document.getElementById("giris01-span").style.backgroundColor="red"
+          document.getElementById("circle6").style.fill="red"
+          }
+      if (si02 == "1") {
+          document.getElementById("giris02-span").innerHTML= "HIGH";
+          document.getElementById("giris02-span").style.backgroundColor="green"
+          document.getElementById("circle7").style.fill="green"
+          }
+          else {
+          document.getElementById("giris02-span").innerHTML= "LOW";
+          document.getElementById("giris02-span").style.backgroundColor="red"
+          document.getElementById("circle7").style.fill="red"
+          }
+      if (si03 == "1") {
+          document.getElementById("giris03-span").innerHTML= "HIGH";
+          document.getElementById("giris03-span").style.backgroundColor="green"
+          document.getElementById("circle8").style.fill="green"
+          }
+          else {
+          document.getElementById("giris03-span").innerHTML= "LOW";
+          document.getElementById("giris03-span").style.backgroundColor="red"
+          document.getElementById("circle8").style.fill="red"
+          }
+        }
+        //document.getElementById("form_refresh_page").submit()
+        //var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris","popup");
+        //var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris");
+        //var open_return=window.open("/app_monitor/scheduler_cihaz");
+        //location.reload();
+        //window.location.replace("/app_monitor/scheduler_cihaz")
+        //window.location.assign("/app_monitor/scheduler_cihaz")
+        const time = new Date();
+        const time_string= time.toLocaleTimeString();
+        //console.log(`open_return:${open_return}`)
+        console.log("scheduler cihaz refresh oldu...")
+        console.log(time_string)
+
+}; // chatSocket.onmessage SONU
+chatSocket.onclose = function () {
+console.log('WebSocket connection closed');
+};
+
+function js_to_esp8266_socket(){
+  chatSocket.send('js_to_esp8266_socket: ' + new Date());
+  console.log('js_to_esp8266_socket: ' + new Date());
+}
+
+//var socket_address='ws://'+ window.location.host+ '/ws/chat/'+ roomName+ '/';
+var socket_address='ws://'+ '81.214.131.122:92/';
+
+
+    function writeToScreen(message) {
+    var pre = document.createElement("p")
+    pre.style.wordWrap = "break-word"
+    pre.innerHTML = message
+    output.appendChild(pre)
+}
+
+////////////// ESP8266 WEBSOCKET BAGLANTI SONU
+/*
+$.ajax({        
+              //url: 'http://81.214.131.122:90/django_device',
+              //url: 'http://81.214.131.122:{{device_port}}/django_device',
+              url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/django_device',
+              //url: 'http://192.168.1.43:{{device_port}}/django_device',
+              //url: 'http://192.168.1.42:{{device_port}}/django_device',
+              //url: 'http://192.168.1.215:{{device_port}}/django_device', // VodafoneSmartUltra6
+              //url: 'http://192.168.43.166:{{device_port}}/django_device', // a6wifi - casper laptop
+              // type: 'POST',
+              type: 'GET',
+              data:{
+               
+              //SicaklikKayit:SicaklikKayit,
+              // csrfmiddlewaretoken: '{{ csrf_token }}',
+              // dataType: "json",
+              },
+              // beforeSend: function (xhr){
+              //   xhr.setRequestHeader('X-CSRFToken', csrftoken);
+              // },
+              success: function(response){
+                //alert("arduino success girdi...");
+                console.log("ajax success girdi...");
+                console.log(response);
+              //$('#test').html(response);
+              console.log(response.No);
+              var numara=response.No;
+              console.log(typeof response.No);
+              document.getElementById("cihaz-id").innerHTML=String(response.xid);
+              document.getElementById("cihaz-adi").innerHTML=String(response.xname);
+              document.getElementById("cihaz-ip").innerHTML=String(response.xip);
+              document.getElementById("server-ip").innerHTML=String(response.xsip);
+              document.getElementById("default-gateway").innerHTML=String(response.xgip);
+              document.getElementById("cihaz-port").innerHTML=String(response.xport);
+              document.getElementById("cihaz-sicaklik").innerHTML=String(response.xtemp);
+              document.getElementById("cihaz-nem").innerHTML=String(response.xhum);
+              document.getElementById("cihaz-voltaj").innerHTML=String(response.xvol);
+              document.getElementById("cihaz-rssi").innerHTML=String(response.xrssi)+" dBm";
+              document.getElementById("cihaz-uptime").innerHTML=String(response.xutime);
+              if (String(response.xo1) == "1") {
+                  document.getElementById("cikis1-span").innerHTML= "Çıkış Açık";
+                  document.getElementById("cikis1-buton").innerHTML="Kapat";
+                  {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
+                  }
+                  else {
+                  document.getElementById("cikis1-span").innerHTML= "Çıkış Kapalı";
+                  document.getElementById("cikis1-buton").innerHTML="Aç";            
+                  {% comment %} document.getElementById("circle1").style.fill="green";{% endcomment %}
+                  }
+              if (String(response.xo00) == "1") {
+                  document.getElementById("cikis00-span").innerHTML= "Çıkış Açık";
+                  document.getElementById("cikis00-buton").innerHTML="Kapat";
+                  document.getElementById("circle1").style.fill="green"
+                  }
+                  else {
+                  document.getElementById("cikis00-span").innerHTML= "Çıkış Kapalı";
+                  document.getElementById("cikis00-buton").innerHTML="Aç";   
+                  document.getElementById("circle1").style.fill="red"         
+                  }
+              if (String(response.xo01) == "1") {
+                  document.getElementById("cikis01-span").innerHTML= "Çıkış Açık";
+                  document.getElementById("cikis01-buton").innerHTML="Kapat";
+                  }
+                  else {
+                  document.getElementById("cikis01-span").innerHTML= "Çıkış Kapalı";
+                  document.getElementById("cikis01-buton").innerHTML="Aç";            
+                  }
+              if (String(response.xo02) == "1") {
+                  document.getElementById("cikis02-span").innerHTML= "Çıkış Açık";
+                  document.getElementById("cikis02-buton").innerHTML="Kapat";
+                  }
+                  else {
+                  document.getElementById("cikis02-span").innerHTML= "Çıkış Kapalı";
+                  document.getElementById("cikis02-buton").innerHTML="Aç";            
+                  }
+              if (String(response.xo03) == "1") {
+                  document.getElementById("cikis03-span").innerHTML= "Çıkış Açık";
+                  document.getElementById("cikis03-buton").innerHTML="Kapat";
+                  }
+                  else {
+                  document.getElementById("cikis03-span").innerHTML= "Çıkış Kapalı";
+                  document.getElementById("cikis03-buton").innerHTML="Aç";            
+                  }
+              if (String(response.xi00) == "1") {
+                  document.getElementById("giris00-span").innerHTML= "HIGH";
+                  document.getElementById("giris00-span").style.backgroundColor="green"
+                  document.getElementById("circle5").style.fill="green"
+                  }
+                  else {
+                  document.getElementById("giris00-span").innerHTML= "LOW";
+                  document.getElementById("giris00-span").style.backgroundColor="red"
+                  document.getElementById("circle5").style.fill="red"
+                  }
+              if (String(response.xi01) == "1") {
+                  document.getElementById("giris01-span").innerHTML= "HIGH";
+                  document.getElementById("giris01-span").style.backgroundColor="green"
+                  document.getElementById("circle6").style.fill="green"
+                  }
+                  else {
+                  document.getElementById("giris01-span").innerHTML= "LOW";
+                  document.getElementById("giris01-span").style.backgroundColor="red"
+                  document.getElementById("circle6").style.fill="red"
+                  }
+              if (String(response.xi02) == "1") {
+                  document.getElementById("giris02-span").innerHTML= "HIGH";
+                  document.getElementById("giris02-span").style.backgroundColor="green"
+                  document.getElementById("circle7").style.fill="green"
+                  }
+                  else {
+                  document.getElementById("giris02-span").innerHTML= "LOW";
+                  document.getElementById("giris02-span").style.backgroundColor="red"
+                  document.getElementById("circle7").style.fill="red"
+                  }
+              if (String(response.xi03) == "1") {
+                  document.getElementById("giris03-span").innerHTML= "HIGH";
+                  document.getElementById("giris03-span").style.backgroundColor="green"
+                  document.getElementById("circle8").style.fill="green"
+                  }
+                  else {
+                  document.getElementById("giris03-span").innerHTML= "LOW";
+                  document.getElementById("giris03-span").style.backgroundColor="red"
+                  document.getElementById("circle8").style.fill="red"
+                  }
+
+              },
+              timeout:3000,
+                error: function() {  // failure bloğu değil, error bloğu OLACAK... 
+                //failure: function() {
+                    //alert("ajax reverse fail geldi");
+                    //device_name="cihazzzzz"
+                    //document.getElementById("device_name_baslik").innerHTML= ` ${device_name} erişimi bulunmuyor... ` 
+                    document.getElementById("device_name_baslik").innerHTML= `Cihaz erişimi bulunmuyor... ` 
+                    console.log("ajax failure girdi...")
+                    {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
+              }               
+          });
+*/
+
+//fetch("http://81.214.131.122:90/django_device",{ mode: 'no-cors'})
+//fetch("http://81.214.131.122:90/django_device",{ mode: 'cors'})
+// fetch("http://81.214.131.122:90/django_device")
+// .then(response => {
+//     //alert(response);
+//     console.log(response)
+//     //response.json()
+// } )
+// .then(data => console.log(data))
+// .catch(error => {
+//     //alert(error);
+//     console.log(error);
+// })
+
+yeni_cihaz_id=document.getElementById("cihaz-id-ayarla").value;
+cihaz_id_dizi=[{% for devices in devices_all %}  {{devices.device_id}},{% endfor %}]
+console.log(`cihaz id'ler: ${cihaz_id_dizi}`)
+
+</script>
+
+
+
+{% endblock content %}
+

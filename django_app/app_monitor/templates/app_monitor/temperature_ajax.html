@@ -1,0 +1,183 @@
+
+
+<b>Kayıt Sayısı: </b>{{kayit_sayisi_total_ajax}} <br>
+
+   <table class="table table-hover">
+  <thead>
+     <tr>
+       <th scope="col">id</th>
+       <th scope="col">Cihaz Adı</th>
+       <th scope="col">Cihaz ID</th>
+       <th scope="col">Sıcaklık</th>
+       <th scope="col">Nem</th>
+       <th scope="col">Voltaj</th>
+       <th scope="col">Tarih</th>
+       <th scope="col">Giriş-0</th>
+       <th scope="col">Giriş-1</th>
+       <th scope="col">Giriş-2</th>
+       <th scope="col">Giriş-3</th>
+       {% comment %} <th scope="col">Çıkış1</th>
+       <th scope="col">Çıkış2</th> {% endcomment %}
+       <th scope="col">Etiket</th>
+       <th scope="col">Açıklama</th>
+     </tr>
+   </thead>
+ <tbody>
+
+ {% for temp in devicePaginator %}
+   <tr>
+       {% if temp.temperature >= 45 %} <!--  if komutuyla sıcaklık 30 üstü olanlar kırmızı satır olacak --> 
+     <th scope="row" style="background-color:#FF0000">{{temp.id}}</th>
+     <td style="background-color:#FF0000">{{temp.temperature}}</td>
+    <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+      <td style="background-color:#FF0000"> {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->        
+           {% if temp.mailSend == False %}
+           <td style="background-color:#FF0000"> {{temp.mailSend}}</td>
+           {% else %}
+           <td style="background-color:#0000FF"> {{temp.mailSend}}</td>
+           {% endif %}
+       
+       {% else %}
+
+     <th scope="row" >{{temp.id}}</th>
+     {% comment %} <td> <a target="_blank" href="/app_monitor/cihazlar/{{temp.device_name}}/port={{temp.device_id.device_port}}" >{{temp.device_name}}</a> </td> {% endcomment %}
+     <td> <a target="_blank" href="/app_monitor/cihazlar/cihaz_adi={{temp.device_name}}" >{{temp.device_name}}</a> </td>
+
+     {% comment %} <td> <a target="_blank" href="/app_monitor/cihazlar/port={{temp.device_id.device_port}}/{{temp.device_id}}" >{{temp.device_id}}</a> </td> {% endcomment %}
+     <td> <a target="_blank" href="/app_monitor/cihazlar/cihaz_id={{temp.device_id}}" >{{temp.device_id}}</a> </td>
+     {% comment %} <td> {{temp.device_id}}</td> {% endcomment %}
+     <td >{{temp.temperature}}</td>
+     <td >{{temp.humidity}}</td>
+     <td >{{temp.volcum}}</td>
+     <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+     <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
+     <td >{{temp.input0}}</td>
+     <td >{{temp.input1}}</td>
+     <td >{{temp.input2}}</td>
+     <td >{{temp.input3}}</td>
+     {% comment %} <td > {{temp.cikis1}}</td> <!--  -->  
+     <td > {{temp.cikis2}}</td> <!--  -->   {% endcomment %}
+     <td > {{temp.staff_name}}--{{temp.tag_id}} </td> <!--  -->  
+     <td >
+      {% comment %} <button type="button" data-bs-toggle="modal" data-bs-target="#modal1" data-bs-toggle="modal">...</button> {% endcomment %}
+      <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
+      <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>
+      {% comment %} <div class="modal" id="modal1" data-bs-backdrop="static"> {% endcomment %}
+      <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">ID:{{temp.id}},Cihaz Adı:{{temp.device_name}}  </h4>
+              {% comment %} <button class="close">kapat</button> {% endcomment %}
+              <button type="button" class="close" data-bs-dismiss="modal">&times;</button> <!-- data-dismiss değil data-bs-dismiss OLMALI -->  
+            </div>
+            <form action="/app_monitor/additional_text">
+            <div class="modal-body">
+                <div class="mb-3">
+                  <label for="acknowledge">Açıklama</label>
+                  <textarea class="form-control" name="additional_text" id="additional_text" rows="5" >{{temp.additionalText}}</textarea>
+                  {% comment %} <label id="modal_id" for="" name="{{modal_id}}" hidden>{{temp.id}} </label> {% endcomment %}
+                  <input hidden type="text" name="temp_id" value="{{temp.id}} ">
+                  <input hidden type="text" name="temp_user" value="{{request.user.username}} ">
+                  <input hidden type="text" name="get_full_path" value="{{ request.get_full_path }}">
+                </div>
+              </div>
+              <div class="modal-footer">
+                {% comment %} <button  class="btn btn-secondary" data-bs-dismiss="modal">Sil</button> {% endcomment %}
+                <a class="btn btn-secondary" href="/app_monitor/additional_text_sil/{{temp.id}}" > Sil</a>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="modal_kaydet">Kaydet </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </td>
+     <!-- Scrollable modal -->
+
+     {% endif %}
+   
+   </tr>  
+
+ {% endfor %}
+
+ </tbody>
+</table>
+{% comment %} <!--  PAGINATOR  -->
+<div class="row">
+  <div class="pagination col-sm-4 offset-sm-1 ">
+    <span class="step-links">
+          {% if devicePaginator.has_previous %}
+          <a href="?page=1">&laquo; first</a>
+          <a href="?page={{ devicePaginator.previous_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">previous</a> {#paginatorda previous basınca arama-search sorgusu yoksa tek get sorgusu ile sonuçlandırır,test edelim.#}
+          
+          {% endif %}
+          
+          <span class="current">
+              Page {{ devicePaginator.number }} of {{ devicePaginator.paginator.num_pages }}.
+          </span>
+    
+          {% if devicePaginator.has_next %}
+          <a href="?page={{ devicePaginator.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">next</a>
+              <a href="?page={{ devicePaginator.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+        </span>
+      </div> <!-- paginator col  --> {% endcomment %}
+      
+      <br>
+<script>
+  document.getElementById('modal_kaydet').addEventListener('click',function(){
+    $.ajax({        
+      //url: 'http://81.214.131.122:90/django_device',
+      //url: 'http://81.214.131.122:{{device_port}}/django_device',
+      //url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/django_device',
+      url: 'http://localhost:9000/additional_text/{{tem}}',
+      //url: 'http://192.168.43.166:{{device_port}}/django_device', // a6wifi - casper laptop
+      // type: 'POST',
+      type: 'GET',
+      data:{
+       
+      //SicaklikKayit:SicaklikKayit,
+      // csrfmiddlewaretoken: '{{ csrf_token }}',
+      // dataType: "json",
+      },
+      // beforeSend: function (xhr){
+      //   xhr.setRequestHeader('X-CSRFToken', csrftoken);
+      // },
+      success: function(response){
+        //alert("arduino success girdi...");
+        console.log("ajax success girdi...");
+        console.log(response);
+      //$('#test').html(response);
+      console.log(response.No);
+      var numara=response.No;
+      console.log(typeof response.No);
+      document.getElementById("cihaz-id").innerHTML=String(response.CihazId);
+      document.getElementById("cihaz-adi").innerHTML=String(response.CihazAdi);
+      document.getElementById("cihaz-ip").innerHTML=String(response.CihazIp);
+      document.getElementById("server-ip").innerHTML=String(response.ServerIp);
+      document.getElementById("default-gateway").innerHTML=String(response.AgGecidiIp);
+      document.getElementById("cihaz-port").innerHTML=String(response.CihazPort);
+      document.getElementById("cihaz-sicaklik").innerHTML=String(response.CihazSicaklik);
+      document.getElementById("cihaz-nem").innerHTML=String(response.CihazNem);
+      document.getElementById("cihaz-voltaj").innerHTML=String(response.CihazVoltaj);
+      document.getElementById("cihaz-rssi").innerHTML=String(response.CihazRssi)+" dBm";
+      document.getElementById("cihaz-uptime").innerHTML=String(response.CihazUpTime);
+      if (String(response.CihazCikis1) == "1") {
+          document.getElementById("cikis1-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis1-buton").innerHTML="Kapat";
+          }
+          else {
+          document.getElementById("cikis1-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis1-buton").innerHTML="Aç";            
+
+          }
+
+      },
+                      failure: function() {
+                  //alert("ajax reverse fail geldi");
+                  console.log("ajax failure girdi...")
+                    }               
+  });
+  })
+</script>
+

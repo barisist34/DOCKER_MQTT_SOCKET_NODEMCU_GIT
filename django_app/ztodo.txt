@@ -1,0 +1,17 @@
+
+
+241013-- Device model, device_id,device_name,device_ip,device_port,device_function
+
+#YAPILANLAR#################################################
+240928-- anydesk ile casper dan asus a otomatik uzak masaüstü bağlantı kuruldu.
+
+240927--OK--240831--anasayfa http://localhost:9001/app_monitor/, son 10 sıcaklık kaydı gösteriliyor.
+        Tüm kayıtlar adı altında bir link ayrı sayfada pagination ile tüm kayıtları getirecek,
+        dosya indirme özelliği de eklenecek.
+
+240831-- nodemcu dan sıcaklık değerleri 20 sn de 192.168.1.40 IP den 
+        python manage.py runserver 0.0.0.0:9000 komutuyla 9000 portundan alınıyor.
+        addRecordArduino view üzerinden çalıştırılıyor.
+
+UYARILAR#################################################
+241129-- cihaz isimleri reset kelimesi içeremez, id ifadesi içeremez.

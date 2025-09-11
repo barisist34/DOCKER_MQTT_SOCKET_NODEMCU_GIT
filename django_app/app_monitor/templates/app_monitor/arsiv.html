@@ -1,0 +1,200 @@
+
+/////////////////// device_id.html  250102  /////////////////////////////////////
+
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title > DEVICE ID:{{device_id}} EKRANI</title>
+{% endblock title %} 
+
+{% comment %} {% static  "js/temperature_ajax.js" %} {% endcomment %}
+{% block content %}
+
+{% comment %} <script src="{% static 'js/temperature_ajax.js' %}"></script> {% endcomment %}
+{% comment %} temperature_ajax.js scripti random olarak djangonun ürettiği değerleri 20 sn de dashboarddda basar. {% endcomment %}
+
+<script>
+  function filtre_id(){
+    document.getElementById("filtre-id").submit();
+  }
+  function filtre_sicaklik(){
+    document.getElementById("filtre-sicaklik").submit();
+  }
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+<h3 class="bg-primary text-center">{{device_name.upper}}  </h3> 
+</div><!--  header col  -->
+</div> <!--  header row  -->
+
+<!--  filtre  -->
+<!-- <form action="/app_monitor/device_filter_filter" > -->
+<div class="row">
+
+  <div class="col">
+    <form action="/app_monitor/device_filter_id_id" method="get">
+    <label class="col-sm-10" for="">ID</label><br>
+    <input class="col-sm-10 mb-1" id="id-kucuk" name="id1" type="number" placeholder="İlk ID" pattern="[*-*-9-9]{4}" title="ID sayı olmalıdır">
+    <input class="col-sm-10" id="id-buyuk" name="id2" type="number" placeholder="Son ID">
+    <input  type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+    <button id="filtre-id" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" onsubmit="filtre_id()">ID</button>
+  </form>
+  </div>
+  <div class="col">
+    <form action="/app_monitor/device_filter_sicaklik" method="get">
+    <label class="col-sm-10" for="">Sıcaklık</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-sicaklik-kucuk" name="sicaklik1" type="number" step="0.1" placeholder="İlk Sıcaklık">
+    <input class="col-sm-10" id="cihaz-sicaklik-buyuk" name="sicaklik2" type="number" step="0.1" placeholder="Son Sıcaklık">
+    <input hidden type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+    <button id="filtre-sicaklik" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" onsubmit="filtre_sicaklik()">SICAKLIK</button>
+  </form>
+  </div>
+  <div class="col">
+    <form action="/app_monitor/device_filter_nem" method="get">
+    <label class="col-sm-10" for="">Nem</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-nem-kucuk" name="nem1" type="number" step="0.1" placeholder="İlk Nem">
+    <input class="col-sm-10" id="cihaz-nem-buyuk" name="nem2" type="number" step="0.1" placeholder="Son Nem">
+    <input hidden type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+    <button id="filtre-nem" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" onsubmit="filtre_sicaklik()">NEM</button>
+  </form>
+  </div>
+  <div class="col">
+    <form action="/app_monitor/device_filter_voltaj" method="get">
+    <label class="col-sm-10 " for="">Voltaj</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-voltaj-kucuk" name="voltaj1" step="0.1" type="number" placeholder="İlk Voltaj">
+    <input class="col-sm-10" id="cihaz-voltaj-buyuk" name="voltaj2" type="number" step="0.1" placeholder="Son Voltaj">
+    <input hidden type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+    <button id="filtre-voltaj" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" >VOLTAJ</button>
+  </form>
+  </div>
+  <div class="col">
+    <form action="/app_monitor/device_filter_tarih" method="get">
+    <label class="col-sm-10 " for="">Tarih</label><br>
+    <input class="col-sm-10 mb-1" id="tarih-kucuk" name="tarih1" type="datetime-local" placeholder="İlk Tarih">
+    <input class="col-sm-10" id="tarih-buyuk" name="tarih2" type="datetime-local" placeholder="Son Tarih">
+    <input hidden  type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+    <button id="filtre-tarih" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" >TARIH</button>
+  </form>
+  </div>
+  
+</div> <!--  row filtre  -->
+<div class="row">
+  <div class="col-sm-6 offset-sm-3 mt-2">
+  <!-- <input class="btn btn-danger" type="submit" value="Filtrele"> -->
+</div>
+</div> <!--  row submit  -->
+<!-- </form>  -->
+<!--  filtre son -->
+
+
+<div class="row">
+
+        {% comment %} <div class="col-sm-10 offset-sm-1"> {% endcomment %}
+        <div class="col-sm-12">
+            <b>Kayıtlar: {{kayit_araligi}} </b> <br>
+            <b>Kayıt Sayısı: {{kayit_sayisi_filter}} {{device_search_count}}</b> <br> <!--  gelen fonksiyona göre kayıt sayılarından biri aktif olur (deviceView veya device_filter_*****) -->
+            <b>Device ID: {{device_id}} </b> <br> <!--  gelen fonksiyona göre kayıt sayılarından biri aktif olur (deviceView veya device_filter_*****) -->
+               <table class="table table-hover">
+              <thead>
+                 <tr>
+                   <th scope="col">id</th>
+                   <th scope="col">Cihaz Adı</th>
+                   <th scope="col">Cihaz ID</th>
+                   <th scope="col">Cihaz Port</th>
+                   <th scope="col">Sıcaklık</th>
+                   <th scope="col">Nem</th>
+                   <th scope="col">Voltaj</th>
+                   <th scope="col">Tarih</th>            
+                 </tr>
+               </thead>
+             <tbody>
+            
+             {% for temp in devicePaginator %}
+               <tr>
+                   {% if temp.temperature >= 45 %} <!--  if komutuyla sıcaklık 30 üstü olanlar kırmızı satır olacak --> 
+                 <th scope="row" style="background-color:#FF0000">{{temp.id}}</th>
+                 <td style="background-color:#FF0000">{{temp.temperature}}</td>
+                <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+                  <td style="background-color:#FF0000"> {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->        
+                       {% if temp.mailSend == False %}
+                       <td style="background-color:#FF0000"> {{temp.mailSend}}</td>
+                       {% else %}
+                       <td style="background-color:#0000FF"> {{temp.mailSend}}</td>
+                       {% endif %}
+                   
+                   {% else %}
+            
+                 <th scope="row" >{{temp.id}}</th>
+                 <td> {{temp.device_name}}</td>
+                 <td> {{temp.device_id.device_id}}</td>
+                 <td> {{temp.device_id.device_port}}</td>
+                 <td >{{temp.temperature}}</td>
+                 <td >{{temp.humidity}}</td>
+                 <td >{{temp.volcum}}</td>
+
+                <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+                  <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
+                  
+            
+                   {% endif %}
+            
+               
+               </tr>  
+            
+             {% endfor %}
+            
+             </tbody>
+            </table>
+
+        </div>
+      </div>   <!--  row  -->
+  {# ************************************************************************************************************************************************************** #}
+  <!--  PAGINATOR  -->
+  <div class="row">
+  <div class="pagination col-sm-4 offset-sm-1 ">
+    <span class="step-links">
+        {% if devicePaginator.has_previous %}
+            <a href="?page=1&cihazadi={{device_name}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}">&laquo; first</a>
+            <a href="?page={{ devicePaginator.previous_page_number }}&cihazadi={{device_name}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">previous</a> {#paginatorda previous basınca arama-search sorgusu yoksa tek get sorgusu ile sonuçlandırır,test edelim.#}
+  
+        {% endif %}
+  
+        <span class="current">
+            Page {{ devicePaginator.number }} of {{ devicePaginator.paginator.num_pages }}.
+        </span>
+  
+        {% if devicePaginator.has_next %}
+            <a href="?page={{ devicePaginator.next_page_number }}&cihazadi={{device_name}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">next</a>
+            <a href="?page={{ devicePaginator.paginator.num_pages }}&cihazadi={{device_name}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}">last &raquo;</a>
+        {% endif %}
+    </span>
+  </div> <!-- paginator col  -->
+  <div class="col-sm-6">
+    <form action="/app_monitor/export_to_excel_id" method="get"> <!-- root adres "/" berlirtilmeli,relative adres olunca deviceView fonksiyonuna geri kaçıyor  -->
+    <input hidden type="text" visibility:"hidden" display="none" name="cihazid" value="{{device_id}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="id1" value="{{id1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="id2" value="{{id2}}"> <!-- hidden  -->
+
+    <input hidden type="text"  display="none" name="nem1" value="{{nem1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="nem2" value="{{nem2}}"> <!-- hidden  -->
+    <input type="submit" class="btn btn-success" value="Excel" >
+  </form>
+
+  </div><!-- excel button col  -->
+</div> <!--  row  -->
+  <br>    
+  {# ************************************************************************************************************************************************************** #}
+
+        <br>
+
+        </div>
+</div>
+{% endblock content %}
+
+///////////////////device_id.html  250102  /////////////////////////////////////
+
+

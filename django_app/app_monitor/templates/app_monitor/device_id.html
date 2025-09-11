@@ -1,0 +1,338 @@
+
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title > CIHAZ ID : {{device_id}} KAYITLAR</title>
+{% endblock title %} 
+
+{% comment %} {% static  "js/temperature_ajax.js" %} {% endcomment %}
+{% block content %}
+
+{% comment %} <script src="{% static 'js/temperature_ajax.js' %}"></script> {% endcomment %}
+{% comment %} temperature_ajax.js scripti random olarak djangonun ürettiği değerleri 20 sn de dashboarddda basar. {% endcomment %}
+
+<script>
+  function filtre_id(){
+    document.getElementById("filtre-id").submit();
+  }
+  function filtre_sicaklik(){
+    document.getElementById("filtre-sicaklik").submit();
+  }
+</script>
+
+<div class="container">
+  {% comment %} <div class="row">
+    <div class="col-sm-12">
+<h3 class="bg-primary text-center">{{device_name.upper}}  </h3> 
+</div><!--  header col  -->
+</div> <!--  header row  --> {% endcomment %}
+
+<!--  filtre  -->
+<!-- <form action="/app_monitor/device_filter_filter" > -->
+<div class="row offset-sm- mt-3">
+
+  <div class="col">
+    <form action="/app_monitor/filter_device_id" method="get"> <!--  id-sicaklıik tek buton form  -->
+    <label class="col-sm-10" for="">ID</label><br>
+    <input class="col-sm-10 mb-1" id="id-kucuk" name="id1" type="number" placeholder="İlk ID" pattern="[*-*-9-9]{4}" title="ID sayı olmalıdır">
+    <input class="col-sm-10" id="id-buyuk" name="id2" type="number" placeholder="Son ID">
+    <input hidden type="text" visibility:"hidden" display="none" name="cihaz_id" value="{{device_id}}"> <!-- cihazadi hidden  -->
+  
+  </div>
+  <div class="col">
+    {% comment %} <form action="/app_monitor/device_filter_sicaklik" method="get"> {% endcomment %}
+    <label class="col-sm-10" for="">Sıcaklık</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-sicaklik-kucuk" name="sicaklik1" type="number" step="0.1" placeholder="İlk Sıcaklık">
+    <input class="col-sm-10" id="cihaz-sicaklik-buyuk" name="sicaklik2" type="number" step="0.1" placeholder="Son Sıcaklık">
+    {% comment %} <input hidden type="text" visibility:"hidden" display="none" name="cihazadi" value="{{device_name}}"> <!-- cihazadi hidden  --> {% endcomment %}
+    {% comment %} <button id="filtre-sicaklik" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" onsubmit="filtre_sicaklik()">SICAKLIK</button> {% endcomment %}
+  {% comment %} </form> {% endcomment %}
+
+  </div>
+  <div class="col">
+    {% comment %} <form action="/app_monitor/device_filter_nem" method="get"> {% endcomment %}
+    <label class="col-sm-10" for="">Nem</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-nem-kucuk" name="nem1" type="number" step="0.1" placeholder="İlk Nem">
+    <input class="col-sm-10" id="cihaz-nem-buyuk" name="nem2" type="number" step="0.1" placeholder="Son Nem">
+    {% comment %} <input hidden type="text" visibility:"hidden" display="none" name="cihazadi" value="{{device_name}}"> <!-- cihazadi hidden  --> {% endcomment %}
+    {% comment %} <button id="filtre-nem" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" onsubmit="filtre_sicaklik()">NEM</button> {% endcomment %}
+  {% comment %} </form> {% endcomment %}
+
+  </div>
+  <div class="col">
+    {% comment %} <form action="/app_monitor/device_filter_voltaj" method="get"> {% endcomment %}
+    <label class="col-sm-10 " for="">Voltaj</label><br>
+    <input class="col-sm-10 mb-1" id="cihaz-voltaj-kucuk" name="voltaj1" step="0.1" type="number" placeholder="İlk Voltaj">
+    <input class="col-sm-10" id="cihaz-voltaj-buyuk" name="voltaj2" type="number" step="0.1" placeholder="Son Voltaj">
+    {% comment %} <input hidden type="text" visibility:"hidden" display="none" name="cihazadi" value="{{device_name}}"> <!-- cihazadi hidden  --> {% endcomment %}
+    {% comment %} <button id="filtre-voltaj" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" >VOLTAJ</button> {% endcomment %}
+  {% comment %} </form> {% endcomment %}
+</div>
+<div class="col">
+  {% comment %} <form action="/app_monitor/device_filter_tarih" method="get"> {% endcomment %}
+    <label class="col-sm-10 " for="">Tarih</label><br>
+    <input class="col-sm-10 mb-1" id="tarih-kucuk" name="tarih1" type="datetime-local" placeholder="İlk Tarih">
+    <input class="col-sm-10" id="tarih-buyuk" name="tarih2" type="datetime-local" placeholder="Son Tarih">
+    {% comment %} <input hidden  type="text" visibility:"hidden" display="none" name="cihazadi" value="{{device_name}}"> <!-- cihazadi hidden  --> {% endcomment %}
+    {% comment %} <button id="filtre-tarih" class="btn btn-danger btn-small col-sm-6 mt-1" type="submit" >TARIH</button> {% endcomment %}
+    <button id="filtre-id" class="btn btn-danger btn-small col-sm-6 mt-3" type="submit" onsubmit="filtre_id()">ARA</button>
+
+    {% comment %} </form> {% endcomment %}
+  </form><!--  id-sicaklık-nem-voltaj-tarih tek buton form  -->
+  </div>
+  
+</div> <!--  row filtre  -->
+<div class="row">
+  <div class="col-sm-6 offset-sm-3 mt-2">
+  <!-- <input class="btn btn-danger" type="submit" value="Filtrele"> -->
+</div>
+</div> <!--  row submit  -->
+<!-- </form>  -->
+<!--  filtre son -->
+
+
+<div class="row">
+
+        {% comment %} <div class="col-sm-10 offset-sm-1"> {% endcomment %}
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-6">
+            <b>CIHAZ ID : {{device_id}} KAYITLARI </b> <br>
+            <b>Kayıtlar: {{kayit_araligi}} </b> / <b>Sıcaklık: {{sicaklik1}} -- {{sicaklik2}} </b>  
+            /<b>Nem: {{nem1}} -- {{nem2}} </b>/<b>Voltaj: {{voltaj1}} -- {{voltaj2}} </b><br>
+            <b>Tarih: {{tarih1}} -- {{tarih2}} </b>
+            <br>
+            <b>Kayıt Sayısı: {{kayit_sayisi_filter}} {{device_search_count}}</b> <br> <!--  gelen fonksiyona göre kayıt sayılarından biri aktif olur (deviceView veya device_filter_*****) -->
+            <b>Device ID: {{device_id}} </b> <br> {% comment "" %} <!--  gelen fonksiyona göre kayıt sayılarından biri aktif olur (deviceView veya device_filter_*****) --> {% endcomment %}
+          </div>
+            <div class="col-sm-6 d-flex align-items-end ">
+              <div class="col-sm-12 text-center d-flex justify-content-end">
+                <a class="fw-bold" href="/app_monitor/django_device_route1/x-{{device_id}}-{{device_port}}" target="_blank">Device ID:{{device_id}} Cihazına Bağlanın</a>
+              <!-- ONLINE KONTROLU-->
+               {% comment %} Device ID: {{device_id}} <br> devices_online: {{devices_online}} {% endcomment %}
+               {% comment %} device_id_id view parametresinden context olarak,sayı olarak geliyor. {% endcomment %}
+            {% if  device_id_id in devices_online %}
+            <b class="b-online-check bg-success ms-3">ONLINE</b> 
+            <script>
+                //$(".b-online-check").addClass('bg-success');
+                //document.getElementsByClassName("b-online-check").style.color="red"
+            </script>
+            {% else %}
+            <b class="b-online-check bg-danger ms-3" >OFFLINE</b> 
+            {% endif %}
+            <!-- ONLINE KONTROLU SON-->
+              </div>
+            </div>
+          </div>
+               <table class="table table-hover">
+              <thead>
+                 <tr>
+                   <th scope="col">id</th>
+                   <th scope="col">Cihaz Adı</th>
+                   <th scope="col">Cihaz ID</th>
+                   <th scope="col">Cihaz Port</th>
+                   <th scope="col">Sıcaklık</th>
+                   <th scope="col">Nem</th>
+                   <th scope="col">Voltaj</th>
+                   <th scope="col">Tarih</th>            
+                   <th scope="col">Açıklama</th>            
+                 </tr>
+               </thead>
+             <tbody>
+            
+             {% for temp in devicePaginator %}
+               <tr>
+                   {% if temp.temperature >= 45 %} {% comment "" %} <!--  if komutuyla sıcaklık 30 üstü olanlar kırmızı satır olacak --> {% endcomment %}
+                 <th scope="row" style="background-color:#FF0000">{{temp.id}}</th>
+                 <td style="background-color:#FF0000">{{temp.temperature}}</td>
+                <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+                  <td style="background-color:#FF0000"> {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->        
+                       {% if temp.mailSend == False %}
+                       <td style="background-color:#FF0000"> {{temp.mailSend}}</td>
+                       {% else %}
+                       <td style="background-color:#0000FF"> {{temp.mailSend}}</td>
+                       {% endif %}
+                   
+                   {% else %}
+            
+                 <th scope="row" >{{temp.id}}</th>
+                 <td> {{temp.device_name}}</td>
+                 <td> {{temp.device_id.device_id}}</td>
+                 <td> {{temp.device_id.device_port}}</td>
+                 <td >{{temp.temperature}}</td>
+                 <td >{{temp.humidity}}</td>
+                 <td >{{temp.volcum}}</td>
+                 
+                 <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
+                 <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
+                 <td >
+                  <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
+                  <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>
+                  {% comment %} <div class="modal" id="modal1" data-bs-backdrop="static"> {% endcomment %}
+                  <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">ID:{{temp.id}},Cihaz Adı:{{temp.device_name}}  </h4>
+                          {% comment %} <button class="close">kapat</button> {% endcomment %}
+                          <button type="button" class="close" data-bs-dismiss="modal">&times;</button> <!-- data-dismiss değil data-bs-dismiss OLMALI -->  
+                        </div>
+                        <form action="/app_monitor/additional_text">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                              <label for="acknowledge">Açıklama</label>
+                              <textarea class="form-control" name="additional_text" id="additional_text" rows="5" >{{temp.additionalText}}</textarea>
+                              {% comment %} <label id="modal_id" for="" name="{{modal_id}}" hidden>{{temp.id}} </label> {% endcomment %}
+                              <input hidden type="text" name="temp_id" value="{{temp.id}} ">
+                              <input hidden type="text" name="temp_user" value="{{request.user.username}} ">
+                              <input hidden type="text" name="temp_template" value="device.html">
+                              <input hidden type="text" name="device_name" value="{{temp.device_name}}">
+                              <input hidden type="text" name="device_port" value="{{temp.device_id.device_port}}">
+                              <input hidden type="text" name="get_full_path" value="{{ request.get_full_path }}">
+                              {% comment "mevcut url path göndermek için" %}{% endcomment %}
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            {% comment %} <button  class="btn btn-secondary" data-bs-dismiss="modal">Sil</button> {% endcomment %}
+                            <a class="btn btn-secondary" href="/app_monitor/additional_text_sil/{{temp.id}}" > Sil</a>
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="modal_kaydet">Kaydet </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                  
+            
+                   {% endif %}
+            
+               
+               </tr>  
+            
+             {% endfor %}
+            
+             </tbody>
+            </table>
+
+        </div>
+      </div>   <!--  row  -->
+  {# ************************************************************************************************************************************************************** #}
+  <!--  PAGINATOR  -->
+  <div class="row">
+  <div class="pagination col-sm-4 offset-sm-1 ">
+    <span class="step-links">
+        {% if devicePaginator.has_previous %}
+            <a href="?page=1&cihaz_id={{device_id}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}&tarih1={{tarih1}}&tarih2={{tarih2}}">&laquo; first</a>
+            <a href="?page={{ devicePaginator.previous_page_number }}&cihaz_id={{device_id}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}&tarih1={{tarih1}}&tarih2={{tarih2}}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">previous</a> {#paginatorda previous basınca arama-search sorgusu yoksa tek get sorgusu ile sonuçlandırır,test edelim.#}
+  
+        {% endif %}
+  
+        <span class="current">
+            Page {{ devicePaginator.number }} of {{ devicePaginator.paginator.num_pages }}.
+        </span>
+  
+        {% if devicePaginator.has_next %}
+            <a href="?page={{ devicePaginator.next_page_number }}&cihaz_id={{device_id}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}&tarih1={{tarih1}}&tarih2={{tarih2}}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">next</a>
+            <a href="?page={{ devicePaginator.paginator.num_pages }}&cihaz_id={{device_id}}&id1={{id1}}&id2={{id2}}&sicaklik1={{sicaklik1}}&sicaklik2={{sicaklik2}}&nem1={{nem1}}&nem2={{nem2}}&voltaj1={{voltaj1}}&voltaj2={{voltaj2}}&tarih1={{tarih1}}&tarih2={{tarih2}}">last &raquo;</a>
+        {% endif %}
+    </span>
+  </div> <!-- paginator col  -->
+  <div class="col-sm-6">
+    {% comment %} <form action="/app_monitor/export_to_excel" method="get"> <!-- root adres "/" berlirtilmeli,relative adres olunca deviceView fonksiyonuna geri kaçıyor  --> {% endcomment %}
+    <form action="/app_monitor/export_to_excel_serial_query_deviceid" method="get"> <!-- root adres "/" berlirtilmeli,relative adres olunca deviceView fonksiyonuna geri kaçıyor  -->
+    <input hidden type="text" visibility:"hidden" display="none" name="cihazid" value="{{device_id}}"> <!-- hidden *** device_name yerine burada device_id gönderiliyor... -->
+    {% comment %} <input hidden type="text" visibility:"hidden" display="none" name="cihazadi" value="{{device_name}}"> <!-- hidden  --> {% endcomment %}
+    <input hidden type="text"  display="none" name="id1" value="{{id1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="id2" value="{{id2}}"> <!-- hidden  -->
+
+    <input hidden type="text"  display="none" name="sicaklik1" value="{{sicaklik1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="sicaklik2" value="{{sicaklik2}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="nem1" value="{{nem1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="nem2" value="{{nem2}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="voltaj1" value="{{voltaj1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="voltaj2" value="{{voltaj2}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="tarih1" value="{{tarih1}}"> <!-- hidden  -->
+    <input hidden type="text"  display="none" name="tarih2" value="{{tarih2}}"> <!-- hidden  -->
+    <input type="submit" class="btn btn-success" value="Excel" >
+  </form>
+
+  </div><!-- excel button col  -->
+</div> <!--  row  -->
+  <br>    
+  {# ************************************************************************************************************************************************************** #}
+  <!--  CHART GRAFIK  -->
+        <div class="row">
+          <div class="col-sm-10 offset-sm-1">
+            <div id="chartdiv" >
+                      <script>
+                      $(document).ready(function(){
+                      var ctx = document.getElementById('myChart').getContext('2d');
+                      var myChart = new Chart(ctx, {
+                          //type: 'bar',
+                          type: 'line',
+                          data: {
+                              labels: [{% for tempss in device500 %}'{{tempss.date}}',{% endfor %}],
+                              datasets: [
+                                {
+                                            label: '# SICAKLIKLAR',
+                                            data: [{% for tempss in device500 %} {% if tempss.temperature  %} {{tempss.temperature}} {% endif %},{% endfor %}],
+                                            fill: false,    //kullanılmazsa grafik altı dolu gelir   
+                                            borderColor: ['rgba(10, 10,255, 10)',],  
+                                            borderWidth: 3
+                                        },
+                                {
+                                            label: '# NEM',
+                                            data: [{% for tempss in device500 %} {% if tempss.temperature  %} {{tempss.humidity}} {% endif %} ,{% endfor %}],
+                                            fill: false,    //kullanılmazsa grafik altı dolu gelir   
+                                            borderColor: ['rgba(255, 255, 10, 10)',],  
+                                            borderWidth: 3
+                                        },
+                                {
+                                            label: '# VOLTAJ',
+                                            data: [{% for tempss in device500 %}{{tempss.volcum}},{% endfor %}],
+                                            fill: false,    //kullanılmazsa grafik altı dolu gelir   
+                                            borderColor: ['rgba(10, 255, 255, 10)',],  
+                                            borderWidth: 3
+                                        },
+                                      ]  
+                                },
+                          options: {
+                              responsive: true,
+                              hover: {
+                                      mode: 'nearest',
+                                      intersect: true
+                                    },
+                              scales: {
+                                x:      {
+                                        title:{
+                                                display: true,
+                                                text: 'Tarih' //ÇALIŞAN X - LABEL
+                                              },
+                                        //display:true,
+                                        reverse:true,
+                                        text:'Tarih...'
+                                      },
+
+                                y:{   //chart.js 3.6.0 versiyon y ekseni
+                                      beginAtZero: true
+                                  },
+
+                              }
+                          }
+                      });
+                      });
+                          //document.write("labels degeri: ");
+                      </script>
+              <canvas id="myChart" width="300" height="150" style="border:1px solid #000000;"></canvas>
+            </div>
+          </div> <!--  chart col  -->
+        </div> <!--  chart row  -->
+        <br>
+        <div class="row">
+
+          <div class="col-sm12 text-center fw-bold mb-3"><a href="/app_monitor" target="_blank">Anasayfa</a></div> <!--  241013  -->
+        </div>
+</div>
+{% endblock content %}

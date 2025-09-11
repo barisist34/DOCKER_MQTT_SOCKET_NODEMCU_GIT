@@ -1,0 +1,140 @@
+
+arduino value: {"device_id":,"device_port":90}
+, type: <class 'str'>
+
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+192.168.43.130>        <input type=
+1 
+arduino_write_dumps:
+
+{"all": "all"}
+
+{"id": "3"}
+
+{"name": "Cihaz5"}
+
+{"ssid": "barisuyar"}
+
+{"SSID": "ZyXEL_4500"}
+
+{"SSID": "A6_wifi"}
+
+{"SSID": "VodafoneSmartUltra6"}
+
+{"SSID": "AndroidAP5012"}
+
+{"password": "7ilp7oT4be444"} //ZyXEL_4500
+
+{"password": "rwrf0860"} //A6_wifi
+
+{"password": "Vdf1234!"} //VodafoneSmartUltra6
+
+{"password": "bvxc8303"} //AndroidAP5012 C5
+
+{"password": "123456789"} 
+
+{"password": "123456789012345678"} 
+
+{"password": "123"}
+
+{"serverip": "192.168.1.35"}
+
+{"serverip": "192.168.1.37"}
+{"serverip": "192.168.43.1"}
+{"serverip": "192.168.43.10"}
+
+{"serverip": "54.242.16.224"}
+{"serverip": "3.233.215.68"}
+
+{"serverip": "barisist34.pythonanywhere.com"}
+{"serverip": "baristest24.pythonanywhere.com"}
+{"serverip": "django-app-u5wye.ondigitalocean.app"}
+{"serverip": "django-app-u5wye.ondigitalocean.app"}
+
+
+{"server_fingerprint": "17d2f71848e5c9a1657cd956cf28b019d440eee726e0a66c54731e799388ac5f"}
+{"server_fingerprint": "17d2f71848e5c9a1657cd956cf28b019d440eee726e0a66c54731e799388ac5f"}  250422
+{"server_fingerprint": "b6269a7da94953bf5f7aefc5a70a7772471712a7aa5f588dc5331178a41e2dda"}  250821 digitalocean 
+
+
+
+{"sure_mesaj": "2"}
+
+{"reset": "reset"}
+
+{"cihazport": "93"}
+
+{"cihazip": "192.168.1.43", "cihazip_3": "43", "cihazip_2": "1", "cihazip_1": "168", "cihazip_0": "192"}
+
+{"serverip": "192.168.1.35", "serverip_3": "35", "serverip_2": "1", "serverip_1": "168", "serverip_0": "192"}
+
+{"gatewayip": "192.168.1.1", "gatewayip_3": "1", "gatewayip_2": "1", "gatewayip_1": "168", "gatewayip_0": "192"}
+
+11:51:24.566 -> 
+11:51:24.566 -> mfrc522.uid.uidByte[0]B3
+11:51:24.614 -> 
+11:51:24.614 ->  UID etiketi : B3 5D DA 26
+11:51:25.648 -> millis_rfid: 1058
+11:51:25.648 -> 
+11:51:25.648 -> Sending_To_DjangoDatabase loopa girdi...
+11:51:29.031 -> millis_dajango: 298
+11:51:52.611 -> 
+11:51:52.611 -> mfrc522.uid.uidByte[0]B3
+11:51:52.657 -> 
+11:51:52.657 ->  UID etiketi : B3 5D DA 26
+11:51:53.698 -> millis_rfid: 1057
+11:52:05.987 -> 
+11:52:05.987 -> Sending_To_DjangoDatabase loopa girdi...
+11:52:09.308 -> millis_dajango: 195
+11:52:46.244 -> 
+11:52:46.244 -> Sending_To_DjangoDatabase loopa girdi...
+11:52:49.517 -> millis_dajango: 183
+11:53:26.444 -> 
+11:53:26.444 -> Sending_To_DjangoDatabase loopa girdi...
+11:53:29.755 -> millis_dajango: 182
+11:54:06.699 -> 
+11:54:06.699 -> Sending_To_DjangoDatabase loopa girdi...
+11:54:10.020 -> millis_dajango: 190
+11:54:46.939 -> 
+11:54:46.939 -> Sending_To_DjangoDatabase loopa girdi...
+11:54:50.232 -> millis_dajango: 169
+11:55:27.172 -> 
+11:55:27.172 -> Sending_To_DjangoDatabase loopa girdi...
+11:55:30.480 -> millis_dajango: 189
+11:56:07.422 -> 
+11:56:07.422 -> Sending_To_DjangoDatabase loopa girdi...
+11:56:10.770 -> millis_dajango: 249
+11:56:47.722 -> 
+11:56:47.722 -> Sending_To_DjangoDatabase loopa girdi...
+11:56:52.105 -> millis_dajango: 1294
+11:57:28.011 -> 
+11:57:28.011 -> Sending_To_DjangoDatabase loopa girdi...
+11:57:31.327 -> millis_dajango: 189
+11:58:08.244 -> 
+11:58:08.244 -> Sending_To_DjangoDatabase loopa girdi...
+11:58:11.561 -> millis_dajango: 173
+11:58:48.508 -> 
+11:58:48.508 -> Sending_To_DjangoDatabase loopa girdi...
+11:58:51.786 -> millis_dajango: 201
+11:59:28.718 -> 
+11:59:28.718 -> Sending_To_DjangoDatabase loopa girdi...
+11:59:32.041 -> millis_dajango: 190
+12:00:08.986 -> 
+12:00:08.986 -> Sending_To_DjangoDatabase loopa girdi...
+12:00:12.330 -> millis_dajango: 234
+12:00:49.249 -> 
+12:00:49.249 -> Sending_To_DjangoDatabase loopa girdi...
+12:00:52.565 -> millis_dajango: 192
+12:01:29.518 -> 
+12:01:29.518 -> Sending_To_DjangoDatabase loopa girdi...
+12:01:33.924 -> millis_dajango: 1297
+12:02:09.814 -> 
+12:02:09.814 -> Sending_To_DjangoDatabase loopa girdi...
+12:02:13.135 -> millis_dajango: 215
+12:02:50.063 -> 
+12:02:50.111 -> Sending_To_DjangoDatabase loopa girdi...
+12:02:53.385 -> millis_dajango: 209
+12:03:30.326 -> 
+12:03:30.326 -> Sending_To_DjangoDatabase loopa girdi...
+12:03:33.626 -> millis_dajango: 184

@@ -1,0 +1,21 @@
+
+
+241223-- OLAYLAR sayfası oluşturulacak.
+        Kesilen cihaz saati olacak.Rengi kırmızı olacak.
+        Cihaz düzelince rengi yeşil olacak,rengi yeşil olacak.
+        Alarm tablosu oluşturulacak.Alanlar(id,alarm_id,alarm_adı,cihaz_adı,cihaz_id,başlangıç saati,düzelme_saati,aciklama,)
+
+241223-- IPTAL---------(sağlıklı çalışmıyor)
+        devices.html de cihazadi hidden input etşketleri silindi,dashboard.html de cihazadi hidden etiket bırakıldı 1 adet.
+        device_filter_id view de request içinde cihazadi varsa return renderda dashboard.html yoksa device.html render yapılacak.
+
+240930-- cihaz sayfasında inputlar number ise rakamdan başka birşey html otomatik validasyonu nedeniyle girilemiyor.
+        validation filter.py de fonksiyonlarda id1,sicaklik1 gibi değişkenlerin queryde kontrolü ile yapıldı.
+        ** charts.js de x ekseninde label kısmı Tarih olarak güncellendi. console da hata veren XAxes kısmı konfigürasyonda silinerek hata kaldırıldı.
+240927-- filtre işlemi(id,sıcaklık,nem,voltaj,tarih) hepsi birlikte yapılamadı. Her değer için ayrı filtreleme butonu kondu.
+        **excel aktarmada cihazadi ile alma yoktu,bütün kayıtlar geliyordu, query de temp = Temperature.objects.filter(device_name__icontains=cihazadi) 
+        icontains ile Cihaz1 büyük problemi de düzeltildi.
+        **Her filtre işlemi için (id,sıcaklık,nem,voltaj,tarih) ayrı export_to_excel fonksiyonu tanımlandı.
+        ** id,nem filtre sonuçları excele aktarılırken export_to_excel() fonkda id1,id2 gibi değerler gerekliydi.
+        Bunun için device.html de filtre butonlarından önce hidden inputlarla request parametreler viewe gönderildi.
+

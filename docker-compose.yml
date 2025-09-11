@@ -1,0 +1,81 @@
+######### REDIS DAPHNE 
+# version: '3.8'
+# services:
+#   mosquitto:
+#     image: eclipse-mosquitto
+#     container_name: mosquitto_2
+#     ports:
+#       - "1883:1883"
+#       - "9001:9001"
+#     volumes:
+#       - ./mosquitto/config:/mosquitto/config
+#     networks:
+#       - mqtt_network
+
+#   redis:
+#     image: redis:alpine
+#     container_name: redis_2
+#     ports:
+#       - "6379:6379"
+#     networks:
+#       - mqtt_network
+
+#   web:
+#     build: ./django_app
+#     container_name: django_app_2
+#     command: >
+#       sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#     volumes:
+#       - ./django_app:/app
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - mosquitto
+#       - redis
+#     networks:
+#       - mqtt_network
+
+# networks:
+#   mqtt_network:
+#     driver: bridge
+
+####### REDIS UVICORN
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto_2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  web:
+    build: ./django_app
+    container_name: django_app_2
+    volumes:
+      - ./django_app:/app
+      # - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - mosquitto
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

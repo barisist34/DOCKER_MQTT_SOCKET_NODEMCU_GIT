@@ -1,0 +1,202 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+<title>Olaylar</title>
+{% endblock title %}
+
+{% block content %}
+
+<script>
+    function fetchdata_perf() {
+        var events_total_state=document.getElementById("btn-check-all").checked;
+        //var events_total_state=document.getElementById("btn-check-all");
+        var events_alarm1_state=document.getElementById("btn-check-alarm1").checked;
+        var events_alarm2_state=document.getElementById("btn-check-alarm2").checked;
+        var events_alarm3_state=document.getElementById("btn-check-alarm3").checked;
+        var events_alarm_clear_state=document.getElementById("btn-check-alarm-clear").checked;
+        $.ajax({
+          url: 'event_list_view',
+          type: 'GET',
+          data: {
+            events_total_state:events_total_state,
+            events_alarm1_state:events_alarm1_state,
+            events_alarm2_state:events_alarm2_state,
+            events_alarm3_state:events_alarm3_state,
+            events_alarm_clear_state:events_alarm_clear_state,
+          },
+          success: function (response) {
+            $('.event_container').html(response);
+            console.log(response);
+            console.log("fetchdata_perf success geldi...10 saniye");
+
+          },
+          failure: function () {
+            alert("ajax reverse fail geldi");
+          }
+        });
+      }
+      //$(document).ready(fetchdata_perf()) // sayfa manuel refresh yapıldığında 60 saniye beklemeden ilk kayıdı yapabilmek için. 
+      //Birden fazla pencerede dashboard açılırsa otomatik 1den fazla kayıt yapılmış olur,hatalı işleme denk gelir.
+      
+      
+      //fetchdata_perf(); // t=0 zamanında ilk zamanda çalıştır.
+       $(document).ready(function () {
+        //setInterval(fetchdata_perf, 10000);
+        //fetchdata_perf();
+        setInterval(fetchdata_perf, 20000);
+      }); 
+
+      {% comment %} $(document).ready(function () {
+        setInterval( async() => { 
+          await  fetchdata_perf() 
+        }, 10000);
+      }); {% endcomment %}
+
+
+      {% comment %} setInterval(async () => {
+        await fetch("https://jsonplaceholder.typicode.com/todos") 
+    }, 100); {% endcomment %}
+
+
+
+</script>
+{% comment %} <p>events_ajax_number:{{events_ajax_number}} </p> {% endcomment %}
+<div>
+<div class="container-fluid p-0">
+       <div id="alarm-sayilari" class="row d-flex ">
+        <div class="col-sm-12">
+            <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()" disabled>
+            <label class="btn btn-secondary btn-sm my-2" for="btn-check-all">TOPLAM SAYI: {{events_total_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm1" onclick="buton_kontrol()" >
+            <label class="btn btn-danger btn-sm my-2" for="btn-check-alarm1">KESİNTİ: {{events_alarm1_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm2" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white"  for="btn-check-alarm2">ÇIKIŞ ALARM: {{events_alarm2_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm3" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white" style="background-color:orange" for="btn-check-alarm3">GİRİŞ ALARM: {{events_alarm3_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm-clear" onclick="buton_kontrol()" >
+            <label class="btn btn-success btn-sm" for="btn-check-alarm-clear">CLEAR ALARM: {{events_clear_count}} </label>
+        </div>
+      </div> 
+<div class="event_container">
+       {% comment %} <div id="alarm-sayilari" class="row d-flex ">
+        <div class="col-sm-12">
+            <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()" disabled>
+            <label class="btn btn-secondary btn-sm my-2" for="btn-check-all">TOPLAM SAYI: {{events_total_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm1" onclick="buton_kontrol()" >
+            <label class="btn btn-danger btn-sm my-2" for="btn-check-alarm1">KESİNTİ: {{events_alarm1_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm2" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white"  for="btn-check-alarm2">ÇIKIŞ ALARM: {{events_alarm2_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm3" onclick="buton_kontrol()">
+            <label class="btn btn-info btn-sm text-white" style="background-color:orange" for="btn-check-alarm3">GİRİŞ ALARM: {{events_alarm3_count}} </label>
+            <input type="checkbox" class="btn-check" id="btn-check-alarm-clear" onclick="buton_kontrol()" >
+            <label class="btn btn-success btn-sm" for="btn-check-alarm-clear">CLEAR ALARM: {{events_clear_count}} </label>
+        </div>
+      </div>  {% endcomment %}
+<table class="table table-hover" data-click-to-select="true">
+    <thead>
+       <tr class="bg-primary px-5">
+         <th class="ps-5" scope="col">id</th>
+         <th scope="col">Cihaz Adı</th>
+         <th scope="col">Cihaz ID</th>
+         <th scope="col">Alarm ID</th>
+         <th scope="col">Alarm Name</th>
+         <th scope="col">Event Active</th>
+         <th scope="col">Start Time</th>
+         <th scope="col">Finish Time</th>
+         <th class="pe-5" scope="col">Info</th>
+       </tr>
+     </thead>
+   <tbody>
+    {% for event in events %}
+     {% comment %} <tr class="{% if event.event_active==True %}bg-danger{% else %}bg-success{% endif %}"> {% endcomment %}
+
+     <tr  
+     {% comment %} {% if event.event_active and event.alarm_id is 1 %}class="bg-danger ps-5"{% else %}class="bg-success"{% endif %}  {% endcomment %}
+     {% if event.event_active and event.alarm_id.alarm_id is 1 %}class="bg-danger ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 2 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 3 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 4 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 5 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 6 %}class="bg-info ps-5"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 7 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 8 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 9 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 10 %}style="background-color:#f57242"{% endif %} 
+     {% if not event.event_active  %}class="bg-success ps-5"{% endif %}
+     
+     style="margin:20%" >
+       <td class="ps-5" >{{event.id}}</td>
+       <td >{{event.device_name}}</td>
+       <td >{{event.device_id}}</td>
+       <td >{{event.alarm_id}}</td>
+       {% comment %} <td >{{event.alarm_name}}</td> {% endcomment %}
+       <td >{{event.alarm_id.alarm_name}}</td>
+       <td > {{event.event_active}}</td> <!--  -->  
+       <td >{{event.start_time}}</td>
+       <td >{{event.finish_time}}</td>
+       <td >{{event.info}}</td>
+     </tr>  
+     {% endfor %}
+   </tbody>
+  </table>
+  {{datetime_now}}  --- Last task: {{completed_task_time}}
+  {% comment %} {{datetime_now}} {% endcomment %}
+</div><!-- event container sonu -->  
+</div><!-- container sonu -->  
+<br>
+
+<div class="row">
+    <div class="col-sm-6">
+     <a href="/app_monitor/export_to_excel_event_all"> <button class="btn btn-success ">EXCEL</button> </a> 
+    </div>
+    <div class="col-sm-6 text-end">
+      <h6 class=""><a href="arduino_serial_local-all" target="_blank">CİHAZ CONFIG</a> </h6>
+      <h6 class="" ><a href="/app_monitor/cihazlar_tum" target="_blank">TÜM CİHAZLAR</a>  </h6>
+    </div>
+  </div>
+
+
+<script>
+    {% comment %} $('#btn-check-alarm1').click(
+        function(){alert("btn-check-alarm1 butona tıklandı...")}
+      ) {% endcomment %}
+
+      {% comment %} $('#btn-check-alarm1').click(
+        function(){alert("btn-check-alarm1 butona tıklandı...")}
+      ) {% endcomment %}
+
+      //buton_kontrol() butonların altına alınmalı. Butonların üstünde olursa çalışmıyor. Butonlar daha önce yüklenmeli.
+      function buton_kontrol() {
+        var events_total_state=document.getElementById("btn-check-all").checked;
+        //var events_total_state=document.getElementById("btn-check-all");
+        var events_alarm1_state=document.getElementById("btn-check-alarm1").checked;
+        var events_alarm2_state=document.getElementById("btn-check-alarm2").checked;
+        var events_alarm3_state=document.getElementById("btn-check-alarm3").checked;
+        var events_alarm_clear_state=document.getElementById("btn-check-alarm-clear").checked;
+        console.log("buton_kontrol girdi...")
+        $.ajax({
+          url: 'event_list_view',
+          type: 'GET',
+          data: {
+            events_total_state:events_total_state,
+            events_alarm1_state:events_alarm1_state,
+            events_alarm2_state:events_alarm2_state,
+            events_alarm3_state:events_alarm3_state,
+            events_alarm_clear_state:events_alarm_clear_state,
+          },
+          success: function (response) {
+            $('.event_container').html(response);
+            console.log(response);
+          },
+          failure: function () {
+            alert("ajax reverse fail geldi");
+          }
+        });
+      }
+</script>
+
+{% endblock content %}
+
+
+
+
