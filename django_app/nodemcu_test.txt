@@ -44,6 +44,8 @@ arduino_write_dumps:
 {"serverip": "192.168.43.1"}
 {"serverip": "192.168.43.10"}
 
+{"serverip": "209.38.202.46"} //droplet
+
 {"serverip": "54.242.16.224"}
 {"serverip": "3.233.215.68"}
 

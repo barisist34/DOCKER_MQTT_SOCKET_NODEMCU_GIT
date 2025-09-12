@@ -53,6 +53,11 @@ services:
       - ./mosquitto/config:/mosquitto/config
     networks:
       - app_network
+#deploy memory sınırlama için 250912
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   redis:
     image: redis:alpine

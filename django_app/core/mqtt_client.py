@@ -52,8 +52,6 @@ def run():
     print("def run icinde client.loop_start gecti...")
     # return HttpResponse("MQTT client is running.")
     # client.loop_forever()
-    
-
 
 # client = mqtt.Client()
 # client.on_connect = on_connect
