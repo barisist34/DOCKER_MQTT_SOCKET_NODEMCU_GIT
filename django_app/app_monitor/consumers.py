@@ -80,19 +80,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #####self.room_group_name = f'chat_baris'
         #####await self.accept()
 
-        # alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
-        # device_id_scope=int(self.scope['query_string'])
-        # device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
+        alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
+        device_id_scope=int(self.scope['query_string'])
+        device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
 
-        # newRecord = Temperature(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name="test",device_id=device_id_socket) #250610
-        # newRecord.save()
+        # newRecord = await sync_to_async(Temperature)(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name=device_id_socket.device_name.capitalize(),device_id=device_id_socket) #250610
+        # await sync_to_async(newRecord.save)()
         # print(f"newRecord: {newRecord}")
-        # event_all_clear=await sync_to_async(Event.objects.filter)(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-        # event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-        # for event in event_all_clear: 
-        #     event.event_active=False
-        #     event.finish_time=datetime.datetime.now()
-        #     await sync_to_async(event.save)()
+        event_all_clear=await sync_to_async(Event.objects.filter)(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+        event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+        for event in event_all_clear: 
+            event.event_active=False
+            event.finish_time=datetime.datetime.now()
+            await sync_to_async(event.save)()
 
 
 
