@@ -132,8 +132,8 @@
        {% comment %} <td >{{event.alarm_name}}</td> {% endcomment %}
        <td >{{event.alarm_id.alarm_name}}</td>
        <td > {{event.event_active}}</td> <!--  -->  
-       <td >{{event.start_time}}</td>
-       <td >{{event.finish_time}}</td>
+       <td >{{event.start_time|date:"d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td>
+       <td >{{event.finish_time|date:"d.m.Y"}} {{event.finish_time|time:"H:i:s"}}</td>
        <td >{{event.info}}</td>
      </tr>  
      {% endfor %}

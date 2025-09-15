@@ -229,7 +229,6 @@
 }
 </script>
 
-<h3>no-cache_2</h3>
 <div class="container">
   <div class="row">
     <div class="col-7" style="height:95vh;overflow-y:auto">
@@ -237,11 +236,11 @@
       <div class="row" >
         {% comment %} <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name}} </h2></div> {% endcomment %}
         {% if device_name != "x"  %}
-        <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name}} </h2></div>
-        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a id="id_cihaz_kayitlar" class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_adi={{device_name}}">{{device_name.capitalize}} Kayıtlar - SOKET </a> </h2></div>
+        <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name.capitalize}} </h2></div>
+        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a id="id_cihaz_kayitlar" class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_adi={{device_name}}">{{device_name.capitalize}} Kayıtlar </a> </h2></div>
         {% else %}
         <div  class="col-sm-6"><h2 id="device_name_baslik">Device ID:{{device_id}} </h2></div>
-        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a  class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_id={{device_id}}">Device ID:{{device_id}} Kayıtlar -SOKET </a> </h2></div>
+        <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a  class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_id={{device_id}}">Device ID:{{device_id}} Kayıtlar</a> </h2></div>
         {% endif %}
       </div>
       <input type="button" value="JS_ESP8266" onclick="js_to_esp8266_socket()">
@@ -446,9 +445,6 @@
         <li>sag_click_2</li>
       </ul> 
 
-        <li id="li_01_open">li 01 ...</li>
-        <li id="li_01_close">li 01 ...</li>
-        <li></li>
       {% comment %} <p id="p_contextmenu" style="position: absolute;">paragraf contextmenu için</p>       {% endcomment %}
       <script>
         const element_circle2=document.getElementById("circle2");

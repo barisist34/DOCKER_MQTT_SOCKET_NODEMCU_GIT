@@ -115,43 +115,15 @@
             {% endcomment %}
           </div>
             <div class="col-sm-6 d-flex align-items-end ">
-              <div class="row">
               <div class="col-sm-12 text-center d-flex justify-content-end">
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1/{{device_name}}-x" target="_blank">{{device_name.capitalize}} Cihazına Bağlanın</a> {% endcomment %}
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1_socket/{{device_name}}-x-{{device_port}}" target="_blank">SOKET {{device_name.capitalize}} Cihazına Bağlanın</a> {% endcomment %}
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1_socket/{{device_name}}-{{device_id}}-{{device_port}}" target="_blank">SOKET {{device_name.capitalize}} Cihazına Bağlanın</a> {% endcomment %}
                 <a class="fw-bold" href="/app_monitor/django_device_route1_socket/{{device_name}}-{{device_id}}-{{device_port}}" target="_blank">{{device_name.capitalize}} Cihazına Bağlanın</a>
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1/x-{{device_id}}-{{device_port}}" target="_blank">Device ID:{{device_id}} Cihazına Bağlanın</a> {% endcomment %}
               <!-- ONLINE KONTROLU-->
-               {% comment %} Device ID: {{device_id}} {% endcomment %}
               {% if  device_id in devices_online %}
               <b class="b-online-check bg-success ms-3">ONLINE</b> 
-              <script>
-                  //$(".b-online-check").addClass('bg-success');
-                  //document.getElementsByClassName("b-online-check").style.color="red"
-              </script>
               {% else %}
               <b class="b-online-check bg-danger ms-3" >OFFLINE</b> 
               {% endif %}
               <!-- ONLINE KONTROLU SON-->
-              </div>
-              <div class="col-sm-12 text-center d-flex justify-content-end">
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1/{{device_name}}-x" target="_blank">{{device_name.capitalize}} Cihazına Bağlanın</a> {% endcomment %}
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1/{{device_name}}-x-{{device_port}}" target="_blank">{{device_name.capitalize}} Cihazına Bağlanın</a> {% endcomment %}
-                {% comment %} <a class="fw-bold" href="/app_monitor/django_device_route1/x-{{device_id}}-{{device_port}}" target="_blank">Device ID:{{device_id}} Cihazına Bağlanın</a> {% endcomment %}
-              <!-- ONLINE KONTROLU-->
-               {% comment %} Device ID: {{device_id}} {% endcomment %}
-              {% if  device_id in devices_online %}
-              <b class="b-online-check bg-success ms-3">ONLINE</b> 
-              <script>
-                  //$(".b-online-check").addClass('bg-success');
-                  //document.getElementsByClassName("b-online-check").style.color="red"
-              </script>
-              {% else %}
-              <b class="b-online-check bg-danger ms-3" >OFFLINE</b> 
-              {% endif %}
-              <!-- ONLINE KONTROLU SON-->
-              </div>
               </div>
             </div>
           </div>
