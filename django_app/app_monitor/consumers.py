@@ -108,7 +108,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
         close_code=close_code
 
-        print(f"DEVICE ID: {device_id_scope} kesildi...")
+        print(f"DEVICE ID: {device_id_scope} kesildi...:{datetime.datetime.now()}")
         print(f"socket_disconnect girdi...   close code:{close_code}")
         print(f"DISCONNECT self.scope['client']: {self.scope['client']} ")
         new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
