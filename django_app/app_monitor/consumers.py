@@ -11,6 +11,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from urllib.parse import parse_qs # url query parametrelerini parse etmek için 250916
 
 # class ChatConsumer(WebsocketConsumer):
 #     def connect(self):
@@ -55,11 +56,31 @@ def chat_message(self, event):
 # class ChatConsumer(WebsocketConsumer):
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+
+        #### url query parametrelerini parse etmek için from urllib.parse import parse_qs
+        self.client_type = self.scope["query_string"].decode() 
+        query_params = parse_qs(self.client_type)
+        self.device_id = query_params.get("device_id", ["unknown"])[0]
+        self.client = query_params.get("client", ["unknown"])[0]
+
         print(f"self.scope: {self.scope}, type: {type(self.scope)} ")
         print(f"CONNECTION self.scope['client']: {self.scope['client']} ")
         print(f"CONNECTION self.scope['user']: {self.scope['user']} ")
-        print(f"CONNECTION self.scope['query_string']: {self.scope['query_string']} ")
-        device_id_scope=int(self.scope['query_string'])
+        print(f"CONNECTION self.scope['query_string']: {self.scope['query_string']}, type:{type(self.scope['query_string'])} ")
+        print(f"CONNECTION parse_qs(self.client_type): {parse_qs(self.client_type)}")
+        print(f"CONNECTION self.client: {self.client}")
+        print(f"CONNECTION self.client_type: {self.client_type}, type: {type(self.client_type)}")
+        value_dict_byte=self.scope['query_string']
+        print(f"value_dict_byte: {value_dict_byte}, type: {type(value_dict_byte)}")
+        value_dict_string=value_dict_byte.decode('utf_8')
+        print(f"value_dict_string: {value_dict_string}, type: {type(value_dict_string)}")
+        # value_dict=json.loads(value_dict_string) # string süslü parantez ve sözlük formatında olmadığı için json.loads() yerine from urllib.parse import parse_qs kullanıyoruz.
+        # print(f"value_dict : {value_dict}, type: {type(value_dict)}")
+        # value_dict_device_id=value_dict["device_id"]
+        # print(f"value_dict_device_id: {value_dict_device_id}")
+        print(f"CONNECTION self.device_id: {self.device_id}")
+        # device_id_scope=int(self.scope['query_string'])
+        device_id_scope=self.device_id
         # self.group_name = 'esp_group'
         self.group_name = f"esp_group_{device_id_scope}"
         print(f"self.group_name: {self.group_name}")
@@ -81,7 +102,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #####await self.accept()
 
         alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
-        device_id_scope=int(self.scope['query_string'])
+        # device_id_scope=int(self.scope['query_string'])
         device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
 
         # newRecord = await sync_to_async(Temperature)(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name=device_id_socket.device_name.capitalize(),device_id=device_id_socket) #250610
@@ -103,16 +124,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #     self.group_name,
         #     self.channel_name
         # )
-        device_id_scope=int(self.scope['query_string'])
+        # device_id_scope=int(self.scope['query_string'])
+        device_id_scope=self.device_id
         device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
         alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
         close_code=close_code
 
         print(f"DEVICE ID: {device_id_scope} kesildi...:{datetime.datetime.now()}")
         print(f"socket_disconnect girdi...   close code:{close_code}")
+        print(f"disconnect sebebi: {self.client}")
         print(f"DISCONNECT self.scope['client']: {self.scope['client']} ")
-        new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
-        await sync_to_async(new_input_event.save)()
+        if self.client == "esp": # sadece esp den gelen disconnect olayında, browser iptal
+            new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
+            await sync_to_async(new_input_event.save)()
 
     async def group_message(self, event):
         message = event['message']
@@ -147,7 +171,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # json_socket_sid=json_socket["sid"]
         if "CONNECTION" in text_data: # cihaz ilk bağlanınca gelir (ayrıca cihaz bağlantı sayfası refresh yapılınca self.group_name = 'esp_group' vasıtasıyla )
             alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
-            device_id_scope=int(self.scope['query_string'])
+            # device_id_scope=int(self.scope['query_string'])
+            device_id_scope=self.device_id
             device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)   
 
             event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
