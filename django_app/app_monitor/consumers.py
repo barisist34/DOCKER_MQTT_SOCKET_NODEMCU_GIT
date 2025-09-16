@@ -98,11 +98,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # def disconnect(self, close_code):
     async def disconnect(self, close_code):
-        # Gruptan çıkar
-        await self.channel_layer.group_discard(
-            self.group_name,
-            self.channel_name
-        )
+        # Gruptan çıkar (DICONNECT OLUNCA GERI CONNECT OLMUYORDU, DISABLE ILE TEST OLACAK)
+        # await self.channel_layer.group_discard(
+        #     self.group_name,
+        #     self.channel_name
+        # )
         device_id_scope=int(self.scope['query_string'])
         device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
         alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)

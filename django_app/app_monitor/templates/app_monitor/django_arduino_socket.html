@@ -243,7 +243,7 @@
         <div class="col-sm-6 "><h2 class="d-flex justify-content-end "> <a  class="text-decoration-none" href="/app_monitor/cihazlar/cihaz_id={{device_id}}">Device ID:{{device_id}} Kayıtlar</a> </h2></div>
         {% endif %}
       </div>
-      <input type="button" value="JS_ESP8266" onclick="js_to_esp8266_socket()">
+      {% comment %} <input type="button" value="JS_ESP8266" onclick="js_to_esp8266_socket()"> {% endcomment %}
       <div id="output"></div>   {# OUTPUT FOR WEBSOCKET #}
 
         <table class="table table-hover">

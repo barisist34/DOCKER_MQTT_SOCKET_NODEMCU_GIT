@@ -59,8 +59,6 @@ arduino_write_dumps:
 {"server_fingerprint": "17d2f71848e5c9a1657cd956cf28b019d440eee726e0a66c54731e799388ac5f"}  250422
 {"server_fingerprint": "b6269a7da94953bf5f7aefc5a70a7772471712a7aa5f588dc5331178a41e2dda"}  250821 digitalocean 
 
-
-
 {"sure_mesaj": "2"}
 
 {"reset": "reset"}
