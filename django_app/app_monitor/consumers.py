@@ -13,38 +13,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from urllib.parse import parse_qs # url query parametrelerini parse etmek için 250916
 
-# class ChatConsumer(WebsocketConsumer):
-#     def connect(self):
-#         print(f"self.scope: {self.scope}, type: {type(self.scope)} ")
-#         print(f"CONNECTION self.scope['client']: {self.scope['client']} ")
-#         print(f"CONNECTION self.scope['user']: {self.scope['user']} ")
-#         print(f"CONNECTION self.scope['query_string']: {self.scope['query_string']} ")
-#         # self.room_name = self.scope['path']
-#         self.room_name = self.scope['client']
-#         # self.room_group_name = f'chat_{self.room_name}'
-#         self.room_group_name = f'chat_baris'
-
-#         # Gruba katıl
-#         async_to_sync(self.channel_layer.group_add)(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#         self.accept()
-#         alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
-#         device_id_scope=int(self.scope['query_string'])
-#         device_id_socket=Device.objects.get(device_id=device_id_scope)
-
-#         # newRecord = Temperature(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name="test",device_id=device_id_socket) #250610
-#         # newRecord.save()
-#         # print(f"newRecord: {newRecord}")
-#         event_all_clear=Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-#         for event in event_all_clear: 
-#             event.event_active=False
-#             event.finish_time=datetime.datetime.now()
-#             event.save()
-#         self.accept()
-
+# Bağlantı takibi için global bir set (çoklu worker yoksa kullanılabilir)
+connected_users = set()
 
 def chat_message(self, event):
 # Gruptan gelen mesajı client'a gönder
@@ -95,6 +65,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
+        # Kullanıcıyı bağlı kullanıcılara ekle
+        connected_users.add(self.channel_name)
+        print(f"Bağlantı: {self.channel_name}")
+        print(f"Aktif bağlantılar: {connected_users}")
+
         # self.room_name = self.scope['path']
         #####self.room_name = self.scope['client']
         # self.room_group_name = f'chat_{self.room_name}'
@@ -137,6 +112,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if self.client == "esp": # sadece esp den gelen disconnect olayında, browser iptal
             new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             await sync_to_async(new_input_event.save)()
+
+            await self.channel_layer.group_discard ( # esp kapanırsa gruptan çıkar
+                self.group_name,
+                self.channel_name
+                # Bağlı soket listesinden sil
+                connected_users.discard(self.channel_name)
+                print(f"Bağlantı kapandı: {self.channel_name}")
+                print(f"Kalan bağlantılar: {connected_users}")
+            )
 
     async def group_message(self, event):
         message = event['message']
