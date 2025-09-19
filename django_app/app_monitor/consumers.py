@@ -109,18 +109,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(f"socket_disconnect girdi...   close code:{close_code}")
         print(f"disconnect sebebi: {self.client}")
         print(f"DISCONNECT self.scope['client']: {self.scope['client']} ")
+        await self.channel_layer.group_discard ( # browser veya esp kapanırsa gruptan çıkar. her browser penceresi ayrı channel_name sahiptir.
+            self.group_name,
+            self.channel_name)
         if self.client == "esp": # sadece esp den gelen disconnect olayında, browser iptal
             new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             await sync_to_async(new_input_event.save)()
 
-            await self.channel_layer.group_discard ( # esp kapanırsa gruptan çıkar
-                self.group_name,
-                self.channel_name
-                # Bağlı soket listesinden sil
-                connected_users.discard(self.channel_name)
-                print(f"Bağlantı kapandı: {self.channel_name}")
-                print(f"Kalan bağlantılar: {connected_users}")
-            )
+            # await self.channel_layer.group_discard ( # esp kapanırsa gruptan çıkar
+            #     self.group_name,
+            #     self.channel_name)
+            # Bağlı soket listesinden sil
+            connected_users.discard(self.channel_name)
+            print(f"Bağlantı kapandı: {self.channel_name}")
+            print(f"Kalan bağlantılar: {connected_users}")
+            print(f"self.group_name: {self.group_name} disconnect oldu...")
 
     async def group_message(self, event):
         message = event['message']
@@ -164,8 +167,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 event.event_active=False
                 event.finish_time=datetime.datetime.now()
                 await sync_to_async(event.save)()
-                            
-        if "sid" in text_data:
+
+            device_name_socket=json_socket["xname"]
+            temperature_socket=json_socket["xtemp"]
+            humidity_socket=json_socket["xhum"]
+            volt_socket=json_socket["xvolt"]
+
+            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            await sync_to_async(newRecord.save)() # CONNECTION TEMP kaydı
+            print(f"newRecord: {newRecord}")
+
+        if "sid" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
             json_socket_sid=int(json_socket['sid'])
             print(f"json_socket['sid']: {json_socket_sid},type :{type(json_socket_sid)} ")
             # device_id_socket=Device.objects.get(device_id=json_socket["sid"])
