@@ -726,8 +726,8 @@ message_object_message_object=JSON.parse(message_object_message)
     //if ( "CONNECTION" in message_object ){
     //if ( "CONNECTION" or "CIHAZ_ALL"  in message_object_message_object ){
     //if ( "CONNECTION" || "CIHAZ_ALL" || "CIKISLAR" in message_object_message ){
-    if ( ("CONNECTION" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
-      console.log("CONNECTION || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
+    if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
+      console.log("CONNECTION_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
       var xid=message_object_message_object.xid;
       //var sid=message_object_message_object.xid;
       var xname=message_object_message_object.xname;

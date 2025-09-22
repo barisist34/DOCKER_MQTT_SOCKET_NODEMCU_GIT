@@ -12,13 +12,18 @@
        <th scope="col">Nem</th>
        <th scope="col">Voltaj</th>
        <th scope="col">Tarih</th>
-       <th scope="col">Giriş-0</th>
-       <th scope="col">Giriş-1</th>
-       <th scope="col">Giriş-2</th>
-       <th scope="col">Giriş-3</th>
+       <th scope="col">Giriş-00</th>
+       <th scope="col">Giriş-01</th>
+       <th scope="col">Giriş-02</th>
+       <th scope="col">Giriş-03</th>
+       <th scope="col">Çıkış-0</th>
+       <th scope="col">Çıkış-00</th>
+       <th scope="col">Çıkış-01</th>
+       <th scope="col">Çıkış-02</th>
+       <th scope="col">Çıkış-03</th>
        {% comment %} <th scope="col">Çıkış1</th>
        <th scope="col">Çıkış2</th> {% endcomment %}
-       <th scope="col">Etiket</th>
+       {% comment %} <th scope="col">Etiket</th> {% endcomment %}
        <th scope="col">Açıklama</th>
      </tr>
    </thead>
@@ -51,14 +56,22 @@
      <td >{{temp.volcum}}</td>
      <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
      <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
-     <td >{{temp.input0}}</td>
-     <td >{{temp.input1}}</td>
-     <td >{{temp.input2}}</td>
-     <td >{{temp.input3}}</td>
+     {% if temp.input00 == "0" %} <td style="background-color:orange">{{temp.input00}}</td> {% else %} <td >{{temp.input00}}</td> {% endif %}
+     {% comment %} <td >{{temp.input0}}</td> {% endcomment %}
+     {% comment %} {% if temp.input01 == "0" %} <td class="p-3 text-center align-middle bg-info border border-light border-5 " style="">{{temp.input01}}</td> {% else %} <td >{{temp.input01}}</td> {% endif %} {% endcomment %}
+     {% if temp.input01 == "0" %} <td style="background-color:orange;">{{temp.input01}}</td> {% else %} <td >{{temp.input01}}</td> {% endif %}
+     {% comment %} <td >{{temp.input1}}</td> {% endcomment %}
+     <td >{{temp.input02}}</td>
+     <td >{{temp.input03}}</td>
+     <td >{{temp.cikis0}}</td>
+     <td >{{temp.cikis00}}</td>
+     <td >{{temp.cikis01}}</td>
+     <td >{{temp.cikis02}}</td>
+     <td >{{temp.cikis03}}</td>
      {% comment %} <td > {{temp.cikis1}}</td> <!--  -->  
      <td > {{temp.cikis2}}</td> <!--  -->   {% endcomment %}
-     <td > {{temp.staff_name}}--{{temp.tag_id}} </td> <!--  -->  
-     <td >
+     {% comment %} <td > {{temp.staff_name}}--{{temp.tag_id}} </td> <!--  -->   {% endcomment %}
+     <td style="display: flex;text-align:start;vertical-align:middle">
       {% comment %} <button type="button" data-bs-toggle="modal" data-bs-target="#modal1" data-bs-toggle="modal">...</button> {% endcomment %}
       <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
       <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>

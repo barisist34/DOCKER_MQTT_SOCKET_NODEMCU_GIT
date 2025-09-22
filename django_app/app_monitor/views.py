@@ -2142,7 +2142,7 @@ def scheduler_cihaz(request):
     events_alarm2_count=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True).count()
     events_alarm3_count=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True).count()
     events_clear_count=Event.objects.filter(event_active=False).count()
-    completed_task_time=CompletedTask.objects.last().run_at
+    # completed_task_time=CompletedTask.objects.last().run_at
 
     context=dict(
         events=events,
@@ -2152,7 +2152,7 @@ def scheduler_cihaz(request):
         events_alarm3_count=events_alarm3_count,
         events_clear_count=events_clear_count,
         datetime_now=datetime_now,
-        completed_task_time=completed_task_time,
+        # completed_task_time=completed_task_time,
     )
     return render(request,"app_monitor/events.html",context)
 
@@ -2165,7 +2165,7 @@ def event_list_view(request):
     events_alarm2_state=request.GET.get("events_alarm2_state")
     events_alarm3_state=request.GET.get("events_alarm3_state")
     events_alarm_clear_state=request.GET.get("events_alarm_clear_state")
-    completed_task_time=CompletedTask.objects.last().run_at
+    # completed_task_time=CompletedTask.objects.last().run_at
     # print(f"in event_list_view from CompletedTask.objects.last().run_at: {completed_task_time}")
 
     # print(f"events_alarm1_state:{events_alarm1_state},events_alarm3_state:{events_alarm3_state}, events_alarm_clear_state:{events_alarm_clear_state}")
@@ -2297,7 +2297,7 @@ def event_list_view(request):
         # events_all=events,
         events_ajax_number=45,
         datetime_now=datetime_now,
-        completed_task_time=completed_task_time,
+        # completed_task_time=completed_task_time,
         secilen_alarm_sayisi=secilen_alarm_sayisi,
         events_total_count=events_total_count,
         events_alarm1_count=events_alarm1_count,

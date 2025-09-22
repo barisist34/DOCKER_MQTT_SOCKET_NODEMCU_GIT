@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
 from app_monitor.views import dashboard,TemperatureAddRecord,addRecordArduino,addEventArduino,addRecordRfid,tempList,deviceView,exportExcel,export_to_excel
 from app_monitor.views import django_device,django_device_backtest,deviceViewDetail,export_to_excel_all,devices_all
 from app_monitor.views import device_id,export_to_excel_id,arduino_serial_local,additional_text,additional_text_sil,export_to_excel_serial_query

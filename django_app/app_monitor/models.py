@@ -46,18 +46,21 @@ class Temperature(models.Model):
     # device_id=models.IntegerField(blank=True,null=True)
     device_id=models.ForeignKey(Device,on_delete=models.CASCADE,null=True, blank=True)
     device_name=models.CharField(blank=True,null=True, max_length=50)
-    cikis1=models.CharField(blank=True,null=True, max_length=5)
-    cikis2=models.CharField(blank=True,null=True, max_length=5)
-    input0=models.CharField(blank=True,null=True, max_length=1)
-    input1=models.CharField(blank=True,null=True, max_length=1)
-    input2=models.CharField(blank=True,null=True, max_length=1)
-    input3=models.CharField(blank=True,null=True, max_length=1)
+    cikis0=models.CharField(blank=True,null=True, max_length=5)
+    cikis00=models.CharField(blank=True,null=True, max_length=5)
+    cikis01=models.CharField(blank=True,null=True, max_length=5)
+    cikis02=models.CharField(blank=True,null=True, max_length=5)
+    cikis03=models.CharField(blank=True,null=True, max_length=5)
+    input00=models.CharField(blank=True,null=True, max_length=1)
+    input01=models.CharField(blank=True,null=True, max_length=1)
+    input02=models.CharField(blank=True,null=True, max_length=1)
+    input03=models.CharField(blank=True,null=True, max_length=1)
     tag_id=models.ForeignKey(RFID_Kisi,on_delete=models.CASCADE,null=True,blank=True)
     staff_name=models.CharField(blank=True,null=True, max_length=30)
     # device_name=models.ForeignKey(Device,on_delete=models.CASCADE,null=True, blank=True)
 
     def __str__(self):
-        return (f"ID:{self.id},Cihaz ID: {self.device_id.device_id} ,Sıcaklık: {self.temperature}, Nem: {self.humidity}, Voltaj: {self.volcum}, Tarih: {self.date}, Cikis1:{self.cikis1}")
+        return (f"ID:{self.id},Cihaz ID: {self.device_id.device_id} ,Sıcaklık: {self.temperature}, Nem: {self.humidity}, Voltaj: {self.volcum}, Tarih: {self.date}, Cikis0:{self.cikis0}")
     
 
 class Alarm(models.Model):

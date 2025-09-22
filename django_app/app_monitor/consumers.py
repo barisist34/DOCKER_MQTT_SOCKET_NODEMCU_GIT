@@ -156,7 +156,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         json_socket=json.loads(text_data)
         print(f"json_socket: {json_socket},type :{type(json_socket)}, ")
         # json_socket_sid=json_socket["sid"]
-        if "CONNECTION" in text_data: # cihaz ilk bağlanınca gelir (ayrıca cihaz bağlantı sayfası refresh yapılınca self.group_name = 'esp_group' vasıtasıyla )
+        if "CONN_ESP" in text_data: # cihaz-esp ilk bağlanınca gelir
             alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
             # device_id_scope=int(self.scope['query_string'])
             device_id_scope=self.device_id
@@ -172,12 +172,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             temperature_socket=json_socket["xtemp"]
             humidity_socket=json_socket["xhum"]
             volt_socket=json_socket["xvolt"]
+            xi00_socket=json_socket["xi00"]
+            xi01_socket=json_socket["xi01"]
+            xi02_socket=json_socket["xi02"]
+            xi03_socket=json_socket["xi03"]
+            xo0_socket=json_socket["xo0"]
+            xo00_socket=json_socket["xo00"]
+            xo01_socket=json_socket["xo01"]
+            xo02_socket=json_socket["xo02"]
+            xo03_socket=json_socket["xo03"]
 
-            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input0=xi00_socket,input1=xi01_socket,input2=xi02_socket,input3=xi03_socket) #250610
+            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input00=xi00_socket,input01=xi01_socket,input02=xi02_socket,input03=xi03_socket,cikis0=xo0_socket,cikis00=xo00_socket,cikis01=xo01_socket,cikis02=xo02_socket,cikis03=xo03_socket) #250610
+
             await sync_to_async(newRecord.save)() # CONNECTION TEMP kaydı
             print(f"newRecord: {newRecord}")
 
-        if "sid" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
+        # if "sid" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
+        if "PERYODIK" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
             json_socket_sid=int(json_socket['sid'])
             print(f"json_socket['sid']: {json_socket_sid},type :{type(json_socket_sid)} ")
             # device_id_socket=Device.objects.get(device_id=json_socket["sid"])
@@ -186,10 +198,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             temperature_socket=json_socket["stemp"]
             humidity_socket=json_socket["shum"]
             volt_socket=json_socket["svolt"]
+            xi00_socket=json_socket["xi00"]
+            xi01_socket=json_socket["xi01"]
+            xi02_socket=json_socket["xi02"]
+            xi03_socket=json_socket["xi03"]
+            xo0_socket=json_socket["xo0"]
+            xo00_socket=json_socket["xo00"]
+            xo01_socket=json_socket["xo01"]
+            xo02_socket=json_socket["xo02"]
+            xo03_socket=json_socket["xo03"]
             # device_id_socket=Device.objects.get(device_id=1)
             # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name="Test",device_id=device_id_socket) #250610
             # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
-            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input00=xi00_socket,input01=xi01_socket,input02=xi02_socket,input03=xi03_socket,cikis0=xo0_socket,cikis00=xo00_socket,cikis01=xo01_socket,cikis02=xo02_socket,cikis03=xo03_socket) #250610
             await sync_to_async(newRecord.save)()
             print(f"newRecord: {newRecord}")
             # self.send(text_data=json.dumps({"message": message}))
@@ -244,8 +266,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             input0_active_event_available=await sync_to_async(Event.objects.filter(alarm_id=alarm_input0_object).filter(event_active=True).filter(device_id=device).count)()
             alarm_input1_object=await sync_to_async(Alarm.objects.get)(alarm_id=8)
             input1_active_event_available=await sync_to_async(Event.objects.filter(alarm_id=alarm_input1_object).filter(event_active=True).filter(device_id=device).count)()
-            print(f"input1:{input1}")
-            print(f"input1_active_event_available:{input1_active_event_available}")
             alarm_input2_object=await sync_to_async(Alarm.objects.get)(alarm_id=9)
             input2_active_event_available=await sync_to_async(Event.objects.filter(alarm_id=alarm_input2_object).filter(event_active=True).filter(device_id=device).count)()
             alarm_input2_object=await sync_to_async(Alarm.objects.get)(alarm_id=9)
@@ -303,22 +323,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 print("redirect scheduler altı...clear")
             if input_no=="2" and input2 == "0" and input2_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
                 print(f"input2 == 0 and input2_active_event_available !=0 girdi...")
-                event_all_clear=await sync_to_async(list)(Event.objects.filter)(event_active=True,alarm_id=alarm_input2_object,device_id=device) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,alarm_id=alarm_input2_object,device_id=device)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
                 for event in event_all_clear: 
                     event.event_active=False
                     event.finish_time=datetime.datetime.now()
-                    event.save()
+                    await sync_to_async(event.save)()
                 print("event clear RETURN event_list_view////")
                 # return redirect('/app_monitor/scheduler_cihaz')
                 redirect('/app_monitor/scheduler_cihaz')
                 print("redirect scheduler altı...clear")
             if input_no=="3" and input3 == "0" and input3_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
                 print(f"input3 == 0 and input3_active_event_available !=0 girdi...")
-                event_all_clear=await sync_to_async(list)(Event.objects.filter)(event_active=True,alarm_id=alarm_input3_object,device_id=device) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,alarm_id=alarm_input3_object,device_id=device)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
                 for event in event_all_clear: 
                     event.event_active=False
                     event.finish_time=datetime.datetime.now()
-                    event.save()
+                    # event.save()
+                    await sync_to_async(event.save)()
                 print("event clear RETURN event_list_view////")
                 # return redirect('/app_monitor/scheduler_cihaz')
                 redirect('/app_monitor/scheduler_cihaz')
