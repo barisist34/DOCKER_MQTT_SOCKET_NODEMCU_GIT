@@ -1276,7 +1276,7 @@ def export_to_excel_all(request):
     ws.title = "ALL"
 
     # Add headers
-    headers = ["id","DEVICE NAME","DEVICE ID","DEVICE PORT","temperature", "humidity", "volcum","TARIH","CIKIS1","CIKIS2","ETIKET","ACIKLAMA"]
+    headers = ["id","DEVICE NAME","DEVICE ID","DEVICE PORT","temperature", "humidity", "volcum","TARIH","GIRIS-00","GIRIS-01","GIRIS-02","GIRIS-03","CIKIS-0","CIKIS-00","CIKIS-01","CIKIS-02","CIKIS-03","ETIKET","ACIKLAMA"]
     ws.append(headers)
 
 
@@ -1284,7 +1284,7 @@ def export_to_excel_all(request):
         # temp = Temperature.objects.filter(device_name=cihazadi)
     for temps in temp:
         try:
-            ws.append([temps.id,temps.device_name,temps.device_id.device_id,temps.device_id.device_port,temps.temperature, temps.humidity, temps.volcum,temps.date,temps.cikis1,temps.cikis2,temps.staff_name,temps.additionalText])
+            ws.append([temps.id,temps.device_name,temps.device_id.device_id,temps.device_id.device_port,temps.temperature, temps.humidity, temps.volcum,temps.date,temps.input00,temps.input01,temps.input02,temps.input03,temps.cikis0,temps.cikis00,temps.cikis01,temps.cikis02,temps.cikis03,temps.staff_name,temps.additionalText])
             # ws.append([temps.id,temps.device_name,temps.temperature, temps.humidity, temps.volcum])
         except AttributeError:
             print("AttributeError oluştu...")
