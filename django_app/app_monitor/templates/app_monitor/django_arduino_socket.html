@@ -301,6 +301,10 @@
             <td id="default-gateway"></td>
           </tr>
           <tr>
+            <td>Internet IP</td>
+            <td id="internet-ip"></td>
+          </tr>
+          <tr>
             <td>Sıcaklık</td>
             <td id="cihaz-sicaklik"></td>
           </tr>
@@ -735,6 +739,7 @@ message_object_message_object=JSON.parse(message_object_message)
       var xip=message_object_message_object.xip;
       var xsip=message_object_message_object.xsip;
       var xgip=message_object_message_object.xgip;
+      var xintip=message_object_message_object.xintip;
       var xport=message_object_message_object.xport;
       //var sport=message_object_message_object.xport;
       var xtemp=message_object_message_object.xtemp;
@@ -757,6 +762,7 @@ message_object_message_object=JSON.parse(message_object_message)
       document.getElementById("cihaz-ip").innerHTML=xip;
       document.getElementById("server-ip").innerHTML=xsip;
       document.getElementById("default-gateway").innerHTML=xgip;
+      document.getElementById("internet-ip").innerHTML=xintip;
       document.getElementById("cihaz-port").innerHTML=xport;
       document.getElementById("cihaz-sicaklik").innerHTML=xtemp;
       document.getElementById("cihaz-nem").innerHTML=xhum;
