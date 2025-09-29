@@ -78,18 +78,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
         # device_id_scope=int(self.scope['query_string'])
-        device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
+        """
+       try:
+            # device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope) 
+            print(f"connect try, device_id_scope={device_id_scope}")
+            if not await sync_to_async(Device.objects.filter(device_id=device_id_scope).exists)():
+                print(f" {device_id_scope}:  device_id database de olmayan blok girdi... ")
+                # device_id_request=request.GET.get("device_id")
+                # device_ip_request=request.GET.get("device_ip")
+                # device_port_request=request.GET.get("device_port")
+                # new_device=Device(device_id=device_id_request,device_name=device_name,device_port=device_port_request,device_ip=device_ip_request)
+                new_device=await sync_to_async(Device)(device_id=device_id_scope,device_name=f"Cihaz{device_id_scope}")
+                await sync_to_async(new_device.save)()
+                print(f"new_device: {new_device}")
+                print(f"new device name: {new_device.device_name}")  
+            device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
 
-        # newRecord = await sync_to_async(Temperature)(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name=device_id_socket.device_name.capitalize(),device_id=device_id_socket) #250610
-        # await sync_to_async(newRecord.save)()
-        # print(f"newRecord: {newRecord}")
-        event_all_clear=await sync_to_async(Event.objects.filter)(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-        event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-        for event in event_all_clear: 
-            event.event_active=False
-            event.finish_time=datetime.datetime.now()
-            await sync_to_async(event.save)()
-
+            # newRecord = await sync_to_async(Temperature)(temperature=11,humidity= 33,volcum=12, date=timezone.now(),device_name=device_id_socket.device_name.capitalize(),device_id=device_id_socket) #250610
+            # await sync_to_async(newRecord.save)()
+            # print(f"newRecord: {newRecord}")
+            event_all_clear=await sync_to_async(Event.objects.filter)(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+            event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+            for event in event_all_clear: 
+                event.event_active=False
+                event.finish_time=datetime.datetime.now()
+                await sync_to_async(event.save)()
+        except:
+            print(f"device {device_id_scope} için device kaydı oluşamadı")"""
 
 
     # def disconnect(self, close_code):
@@ -112,6 +127,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard ( # browser veya esp kapanırsa gruptan çıkar. her browser penceresi ayrı channel_name sahiptir.
             self.group_name,
             self.channel_name)
+        connected_users.discard(self.channel_name)
+        print(f"Bağlantı kapandı: {self.channel_name}")
+        print(f"Kalan bağlantılar: {connected_users}")
         if self.client == "esp": # sadece esp den gelen disconnect olayında, browser iptal
             new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             await sync_to_async(new_input_event.save)()
@@ -145,6 +163,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
         print("consumer receive girdi...")
+        print(f"Aktif soketler: {connected_users}")
+        print(f"Aktif soket sayısı: {len(connected_users)}")
 
         # data = text_data.readline().decode('utf_8')
         # data = int(text_data)
@@ -160,33 +180,47 @@ class ChatConsumer(AsyncWebsocketConsumer):
             alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
             # device_id_scope=int(self.scope['query_string'])
             device_id_scope=self.device_id
-            device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)   
+            try:
+                print(f"connect try, device_id_scope={device_id_scope}")
+                device_name_socket=json_socket["xname"]
+                device_port_socket=json_socket["xport"]
+                temperature_socket=json_socket["xtemp"]
+                humidity_socket=json_socket["xhum"]
+                volt_socket=json_socket["xvolt"]
+                xi00_socket=json_socket["xi00"]
+                xi01_socket=json_socket["xi01"]
+                xi02_socket=json_socket["xi02"]
+                xi03_socket=json_socket["xi03"]
+                xo0_socket=json_socket["xo0"]
+                xo00_socket=json_socket["xo00"]
+                xo01_socket=json_socket["xo01"]
+                xo02_socket=json_socket["xo02"]
+                xo03_socket=json_socket["xo03"]
+                if not await sync_to_async(Device.objects.filter(device_id=device_id_scope).exists)():
+                    print(f" {device_id_scope}:  device_id database de olmayan blok girdi... ")
+                    # device_id_request=request.GET.get("device_id")
+                    # device_ip_request=request.GET.get("device_ip")
+                    # device_port_request=request.GET.get("device_port")
+                    # new_device=Device(device_id=device_id_request,device_name=device_name,device_port=device_port_request,device_ip=device_ip_request)
+                    new_device=await sync_to_async(Device)(device_id=device_id_scope,device_name=device_name_socket,device_port=device_port_socket)
+                    await sync_to_async(new_device.save)()
+                    print(f"new_device: {new_device}")
+                    print(f"new device name: {new_device.device_name}")  
+                device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
+                # device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope) 
+                event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                for event in event_all_clear: 
+                    event.event_active=False
+                    event.finish_time=datetime.datetime.now()
+                    await sync_to_async(event.save)()
 
-            event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
-            for event in event_all_clear: 
-                event.event_active=False
-                event.finish_time=datetime.datetime.now()
-                await sync_to_async(event.save)()
+                # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input0=xi00_socket,input1=xi01_socket,input2=xi02_socket,input3=xi03_socket) #250610
+                newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input00=xi00_socket,input01=xi01_socket,input02=xi02_socket,input03=xi03_socket,cikis0=xo0_socket,cikis00=xo00_socket,cikis01=xo01_socket,cikis02=xo02_socket,cikis03=xo03_socket) #250610
 
-            device_name_socket=json_socket["xname"]
-            temperature_socket=json_socket["xtemp"]
-            humidity_socket=json_socket["xhum"]
-            volt_socket=json_socket["xvolt"]
-            xi00_socket=json_socket["xi00"]
-            xi01_socket=json_socket["xi01"]
-            xi02_socket=json_socket["xi02"]
-            xi03_socket=json_socket["xi03"]
-            xo0_socket=json_socket["xo0"]
-            xo00_socket=json_socket["xo00"]
-            xo01_socket=json_socket["xo01"]
-            xo02_socket=json_socket["xo02"]
-            xo03_socket=json_socket["xo03"]
-
-            # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input0=xi00_socket,input1=xi01_socket,input2=xi02_socket,input3=xi03_socket) #250610
-            newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket,input00=xi00_socket,input01=xi01_socket,input02=xi02_socket,input03=xi03_socket,cikis0=xo0_socket,cikis00=xo00_socket,cikis01=xo01_socket,cikis02=xo02_socket,cikis03=xo03_socket) #250610
-
-            await sync_to_async(newRecord.save)() # CONNECTION TEMP kaydı
-            print(f"newRecord: {newRecord}")
+                await sync_to_async(newRecord.save)() # CONNECTION TEMP kaydı
+                print(f"newRecord: {newRecord}")
+            except:
+                print(f"conn_esp device: {device_id_scope} için event,temperature kaydı oluşamadı")
 
         # if "sid" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
         if "PERYODIK" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL

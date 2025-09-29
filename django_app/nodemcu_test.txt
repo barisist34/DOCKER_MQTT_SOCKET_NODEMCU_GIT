@@ -17,20 +17,17 @@ arduino_write_dumps:
 {"ssid": "barisuyar"}
 
 {"SSID": "ZyXEL_4500"}
-
-{"SSID": "A6_wifi"}
-
-{"SSID": "VodafoneSmartUltra6"}
-
-{"SSID": "AndroidAP5012"}
-
 {"password": "7ilp7oT4be444"} //ZyXEL_4500
 
+{"SSID": "A6_wifi"}
 {"password": "rwrf0860"} //A6_wifi
 
+{"SSID": "VodafoneSmartUltra6"}
 {"password": "Vdf1234!"} //VodafoneSmartUltra6
 
+{"SSID": "AndroidAP5012"}
 {"password": "bvxc8303"} //AndroidAP5012 C5
+
 
 {"password": "123456789"} 
 

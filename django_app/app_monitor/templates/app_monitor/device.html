@@ -287,21 +287,22 @@
                                             data: [{% for tempss in device500 %} {% if tempss.temperature  %} {{tempss.temperature}} {% endif %},{% endfor %}],
                                             fill: false,    //kullanılmazsa grafik altı dolu gelir   
                                             borderColor: ['rgba(10, 10,255, 10)',],  
-                                            borderWidth: 3
+                                            //borderWidth: 3
+                                            borderWidth: 1
                                         },
                                 {
                                             label: '# NEM',
                                             data: [{% for tempss in device500 %} {% if tempss.temperature  %} {{tempss.humidity}} {% endif %} ,{% endfor %}],
                                             fill: false,    //kullanılmazsa grafik altı dolu gelir   
                                             borderColor: ['rgba(255, 255, 10, 10)',],  
-                                            borderWidth: 3
+                                            borderWidth: 1
                                         },
                                 {
                                             label: '# VOLTAJ',
                                             data: [{% for tempss in device500 %} {% if tempss.volcum is not None %}{{tempss.volcum}}{% endif %}  ,{% endfor %}],
                                             fill: false,    //kullanılmazsa grafik altı dolu gelir   
                                             borderColor: ['rgba(10, 255, 255, 10)',],  
-                                            borderWidth: 3
+                                            borderWidth: 1
                                         },
                                       ]  
                                 },
