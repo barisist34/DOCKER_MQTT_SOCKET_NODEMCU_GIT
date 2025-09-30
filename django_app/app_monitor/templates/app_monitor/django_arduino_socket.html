@@ -227,6 +227,14 @@
     chatSocket.send(JSON.stringify(json_outputs));
     console.log(`json_outputs CIKISAYARLA(): ${JSON.stringify(json_outputs)}`)
 }
+
+function reset_esp(){
+  //if (confirm(`${yeni_cihaz_id} ID si daha önce kullanılmış. Devam ederseniz değişiklik yapılacaktır!!!`)==true){
+  if (confirm(`Cihaz RESET yapılacaktır !!!`)==true){
+  chatSocket.send(JSON.stringify({"type":"reset_esp"}));
+  document.getElementById("reset-span").innerHTML="Cihaz resetlendi,20 sn sonra sayfayı yenileyiniz.";
+  }
+}
 </script>
 
 <div class="container">
@@ -303,6 +311,10 @@
           <tr>
             <td>Internet IP</td>
             <td id="internet-ip"></td>
+          </tr>
+          <tr>
+            <td>SSID</td>
+            <td id="ssid"></td>
           </tr>
           <tr>
             <td>Sıcaklık</td>
@@ -385,7 +397,14 @@
             <td id="cihaz-uptime">
             </td>
           </tr>
-
+          <tr>
+            <td>Cihaz Reset</td>
+            <td id="cihaz-reset">
+              <button id="reset-buton" class="btn btn-danger btn-sm" onclick="reset_esp()">RESET</button>
+              <span id="reset-span"></span>
+            </td>
+          </tr>
+          
         </table>
         {% comment %} <h4>NOT:Cihaz ONLINE ise,sayfanın bağlanabilmesi için sayfa ayarlarından güvenli olmayan içeriğe izin verilmelidir.</h4> {% endcomment %}
 
@@ -444,7 +463,15 @@
         <li style=""> <a href=""> sag_click_1 ... </a> </li>
         <li>sag_click_2</li>
       </ul> 
+      <ul id="ul_sag_click_00" class="ul_sag_click_00">
+        <li style=""> <a href=""> sag_click_1 ... </a> </li>
+        <li>sag_click_2</li>
+      </ul> 
       <ul id="ul_sag_click_01" class="ul_sag_click_01">
+        <li style=""> <a href=""> sag_click_1 ... </a> </li>
+        <li>sag_click_2</li>
+      </ul> 
+      <ul id="ul_sag_click_02" class="ul_sag_click_02">
         <li style=""> <a href=""> sag_click_1 ... </a> </li>
         <li>sag_click_2</li>
       </ul> 
@@ -459,14 +486,14 @@
         $(document).bind("contextmenu",function(e){
           //e.preventDefault()  // geçici olarak kapatıldı
         }) // global contextmenu ayarı
-        $(document).bind("click",function(){
-          $('#ul_sag_click').hide()
-        })
         $(document).bind("contextmenu",function(e){
           //e.preventDefault()  // geçici olarak kapatıldı
         }) // global contextmenu ayarı
         $(document).bind("click",function(){
+          $('#ul_sag_click').hide()
           $('#ul_sag_click_01').hide()
+          $('#ul_sag_click_00').hide()
+          $('#ul_sag_click_02').hide()
         })
         //function circle3_oncontextmenu(){
           //var x=e.offsetX  //bu satır javascript. e.pageX jquery
@@ -474,7 +501,7 @@
           var circle3_x=document.querySelector('#circle3').getBoundingClientRect().left
           var circle3_y=document.querySelector('#circle3').getBoundingClientRect().top
 
-          $("#circle1").on("contextmenu",function(e){
+          /*$("#circle1").on("contextmenu",function(e){
             e.preventDefault()
             $('#ul_sag_click').css({
               top:e.pageY,
@@ -484,79 +511,71 @@
             $("#ul_sag_click>li:nth-child(1)").text("Çıkış-00 AÇ")
             $("#ul_sag_click>li:nth-child(2)").text("Çıkış-00 KAPAT")
           }
+          )*/
+          $("#circle1").on("contextmenu",function(e){
+            var li_00=document.createElement("li")
+            li_00.id="li_00"
+            li_00.innerHTML="li_00 innerHTML den gelen..."
+            console.log(`li_00.id: ${li_00.id},innerHTML: ${li_00.innerHTML}`)
+            e.preventDefault()
+            $('#ul_sag_click_00').css({
+              top:e.pageY,
+              left:e.pageX,
+              color:"black",
+            }).show()
+            if (document.getElementById("cikis00-buton").innerHTML=="Aç"){
+            $("#ul_sag_click_00>li:nth-child(1)").html(" <a  onclick='cikisAyarla(1)' style='text-decoration:none;padding:10px'> Çıkış-00 AÇ</a>")
+            console.log(`circle1 sağ click...`)
+            $("#ul_sag_click_00>li:nth-child(2)").hide()
+          }
+          else{
+            $("#ul_sag_click_00>li:nth-child(1)").html(" <a onclick='cikisAyarla(1)' style='text-decoration:none'> Çıkış-00 KAPAT</a>")
+            }
+          }
           )
           $("#circle2").on("contextmenu",function(e){
-            //$("li#li_01").prepend("01")
             var li_01=document.createElement("li")
             li_01.id="li_01"
             li_01.innerHTML="li_01 innerHTML den gelen..."
             console.log(`li_01.id: ${li_01.id},innerHTML: ${li_01.innerHTML}`)
             e.preventDefault()
             $('#ul_sag_click_01').css({
-            //$('#li_01_p').css({
               top:e.pageY,
               left:e.pageX,
-              //color:"white",
               color:"black",
             }).show()
-            //$("#ul_sag_click>li:nth-child(1)").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 AÇ...//</a>")
-            //$("#ul_sag_click>li:nth-child(2)").html(" <a  onclick='cikisAyarla(2)' > Çıkış-01 KAPAT...//</a>")
-            
             if (document.getElementById("cikis01-buton").innerHTML=="Aç"){
-              //$("#ul_sag_click>li:nth-child(1)").show()
-            //$("#ul_sag_click>li:nth-child(1)").prop("disabled",false)
-            //$("#ul_sag_click>li:nth-child(2)").prop("disabled",true)
             $("#ul_sag_click_01>li:nth-child(1)").html(" <a  onclick='cikisAyarla(2)' style='text-decoration:none;padding:10px'> Çıkış-01 AÇ</a>")
-            //$("#ul_sag_click>li:nth-child(2)").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
-            //$("#li_01_open").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 AÇ...//</a>")
-            //$("#li_01").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 AÇ...//</a>")
-            //$("#li_01").show()
             console.log(`circle2 sağ click...`)
             $("#ul_sag_click_01>li:nth-child(2)").hide()
-            
           }
           else{
             $("#ul_sag_click_01>li:nth-child(1)").html(" <a onclick='cikisAyarla(2)' style='text-decoration:none'> Çıkış-01 KAPAT</a>")
-            //$("#li_01_close").html(" <a onclick='cikisAyarla(2)' style=''> Çıkış-01 KAPAT...//</a>")
-            //$("li").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
-            //$("#ul_sag_click>li:nth-child(2)").show()
-            //$("#ul_sag_click>li:nth-child(2)").prop("disabled",false)
-            //$("#ul_sag_click>li:nth-child(1)").prop("disabled",true)
-            //$("#ul_sag_click>li:nth-child(2)").html(" <a onclick='cikisAyarla(2)' style='background-color:red'> Çıkış-01 KAPAT...//</a>")
-              //$("#ul_sag_click>li:nth-child(1)").hide()
             }
-            
-            
-            
-            {% comment %} $("#ul_sag_click>li:nth-child(2)").text("Çıkış-01 KAPAT") {% endcomment %}
           }
           )
-          //$("#circle3").bind("contextmenu",function(e){
           $("#circle3").on("contextmenu",function(e){
+            var li_02=document.createElement("li")
+            li_02.id="li_02"
+            li_02.innerHTML="li_02 innerHTML den gelen..."
+            console.log(`li_02.id: ${li_02.id},innerHTML: ${li_02.innerHTML}`)
             e.preventDefault()
-            var circle3_x=document.querySelector('#circle3').getBoundingClientRect().left
-          var circle3_y=document.querySelector('#circle3').getBoundingClientRect().top
-            //var x=e.pageX
-            //var y=e.pageY
-            var x=e.pageX + circle3_x
-            var y=e.pageY + circle3_y
-            $('#ul_sag_click').css({
+            $('#ul_sag_click_02').css({
               top:e.pageY,
               left:e.pageX,
-              color:"white",
-              display:"block",
-              //top:y,
-              //left:x
+              color:"black",
             }).show()
-            //fadeIn(100,function(){
-              {% comment %} alert("tamam...") {% endcomment %}
-              //alert(`jquery fadein girdi... x: ${x}, y:${x}`)
-            //})
-          //alert(`circle3_oncontextmenu position x:${x},y:${y}`)
-          $("#ul_sag_click>li:nth-child(1)").text("Çıkış-02 AÇ")
-          $("#ul_sag_click>li:nth-child(2)").text("Çıkış-02 KAPAT")
-        })
-      //}
+            if (document.getElementById("cikis02-buton").innerHTML=="Aç"){
+            $("#ul_sag_click_02>li:nth-child(1)").html(" <a  onclick='cikisAyarla(3)' style='text-decoration:none;padding:10px'> Çıkış-02 AÇ</a>")
+            console.log(`circle3 sağ click...`)
+            $("#ul_sag_click_02>li:nth-child(2)").hide()
+          }
+          else{
+            $("#ul_sag_click_02>li:nth-child(1)").html(" <a onclick='cikisAyarla(3)' style='text-decoration:none'> Çıkış-02 KAPAT</a>")
+            }
+          }
+          )
+
       $("#circle4").on("contextmenu",function(e){
         e.preventDefault()
         $('#ul_sag_click').css({
@@ -569,44 +588,6 @@
       }
       )
       
-        /*
-        $(function(){
-          $(document).bind("contextmenu",function(e){
-            e.preventDefault()
-            var x=e.pageX
-            var y=e.pageY
-            // herhangibir elemanın konumu*******************
-            //var p_contextmenu_position_x=document.querySelector('#p_contextmenu').getBoundingClientRect().left
-            //var p_contextmenu_position_y=document.querySelector('#p_contextmenu').getBoundingClientRect().top
-            //alert(`jquery bind girdi... x: ${x}, y:${x}`)
-            //alert(`jquery p_contextmenu_position_y... x: ${p_contextmenu_position_x}, y:${p_contextmenu_position_y}`)
-            $('#ul_sag_click').css({
-              top:e.pageY,
-              left:e.pageX
-            }).fadeIn(500,function(){
-              {% comment %} alert("tamam...") {% endcomment %}
-              //alert(`jquery fadein girdi... x: ${x}, y:${x}`)
-            })
-            {% comment %} alert("sağ tuş tıklandı...") {% endcomment %}
-            //alert(`jquery  girdi... x: ${x}, y:${y}`)
-          })
-          $(document).bind("click",function(){
-            $('#ul_sag_click').hide()
-          })
-        })  
-        */
-        /*element_circle2.addEventListener("contextmenu", (event)=>{
-          event.preventDefault();
-          event.stopPropagation();
-          const x = event.offsetX;
-          const y = event.offsetY - 15;
-          {% comment %} alert(`element_circle2.addEventListener  girdi... x: ${x}, y:${y}`) {% endcomment %}
-          list_event.style.display = "block";
-          list_event.style.top = y + "px";
-          list_event.style.left = x + "px";
-          alert(`element_circle2.addEventListener  girdi... x: ${x}, y:${y}`)
-        })*/
-
         id_cihaz_kayitlar.addEventListener("contextmenu", (event)=>{
           event.preventDefault();
           event.stopPropagation();
@@ -740,6 +721,7 @@ message_object_message_object=JSON.parse(message_object_message)
       var xsip=message_object_message_object.xsip;
       var xgip=message_object_message_object.xgip;
       var xintip=message_object_message_object.xintip;
+      var xssid=message_object_message_object.xssid;
       var xport=message_object_message_object.xport;
       //var sport=message_object_message_object.xport;
       var xtemp=message_object_message_object.xtemp;
@@ -763,6 +745,7 @@ message_object_message_object=JSON.parse(message_object_message)
       document.getElementById("server-ip").innerHTML=xsip;
       document.getElementById("default-gateway").innerHTML=xgip;
       document.getElementById("internet-ip").innerHTML=xintip;
+      document.getElementById("ssid").innerHTML=xssid;
       document.getElementById("cihaz-port").innerHTML=xport;
       document.getElementById("cihaz-sicaklik").innerHTML=xtemp;
       document.getElementById("cihaz-nem").innerHTML=xhum;
@@ -954,159 +937,6 @@ var socket_address='ws://'+ '81.214.131.122:92/';
     pre.innerHTML = message
     output.appendChild(pre)
 }
-
-////////////// ESP8266 WEBSOCKET BAGLANTI SONU
-/*
-$.ajax({        
-              //url: 'http://81.214.131.122:90/django_device',
-              //url: 'http://81.214.131.122:{{device_port}}/django_device',
-              url: 'http://{{cihazlar_erisim_ip}}:{{device_port}}/django_device',
-              //url: 'http://192.168.1.43:{{device_port}}/django_device',
-              //url: 'http://192.168.1.42:{{device_port}}/django_device',
-              //url: 'http://192.168.1.215:{{device_port}}/django_device', // VodafoneSmartUltra6
-              //url: 'http://192.168.43.166:{{device_port}}/django_device', // a6wifi - casper laptop
-              // type: 'POST',
-              type: 'GET',
-              data:{
-               
-              //SicaklikKayit:SicaklikKayit,
-              // csrfmiddlewaretoken: '{{ csrf_token }}',
-              // dataType: "json",
-              },
-              // beforeSend: function (xhr){
-              //   xhr.setRequestHeader('X-CSRFToken', csrftoken);
-              // },
-              success: function(response){
-                //alert("arduino success girdi...");
-                console.log("ajax success girdi...");
-                console.log(response);
-              //$('#test').html(response);
-              console.log(response.No);
-              var numara=response.No;
-              console.log(typeof response.No);
-              document.getElementById("cihaz-id").innerHTML=String(response.xid);
-              document.getElementById("cihaz-adi").innerHTML=String(response.xname);
-              document.getElementById("cihaz-ip").innerHTML=String(response.xip);
-              document.getElementById("server-ip").innerHTML=String(response.xsip);
-              document.getElementById("default-gateway").innerHTML=String(response.xgip);
-              document.getElementById("cihaz-port").innerHTML=String(response.xport);
-              document.getElementById("cihaz-sicaklik").innerHTML=String(response.xtemp);
-              document.getElementById("cihaz-nem").innerHTML=String(response.xhum);
-              document.getElementById("cihaz-voltaj").innerHTML=String(response.xvol);
-              document.getElementById("cihaz-rssi").innerHTML=String(response.xrssi)+" dBm";
-              document.getElementById("cihaz-uptime").innerHTML=String(response.xutime);
-              if (String(response.xo1) == "1") {
-                  document.getElementById("cikis1-span").innerHTML= "Çıkış Açık";
-                  document.getElementById("cikis1-buton").innerHTML="Kapat";
-                  {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
-                  }
-                  else {
-                  document.getElementById("cikis1-span").innerHTML= "Çıkış Kapalı";
-                  document.getElementById("cikis1-buton").innerHTML="Aç";            
-                  {% comment %} document.getElementById("circle1").style.fill="green";{% endcomment %}
-                  }
-              if (String(response.xo00) == "1") {
-                  document.getElementById("cikis00-span").innerHTML= "Çıkış Açık";
-                  document.getElementById("cikis00-buton").innerHTML="Kapat";
-                  document.getElementById("circle1").style.fill="green"
-                  }
-                  else {
-                  document.getElementById("cikis00-span").innerHTML= "Çıkış Kapalı";
-                  document.getElementById("cikis00-buton").innerHTML="Aç";   
-                  document.getElementById("circle1").style.fill="red"         
-                  }
-              if (String(response.xo01) == "1") {
-                  document.getElementById("cikis01-span").innerHTML= "Çıkış Açık";
-                  document.getElementById("cikis01-buton").innerHTML="Kapat";
-                  }
-                  else {
-                  document.getElementById("cikis01-span").innerHTML= "Çıkış Kapalı";
-                  document.getElementById("cikis01-buton").innerHTML="Aç";            
-                  }
-              if (String(response.xo02) == "1") {
-                  document.getElementById("cikis02-span").innerHTML= "Çıkış Açık";
-                  document.getElementById("cikis02-buton").innerHTML="Kapat";
-                  }
-                  else {
-                  document.getElementById("cikis02-span").innerHTML= "Çıkış Kapalı";
-                  document.getElementById("cikis02-buton").innerHTML="Aç";            
-                  }
-              if (String(response.xo03) == "1") {
-                  document.getElementById("cikis03-span").innerHTML= "Çıkış Açık";
-                  document.getElementById("cikis03-buton").innerHTML="Kapat";
-                  }
-                  else {
-                  document.getElementById("cikis03-span").innerHTML= "Çıkış Kapalı";
-                  document.getElementById("cikis03-buton").innerHTML="Aç";            
-                  }
-              if (String(response.xi00) == "1") {
-                  document.getElementById("giris00-span").innerHTML= "HIGH";
-                  document.getElementById("giris00-span").style.backgroundColor="green"
-                  document.getElementById("circle5").style.fill="green"
-                  }
-                  else {
-                  document.getElementById("giris00-span").innerHTML= "LOW";
-                  document.getElementById("giris00-span").style.backgroundColor="red"
-                  document.getElementById("circle5").style.fill="red"
-                  }
-              if (String(response.xi01) == "1") {
-                  document.getElementById("giris01-span").innerHTML= "HIGH";
-                  document.getElementById("giris01-span").style.backgroundColor="green"
-                  document.getElementById("circle6").style.fill="green"
-                  }
-                  else {
-                  document.getElementById("giris01-span").innerHTML= "LOW";
-                  document.getElementById("giris01-span").style.backgroundColor="red"
-                  document.getElementById("circle6").style.fill="red"
-                  }
-              if (String(response.xi02) == "1") {
-                  document.getElementById("giris02-span").innerHTML= "HIGH";
-                  document.getElementById("giris02-span").style.backgroundColor="green"
-                  document.getElementById("circle7").style.fill="green"
-                  }
-                  else {
-                  document.getElementById("giris02-span").innerHTML= "LOW";
-                  document.getElementById("giris02-span").style.backgroundColor="red"
-                  document.getElementById("circle7").style.fill="red"
-                  }
-              if (String(response.xi03) == "1") {
-                  document.getElementById("giris03-span").innerHTML= "HIGH";
-                  document.getElementById("giris03-span").style.backgroundColor="green"
-                  document.getElementById("circle8").style.fill="green"
-                  }
-                  else {
-                  document.getElementById("giris03-span").innerHTML= "LOW";
-                  document.getElementById("giris03-span").style.backgroundColor="red"
-                  document.getElementById("circle8").style.fill="red"
-                  }
-
-              },
-              timeout:3000,
-                error: function() {  // failure bloğu değil, error bloğu OLACAK... 
-                //failure: function() {
-                    //alert("ajax reverse fail geldi");
-                    //device_name="cihazzzzz"
-                    //document.getElementById("device_name_baslik").innerHTML= ` ${device_name} erişimi bulunmuyor... ` 
-                    document.getElementById("device_name_baslik").innerHTML= `Cihaz erişimi bulunmuyor... ` 
-                    console.log("ajax failure girdi...")
-                    {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
-              }               
-          });
-*/
-
-//fetch("http://81.214.131.122:90/django_device",{ mode: 'no-cors'})
-//fetch("http://81.214.131.122:90/django_device",{ mode: 'cors'})
-// fetch("http://81.214.131.122:90/django_device")
-// .then(response => {
-//     //alert(response);
-//     console.log(response)
-//     //response.json()
-// } )
-// .then(data => console.log(data))
-// .catch(error => {
-//     //alert(error);
-//     console.log(error);
-// })
 
 yeni_cihaz_id=document.getElementById("cihaz-id-ayarla").value;
 cihaz_id_dizi=[{% for devices in devices_all %}  {{devices.device_id}},{% endfor %}]

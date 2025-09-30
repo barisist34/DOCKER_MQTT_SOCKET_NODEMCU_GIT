@@ -141,6 +141,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             connected_users.discard(self.channel_name)
             print(f"Bağlantı kapandı: {self.channel_name}")
             print(f"Kalan bağlantılar: {connected_users}")
+            print(f"Aktif soket sayısı: {len(connected_users)}")
             print(f"self.group_name: {self.group_name} disconnect oldu...")
 
     async def group_message(self, event):
