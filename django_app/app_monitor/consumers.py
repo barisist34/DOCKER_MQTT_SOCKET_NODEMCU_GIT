@@ -11,7 +11,9 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 from urllib.parse import parse_qs # url query parametrelerini parse etmek için 250916
+import traceback # Hata detaylarını (traceback dahil) görmek için:
 
 # Bağlantı takibi için global bir set (çoklu worker yoksa kullanılabilir)
 connected_users = set()
@@ -183,6 +185,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             device_id_scope=self.device_id
             try:
                 print(f"connect try, device_id_scope={device_id_scope}")
+                device_ip_socket=json_socket["xip"]
+                # device_ip_socket=json_socket["xipppppppppppp"]
                 device_name_socket=json_socket["xname"]
                 device_port_socket=json_socket["xport"]
                 temperature_socket=json_socket["xtemp"]
@@ -197,6 +201,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 xo01_socket=json_socket["xo01"]
                 xo02_socket=json_socket["xo02"]
                 xo03_socket=json_socket["xo03"]
+                """
                 if not await sync_to_async(Device.objects.filter(device_id=device_id_scope).exists)():
                     print(f" {device_id_scope}:  device_id database de olmayan blok girdi... ")
                     # device_id_request=request.GET.get("device_id")
@@ -206,7 +211,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     new_device=await sync_to_async(Device)(device_id=device_id_scope,device_name=device_name_socket,device_port=device_port_socket)
                     await sync_to_async(new_device.save)()
                     print(f"new_device: {new_device}")
-                    print(f"new device name: {new_device.device_name}")  
+                    print(f"new device name: {new_device.device_name}") 
+                """
+                # device_obj, created = await sync_to_async(Device.objects.update_or_create)(
+                device_obj, created = await database_sync_to_async(Device.objects.update_or_create)(
+                    # email='test@example.com',
+                    device_id=f"{device_id_scope}",
+                    defaults={
+                        "device_name": f"{device_name_socket}",
+                        "device_ip": f"{device_ip_socket}",
+                        "device_port": f"{device_port_socket}",
+                    }
+                )
+                print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
                 device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope)
                 # device_id_socket=await sync_to_async(Device.objects.get)(device_id=device_id_scope) 
                 event_all_clear=await sync_to_async(list)(Event.objects.filter(event_active=True,device_id=device_id_socket,alarm_id=alarm_kesinti_object)) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
@@ -220,8 +237,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 await sync_to_async(newRecord.save)() # CONNECTION TEMP kaydı
                 print(f"newRecord: {newRecord}")
-            except:
+            except Exception as e:
                 print(f"conn_esp device: {device_id_scope} için event,temperature kaydı oluşamadı")
+                print(f"Exception cinsi: {str(e)}")
+                traceback.print_exc() # Hata detaylarını (traceback dahil) görmek için:
 
         # if "sid" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL
         if "PERYODIK" in text_data: # BU BLOK ŞU ANDA AKTİF DEĞİL

@@ -21,6 +21,7 @@ from operator import attrgetter # 241229 sorted() fonksiyonu için
 from django.urls import resolve # 250403  template mevcut url çözümlemesi
 from background_task import background  # 250505 event_list_view de son task zamanı yazdırılacak.
 from background_task.models import Task,CompletedTask # 250505 event_list_view de son task zamanı yazdırılacak.
+import traceback
 
 # from django.contrib
 
@@ -204,6 +205,7 @@ def addRecordArduino(request): # yeni sıcaklık kaydı ekleme,form get metoduyl
         except:
             tag_id_request=None
             staff_name_request=None
+            traceback.print_exc() # Hata detaylarını (traceback dahil) görmek için:
         device_id_request=request.GET.get("device_id")
         if not Device.objects.filter(device_id=device_id_request).exists():
             print(f" {device_id_request}:  device_id database de olmayan blok girdi... ")
@@ -1629,6 +1631,7 @@ def write_read(config_parameter,comport):
         # arduino.close() #241117
         # return "write_read all parametresinde except oluştu..."
         # return "{\"CihazId\":\"x\",\"CihazAdi\":\"x\",\"CihazPort\":\"x\",\"CihazIp\":\"x\",\"ServerIp\":\"x\",\"AgGecidi\":\"x\",\"CihazSSID\":\"x\",\"CihazPassword\":\"x\"}"
+        traceback.print_exc() # Hata detaylarını (traceback dahil) görmek için:
         return "{\"CihazId\":\"Cihazı bağlayın...\",\"CihazAdi\":\"Cihazı bağlayın...\",\"CihazPort\":\"Cihazı bağlayın...\",\"CihazIp\":\"Cihazı bağlayın...\",\"ServerIp\":\"Cihazı bağlayın...\",\"AgGecidi\":\"Cihazı bağlayın...\",\"CihazSSID\":\"Cihazı bağlayın...\",\"CihazPassword\":\"Cihazı bağlayın...\",\"CihazSure\":\"Cihazı bağlayın...\"}"
     # raise Exception("COM portu yanlış giriyorsunuz...")
 
