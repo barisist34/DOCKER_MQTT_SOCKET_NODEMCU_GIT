@@ -228,6 +228,11 @@
     console.log(`json_outputs CIKISAYARLA(): ${JSON.stringify(json_outputs)}`)
 }
 
+function pwmAyarla(){
+  pwm0_deger=document.getElementById("pwm0-input").innerHTML
+  chatSocket.send(JSON.stringify({"type":"pwm0","pwm0_deger":pwm0_deger }));
+}
+
 function reset_esp(){
   //if (confirm(`${yeni_cihaz_id} ID si daha önce kullanılmış. Devam ederseniz değişiklik yapılacaktır!!!`)==true){
   if (confirm(`Cihaz RESET yapılacaktır !!!`)==true){
