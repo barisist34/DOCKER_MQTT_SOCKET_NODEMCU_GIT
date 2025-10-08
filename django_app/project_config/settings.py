@@ -224,14 +224,24 @@ LOGGING = {
         },
     },
 }
-# WEBSOCKET GROUP ekleyebilmek için gerekli
+# WEBSOCKET GROUP ekleyebilmek için gerekli (tek redis o da master,haproxy yok)
+# CHANNEL_LAYERS = { 
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             # "hosts": [("127.0.0.1", 6379)],  # Redis sunucun burada çalışıyor olmalı
+#             # "hosts": [("172.19.0.3", 6379)],  # Redis sunucun burada çalışıyor olmalı
+#             "hosts": [("redis", 6379)],  # Redis sunucun burada çalışıyor olmalı
+#         },
+#     },
+# }
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://haproxy:6379")
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            # "hosts": [("127.0.0.1", 6379)],  # Redis sunucun burada çalışıyor olmalı
-            # "hosts": [("172.19.0.3", 6379)],  # Redis sunucun burada çalışıyor olmalı
-            "hosts": [("redis", 6379)],  # Redis sunucun burada çalışıyor olmalı
+    "BACKEND": "channels_redis.core.RedisChannelLayer",
+    "CONFIG": {
+    "hosts": [REDIS_URL],
         },
     },
 }
