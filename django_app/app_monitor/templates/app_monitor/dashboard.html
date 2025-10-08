@@ -3,8 +3,12 @@
 
 {% load static %}
 
-{% block style %}
-td{
+{% comment %} {% block style %}
+
+
+{% endblock style %} {% endcomment %}
+
+ {% comment %} td{
   text-align:center !important;
   vertical-align:middle !important;
   /* display: inline-block; */
@@ -14,11 +18,7 @@ td{
 th{
   text-align:center;
   vertical-align:middle
-}
-
-{% endblock style %}
-
-
+} {% endcomment %}
 
 {% comment %} {% static  "js/temperature_ajax.js" %} {% endcomment %}
 {% block content %}
