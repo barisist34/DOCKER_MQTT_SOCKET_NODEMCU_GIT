@@ -195,7 +195,8 @@ const timer=() => {
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
                 <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>
                 {% comment %} <div class="modal" id="modal1" data-bs-backdrop="static"> {% endcomment %}
-                <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static">
+                {% comment %} <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static" data-bs-keyboard="true"> {% endcomment %}
+                <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static" tabindex="-1">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">

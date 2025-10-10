@@ -178,7 +178,7 @@
                   <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
                   <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>
                   {% comment %} <div class="modal" id="modal1" data-bs-backdrop="static"> {% endcomment %}
-                  <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static">
+                  <div class="modal" id="modal{{temp.id}}" data-bs-backdrop="static" tabindex="-1">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -186,7 +186,8 @@
                           {% comment %} <button class="close">kapat</button> {% endcomment %}
                           <button type="button" class="close" data-bs-dismiss="modal">&times;</button> <!-- data-dismiss değil data-bs-dismiss OLMALI -->  
                         </div>
-                        <form action="/app_monitor/additional_text">
+                        {% comment %} <form action="/app_monitor/additional_text"> {% endcomment %}
+                        <form action="/app_monitor/additional_text_singledevice">
 
                         <div class="modal-body">
                             <div class="mb-3">

@@ -2082,7 +2082,8 @@ def additional_text(request):
     # print(f"current_url2: {current_url2} ")
     # print(f"current_url3: {current_url3} ")
     # return redirect(current_url)
-    return redirect(get_full_path)
+    # return redirect(get_full_path) ### 251010 ONCEKI HALDE 30 sn sonra templist başlayınca hatalı çıkış veriyor.
+    return redirect('/app_monitor') ##251010
     # if template_name=="device.html":
     #     return redirect(f"/app_monitor/cihazlar/cihaz_adi={device_name}")
         
@@ -2109,12 +2110,15 @@ def additional_text_singledevice(request):
     tarih2=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     tarih3=datetime.timestamp(tarih)
     print(f"tarih1:{tarih},tarih2:{tarih2}")
+    # edited_item=Temperature.objects.get(id=temp_id)
+    # edited_item.additionalText=f"{additional_text},ID:{temp_id}, Kullanıcı:{temp_user}, Tarih:{tarih2}"
     edited_item=Temperature.objects.get(id=temp_id)
     edited_item.additionalText=f"{additional_text},ID:{temp_id}, Kullanıcı:{temp_user}, Tarih:{tarih2}"
     print(f"edited_item.additionalText: {edited_item.additionalText}")
     edited_item.save()
 
-    return redirect(f"/app_monitor/{device_name}/{device_port}")
+    # return redirect(f"/app_monitor/{device_name}/{device_port}")
+    return redirect(f"/app_monitor/cihazlar/cihaz_adi={device_name}")
 
 def additional_text_sil_singledevice(request,id):
     print(f"additonal_text_sil girdi.")
