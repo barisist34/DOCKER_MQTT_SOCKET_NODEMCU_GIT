@@ -18,9 +18,12 @@
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 from django.http import HttpResponse
+import json
 # Mosquitto Broker Bilgileri
 # MQTT_BROKER = "localhost"  # veya Mosquitto'nun IP adresi
-MQTT_BROKER = "172.19.0.1"  # veya Mosquitto'nun IP adresi
+# MQTT_BROKER = "172.19.0.1"  # veya Mosquitto'nun IP adresi
+# MQTT_BROKER = "172.18.0.3"  # veya Mosquitto'nun IP adresi
+MQTT_BROKER = "mosquitto"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "192.168.43.10"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "172.18.0.2"  # veya Mosquitto'nun IP adresi (PS C:\WINDOWS\system32> docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mosquitto)
 MQTT_PORT = 1883  # Mosquitto'nun varsayılan portu
@@ -35,8 +38,14 @@ def on_connect(client, userdata, flags, rc):
     print(f"deneme_aaa topice abone olundu...")
 
 def on_message(client, userdata, msg):
-    print(f"Received message: {msg.payload.decode()} on topic {msg.topic}")
-    # return HttpResponse(f"Received message: {msg.payload.decode()} on topic {msg.topic}")
+    try:
+        print(f"on_message msg: {msg}")
+        print(f"on_message msg.payload: {msg.payload}")
+        print(f"on_message msg.payload.decode.loads() dictionary: {json.loads(msg.payload.decode('utf-8'))}")
+        print(f"Received message: {msg.payload.decode('utf-8')} on topic {msg.topic}")
+        # return HttpResponse(f"Received message: {msg.payload.decode()} on topic {msg.topic}")
+    except Exception as e:
+        print(f"mqtt on_message exception: {str(e)}")
 
 def run():
     client = mqtt.Client()
@@ -46,6 +55,7 @@ def run():
     # client.connect("172.19.0.3", 1883, 60) # service adı ile bağlantı
     # client.connect("192.168.43.10", 1883, 60) # service adı ile bağlantı
     # client.connect("localhost", 1883, 60) # service adı ile bağlantı
+    # client.connect("192.168.1.35", 1883, 60) # service adı ile bağlantı
     # client.connect("localhost", 1884, 60) # service adı ile bağlantı
     print("def run icinde client.connect gecti...")
     client.loop_start()

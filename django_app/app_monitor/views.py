@@ -22,6 +22,9 @@ from django.urls import resolve # 250403  template mevcut url çözümlemesi
 from background_task import background  # 250505 event_list_view de son task zamanı yazdırılacak.
 from background_task.models import Task,CompletedTask # 250505 event_list_view de son task zamanı yazdırılacak.
 import traceback
+import paho.mqtt.publish as publish
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # from django.contrib
 
@@ -2083,6 +2086,7 @@ def additional_text(request):
     # print(f"current_url3: {current_url3} ")
     # return redirect(current_url)
     # return redirect(get_full_path) ### 251010 ONCEKI HALDE 30 sn sonra templist başlayınca hatalı çıkış veriyor.
+    # return redirect(get_full_path) ### 251010 ONCEKI HALDE 30 sn sonra templist başlayınca hatalı çıkış veriyor.
     return redirect('/app_monitor') ##251010
     # if template_name=="device.html":
     #     return redirect(f"/app_monitor/cihazlar/cihaz_adi={device_name}")
@@ -2350,3 +2354,14 @@ def event_buton_view(request):
 
 def room(request, room_name):
     return render(request, "app_monitor/room.html", {"room_name": room_name})
+
+@csrf_exempt
+def mqtt_mesaj_gonder(request):
+    print("mqtt_mesaj_gonder view girdi...")
+    if request.method == "POST":
+        data = json.loads(request.body)
+        mesaj = data.get("mesaj", "")
+        topic = "deneme_aaa"
+        # publish.single(topic, mesaj, hostname="localhost") # Mosquitto broker IP
+        publish.single(topic, mesaj, hostname="192.168.1.35") # Mosquitto broker IP
+        # return JsonResponse({"durum": "ok"}) // esp8266 dan gelen mesajı blokluyor 251013

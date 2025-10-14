@@ -6,7 +6,7 @@ from app_monitor.views import django_device,django_device_backtest,deviceViewDet
 from app_monitor.views import device_id,export_to_excel_id,arduino_serial_local,additional_text,additional_text_sil,export_to_excel_serial_query
 from app_monitor.views import cron_task,scheduler_cihaz,event_list_view,export_to_excel_event_all,export_to_excel_serial_query_deviceid
 from app_monitor.views import django_device_route1,django_device_route1_socket,device_port,export_to_excel_serial_query_deviceport,export_to_excel_serial_query_deviceall
-from app_monitor.views import room,additional_text_singledevice
+from app_monitor.views import room,additional_text_singledevice,mqtt_mesaj_gonder
 from app_monitor.filter import filter_device_name,filter_device_id,filter_device_all
 # from app_monitor.filter import device_filter_id_id,device_filter_sicaklik,device_filter_nem,device_filter_voltaj,device_filter_tarih
 
@@ -59,6 +59,7 @@ urlpatterns=[
     path('scheduler_cihaz',scheduler_cihaz,name="scheduler_cihaz"),
     path('event_list_view',event_list_view,name="event_list_view"),
     path('export_to_excel_event_all',export_to_excel_event_all,name="export_to_excel_event_all"),
+    path("mqtt/gonder/", mqtt_mesaj_gonder, name="mqtt_mesaj_gonder"),
 
     path('room/<str:room_name>',room,name="room"), # websocket chat room 
     

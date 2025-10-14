@@ -742,18 +742,25 @@ function reset_esp(){
 </script>
 
 <script>
+/////////// MQTT BROWSER DJANGO ESP8266 BAĞLANMA MESAJI GONDERILIYOR SOKETTEN BAĞIMSIZ
+const mesaj = '{"mesaj":"CONNREQ_MQTT_BRW"}';
+fetch("/mqtt/gonder/", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({ mesaj: mesaj })
+})
+.then(response => response.json())
+.then(data => {
+console.log(`CONNREQ_MQTT_BRW sonucu fetch response object.entries(data): ${Object.entries(data)}`);
+console.log("browser response süslü parantez...")
+}
+);
+console.log(`JSON.stringify({ mesaj: mesaj }): ${JSON.stringify({ mesaj: mesaj })}`)
+/////////// MQTT BROWSER DJANGO ESP8266 BAĞLANMA MESAJI SONU
 var device_name;
 ////////////// ESP8266 WEBSOCKET BAGLANTI
-/*
-const chatSocket = new WebSocket(
-    'ws://'
-    //+ window.location.host
-    //+ '//81.214.131.122:92'
-    + '//{{cihazlar_erisim_ip}}:' // socket grup tanımlaması yapılmadan önce direkt uç cihaza bağlanıyordu
-    + '{{device_port}}' // esp tarafında socket server kullanlıyordu
-    + '/'
-);*/
-//const chatSocket = new WebSocket('ws://localhost:8000/ws/device/');
 var device_id_js={{device_id}}
 var device_name_js="{{device_name}}"
 console.log(`device_id_js: ${device_id_js}`)
@@ -773,6 +780,13 @@ chatSocket.onopen = function () {
 //chatSocket.send('__Connect__');
 chatSocket.send('{"type":"connect"}');
 console.log("arduino websocket connected...")
+
+//function mqtt_connect_request() {
+//const mesaj = document.getElementById("mesaj").value;
+
+//}
+//mqtt_connect_request();
+
 //writeToScreen(`CONNECTED SOCKET ...: ${socket_address}`);
 };
 chatSocket.onerror = function (error) {
@@ -1043,7 +1057,22 @@ console.log(`cihaz id'ler: ${cihaz_id_dizi}`)
 
 </script>
 
-
+{% comment "esp8266 mesaj gönder test..." %}{% endcomment %}
+<input type="text" id="mesaj" placeholder="Komut girin">
+<button onclick="gonder()">Gönder</button><script>
+function gonder() {
+const mesaj = document.getElementById("mesaj").value;
+fetch("/mqtt/gonder/", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({ mesaj: mesaj })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+}
+</script>
 
 {% endblock content %}
 

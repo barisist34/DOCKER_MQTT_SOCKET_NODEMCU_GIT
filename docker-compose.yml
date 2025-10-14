@@ -68,7 +68,11 @@ services:
 
   redis-master:
     image: redis:6.2
-    command: redis-server --port 6379
+    command: redis-server --port 6379 
+    # command: redis-server --port 6379 --bind 127.0.0.1  #251011 bu ayarla local django makinede redise ulaşım olamaz,django terminalde hata alınır (Error condition on socket for SYNC: Connection refused)
+    # restart: unless-stopped # 251011
+    volumes:
+      - redis_master_data:/data #251011
     ports:
       - "6379:6379"
     networks:
@@ -77,11 +81,14 @@ services:
   redis-replica:
     image: redis:6.2
     command: redis-server --replicaof redis-master 6379
+    # command: redis-server --port 6379 --replicaof redis-master 6379 --bind 127.0.0.1
+    volumes:
+      - redis_replica_data:/data #251011
     depends_on:
       - redis-master
     networks:
       - app_network
-      
+
   haproxy:
     image: haproxy:2.4
     volumes:
@@ -114,7 +121,7 @@ services:
 #           memory: 256M
 
   web: # haproxy ve master-slave redis
-    build: ./django_app
+    build: ./django_app  # ./django_app klasöründe Dockerfile varlığını kontrol eder
     container_name: django_app_2
     volumes:
       - ./django_app:/app
@@ -139,5 +146,7 @@ networks:
   app_network:
     driver: bridge
 
-volumes:
-  redis-data:
+
+volumes: # 251011 redislere volume tanımlamak için mecburi en alta
+  redis_master_data:
+  redis_replica_data:
