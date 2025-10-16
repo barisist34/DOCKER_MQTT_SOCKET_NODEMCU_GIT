@@ -174,7 +174,7 @@
                  <td > {{temp.cikis1}}</td> <!--  -->  
                  <td > {{temp.cikis2}}</td> <!--  -->  
                  <td > {{temp.staff_name}}--{{temp.tag_id}} </td> <!--  -->    
-                 <td >
+                  <td style="display: flex;text-align:start;vertical-align:middle"> {% comment "modal sürekli sola yaslı olacak,diğer sütunlar ortada" %}{% endcomment %}
                   <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
                   <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>
                   {% comment %} <div class="modal" id="modal1" data-bs-backdrop="static"> {% endcomment %}

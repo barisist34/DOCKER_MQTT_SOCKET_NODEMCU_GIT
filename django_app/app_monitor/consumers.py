@@ -14,6 +14,7 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from urllib.parse import parse_qs # url query parametrelerini parse etmek için 250916
 import traceback # Hata detaylarını (traceback dahil) görmek için:
+from core.mqtt_client import client  # İşte burada!
 
 # Bağlantı takibi için global bir set (çoklu worker yoksa kullanılabilir)
 connected_users = set()
@@ -25,8 +26,8 @@ def chat_message(self, event):
     'message': message
     }))
 
-# class ChatConsumer(WebsocketConsumer):
-class ChatConsumer(AsyncWebsocketConsumer):
+# class MqttConsumer(WebsocketConsumer):
+class MqttConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         #### url query parametrelerini parse etmek için from urllib.parse import parse_qs
@@ -154,7 +155,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-    # def receive(self, text_data):
+
+
     async def receive(self, text_data):
         # Gruptaki tüm clientlara mesajı gönder
         await self.channel_layer.group_send(
@@ -165,6 +167,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': text_data
             }
         )
+        
         print("consumer receive girdi...")
         print(f"Aktif soketler: {connected_users}")
         print(f"Aktif soket sayısı: {len(connected_users)}")
@@ -172,7 +175,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # data = text_data.readline().decode('utf_8')
         # data = int(text_data)
         data = text_data
+        data_dict=json.loads(data)
+        device_id_scope=self.device_id
+        print(f"data_dict: {data_dict}")
         print(f"consumer gelen_veri: {data}, type: {type(data)}")
+        # client.publish("deneme_aaa", json.dumps(data))  # MQTT'ye gönderiyoruz
+        # client.publish("deneme_aaa", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
+        # client.publish("cihaz_tum", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
+        client.publish(f"cihaz/{device_id_scope}/BRW", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
+        ##  WEBSOCKET BROWSER (consumer receive) -----------> MQTT
+
         # text_data_json = json.loads(text_data)
         # message = text_data_json["message"]
         # device_id_socket=Device.objects.get(device_id=1)

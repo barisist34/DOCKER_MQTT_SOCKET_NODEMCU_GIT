@@ -311,19 +311,19 @@
       "cikis02":cikis02,
       "cikis03":cikis03,
     }
-    chatSocket.send(JSON.stringify(json_outputs));
+    mqttSocket.send(JSON.stringify(json_outputs));
     console.log(`json_outputs CIKISAYARLA(): ${JSON.stringify(json_outputs)}`)
 }
 
 function pwmAyarla(){
   pwm0_deger=document.getElementById("pwm0-input").innerHTML
-  chatSocket.send(JSON.stringify({"type":"pwm0","pwm0_deger":pwm0_deger }));
+  mqttSocket.send(JSON.stringify({"type":"pwm0","pwm0_deger":pwm0_deger }));
 }
 
 function reset_esp(){
   //if (confirm(`${yeni_cihaz_id} ID si daha önce kullanılmış. Devam ederseniz değişiklik yapılacaktır!!!`)==true){
   if (confirm(`Cihaz RESET yapılacaktır !!!`)==true){
-  chatSocket.send(JSON.stringify({"type":"reset_esp"}));
+  mqttSocket.send(JSON.stringify({"type":"reset_esp"}));
   document.getElementById("reset-span").innerHTML="Cihaz resetlendi,20 sn sonra sayfayı yenileyiniz.";
   }
 }
@@ -743,6 +743,7 @@ function reset_esp(){
 
 <script>
 /////////// MQTT BROWSER DJANGO ESP8266 BAĞLANMA MESAJI GONDERILIYOR SOKETTEN BAĞIMSIZ
+/*
 const mesaj = '{"mesaj":"CONNREQ_MQTT_BRW"}';
 fetch("/mqtt/gonder/", {
 method: "POST",
@@ -757,7 +758,8 @@ console.log(`CONNREQ_MQTT_BRW sonucu fetch response object.entries(data): ${Obje
 console.log("browser response süslü parantez...")
 }
 );
-console.log(`JSON.stringify({ mesaj: mesaj }): ${JSON.stringify({ mesaj: mesaj })}`)
+*/
+//console.log(`JSON.stringify({ mesaj: mesaj }): ${JSON.stringify({ mesaj: mesaj })}`)
 /////////// MQTT BROWSER DJANGO ESP8266 BAĞLANMA MESAJI SONU
 var device_name;
 ////////////// ESP8266 WEBSOCKET BAGLANTI
@@ -771,15 +773,23 @@ var host_ip=window.location.host
 //var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
 var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?device_id=${device_id_js}&client=browser`
 console.log(`websocket_url: ${websocket_url}`)
-const chatSocket = new WebSocket(websocket_url);
+const mqttSocket = new WebSocket(websocket_url);
 //deneme
-//const chatSocket = new WebSocket('ws://localhost:8000/ws/app_monitor_2/esp8266/abc/');
+//const mqttSocket = new WebSocket('ws://localhost:8000/ws/app_monitor_2/esp8266/abc/');
 
-chatSocket.onopen = function () {
-//chatSocket.send('__Connect__ ' + new Date()); 
-//chatSocket.send('__Connect__');
-chatSocket.send('{"type":"connect"}');
-console.log("arduino websocket connected...")
+
+
+mqttSocket.onopen = function () {
+//mqttSocket.send('__Connect__ ' + new Date()); 
+//mqttSocket.send('__Connect__');
+//mqttSocket.send('{"type":"connect"}');
+//const mesaj = '{"mesaj":"CONNREQ_MQTT_BRW"}';
+//const mesaj = "{'mesaj':'CONNREQ_MQTT_BRW'}"; //// BU HATA VERIYOR---- AŞAĞIDAKI GIBI OLMAI JSON.stringify({ mesaj: "CONNREQ_MQTT_BRW" })
+const mesaj = JSON.stringify({ type: "brw_connreq" ,mesaj: "CONNREQ_MQTT_BRW" });
+//const mesaj = "{\"mesaj\":\"CONNREQ_MQTT_BRW\"}";
+//const mesaj = "CONNREQ_MQTT_BRW";
+mqttSocket.send(mesaj);
+console.log("browser mqtt websocket connected...")
 
 //function mqtt_connect_request() {
 //const mesaj = document.getElementById("mesaj").value;
@@ -789,12 +799,12 @@ console.log("arduino websocket connected...")
 
 //writeToScreen(`CONNECTED SOCKET ...: ${socket_address}`);
 };
-chatSocket.onerror = function (error) {
+mqttSocket.onerror = function (error) {
 console.log('WebSocket Error ', error);
 };
 
-chatSocket.onmessage = function (e) {
-console.log('Server chatSocket.onmessage: ', e.data);
+mqttSocket.onmessage = function (e) {
+console.log('Server mqttSocket.onmessage: ', e.data);
 //writeToScreen(`ESP8266 gelen MESAJ ...: ${e.data}`);
 //writeToScreen(`${e.data}`);
 //console.log(`message_object:`)
@@ -824,8 +834,9 @@ message_object_message_object=JSON.parse(message_object_message)
     //if ( "CONNECTION" in message_object ){
     //if ( "CONNECTION" or "CIHAZ_ALL"  in message_object_message_object ){
     //if ( "CONNECTION" || "CIHAZ_ALL" || "CIKISLAR" in message_object_message ){
-    if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
-      console.log("CONNECTION_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
+    //if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
+    if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
+      console.log("CONNACK_MQTT_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
       var xid=message_object_message_object.xid;
       //var sid=message_object_message_object.xid;
       var xname=message_object_message_object.xname;
@@ -1030,13 +1041,13 @@ message_object_message_object=JSON.parse(message_object_message)
         console.log("scheduler cihaz refresh oldu...")
         console.log(time_string)
 
-}; // chatSocket.onmessage SONU
-chatSocket.onclose = function () {
+}; // mqttSocket.onmessage SONU
+mqttSocket.onclose = function () {
 console.log('WebSocket connection closed');
 };
 
 function js_to_esp8266_socket(){
-  chatSocket.send('js_to_esp8266_socket: ' + new Date());
+  mqttSocket.send('js_to_esp8266_socket: ' + new Date());
   console.log('js_to_esp8266_socket: ' + new Date());
 }
 
@@ -1055,23 +1066,6 @@ yeni_cihaz_id=document.getElementById("cihaz-id-ayarla").value;
 cihaz_id_dizi=[{% for devices in devices_all %}  {{devices.device_id}},{% endfor %}]
 console.log(`cihaz id'ler: ${cihaz_id_dizi}`)
 
-</script>
-
-{% comment "esp8266 mesaj gönder test..." %}{% endcomment %}
-<input type="text" id="mesaj" placeholder="Komut girin">
-<button onclick="gonder()">Gönder</button><script>
-function gonder() {
-const mesaj = document.getElementById("mesaj").value;
-fetch("/mqtt/gonder/", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({ mesaj: mesaj })
-})
-.then(response => response.json())
-.then(data => console.log(data));
-}
 </script>
 
 {% endblock content %}
