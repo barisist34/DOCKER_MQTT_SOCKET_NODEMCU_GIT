@@ -27,10 +27,10 @@ MQTT_PORT = 1883  # Mosquitto'nun varsayılan portu
 # MQTT_TOPIC = f"cihaz_{}"  # Göndereceğiniz konu adı
 # MQTT_TOPIC = "cihaz_#"  # Göndereceğiniz konu adı
 # MQTT_TOPIC = "cihaz_+"  # Göndereceğiniz konu adı
-MQTT_TOPIC = "cihaz/+"  # Göndereceğiniz konu adı
+MQTT_TOPIC = "cihaz/#"  # Göndereceğiniz konu adı
 
 
-client = mqtt.Client()
+client = mqtt.Client() # mosquitto serverın clientı
 
 def on_connect(client, userdata, flags, rc):
     print("MQTT connected with result code " + str(rc))
@@ -40,7 +40,21 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
     print(f"cihaz/+ topice abone olundu...")
 
+def on_disconnect(client, userdata, rc):
+    print(f"client:{client}, Bağlantı kesildi. Kod:", rc)
+    if rc != 0:
+        print("Beklenmeyen bağlantı kesilmesi!")
+
 def on_message(client, userdata, msg):
+    """
+    ***payload_dict_type[""] kontrolü:
+    "CONNACK_MQTT_BRW" or "INPUTLAR_ESP" -- browser açılış veya esp input giriş
+    "CIKISLAR_ESP" -- browserdan çıkış komutu,esp den gelen mesaj
+    "CONN_ESP" -- esp ilk enerjilendiğinde gelen mesaj
+    "PERYODIK" -- esp den 1dk peryotla gelen mesaj, Temperature database kayıt yapılır
+    "willmesaj" -- esp kesildiğinde mosquittadan djangoya gelen mesaj
+    "online" -- esp ayaktayken mosquitto kesildiğinde,mosquitto yeniden up olunca gelen mesaj
+    """
     try:
         payload = msg.payload.decode()
         payload_dict=json.loads(payload)
@@ -48,7 +62,129 @@ def on_message(client, userdata, msg):
         print(f"payload_dict_type: {payload_dict_type}")
         print(f"MQTT mesajı alındı: {payload}")
         # if "CONNECTION_BRW" in payload_dict:
-        if payload_dict_type == "CONNACK_MQTT_BRW":
+        if payload_dict_type == "CONNACK_MQTT_BRW" or payload_dict_type == "INPUTLAR_ESP":
+            device_id= payload_dict["xid"]
+            print(f"msg.payload: {msg.payload}, type: {type(msg.payload)}")
+            print(f"device_id mqtt on_message: {device_id}")
+            print(f"payload_dict['xid']: {payload_dict['xid']} ")
+
+            grup_adı=f"esp_group_{device_id}"
+            # WebSocket'e mesaj gönder (tüm bağlantılara) MQTT-----------> WEBSOCKET BROWSER
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+            # sync_to_async(channel_layer.group_send)(
+            # "mqtt_group", # grup adı
+            grup_adı, # grup adı
+            {
+            # "type": "send.mqtt", # WebSocket consumer'da tanımlı method
+            # "text": payload,
+            'type': 'group_message',
+                    # 'message': message
+            'message': payload
+            },
+            )
+            if payload_dict_type == "INPUTLAR_ESP":
+                ### INPUT EVENT OLUŞTURMA, CLEAR YAPMA
+                device_id= payload_dict["xid"]
+                input0=str(payload_dict['xi00'])
+                print(f"input0:{input0}, type(input0):{type(input0)}")
+                input1=str(payload_dict['xi01'])
+                print(f"input1:{input1}, type(input1):{type(input1)}")
+                input2=str(payload_dict['xi02'])
+                print(f"input2:{input2}, type(input2):{type(input2)}")
+                input3=str(payload_dict['xi03'])
+                print(f"input3:{input3}, type(input3):{type(input3)}")
+                input_no=str(payload_dict['xinput_id'])
+                print(f"input_no:{input_no}, type(input_no):{type(input_no)}")
+                device_id_int=int(payload_dict['xid'])
+                device_obj=Device.objects.get(device_id=device_id_int)
+                # device=Device.objects.get(device_id=json_socket_sid) #250615
+                datetime_now=datetime.datetime.now() #250513
+                alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
+                alarm_input0_object=Alarm.objects.get(alarm_id=7)
+                # print(f"input0_active_event_available: {input0_active_event_available}")
+                alarm_input0_object=Alarm.objects.get(alarm_id=7)
+                input0_active_event_available=Event.objects.filter(alarm_id=alarm_input0_object).filter(event_active=True).filter(device_id=device_obj).count()
+                alarm_input1_object=Alarm.objects.get(alarm_id=8)
+                input1_active_event_available=Event.objects.filter(alarm_id=alarm_input1_object).filter(event_active=True).filter(device_id=device_obj).count()
+                alarm_input2_object=Alarm.objects.get(alarm_id=9)
+                input2_active_event_available=Event.objects.filter(alarm_id=alarm_input2_object).filter(event_active=True).filter(device_id=device_obj).count()
+                alarm_input2_object=Alarm.objects.get(alarm_id=9)
+                alarm_input3_object=Alarm.objects.get(alarm_id=10)
+                input3_active_event_available=Event.objects.filter(alarm_id=alarm_input3_object).filter(event_active=True).filter(device_id=device_obj).count()
+                if input0 or input1 or input2 or input3 == "1":
+                    if input_no=="0" and  input0 == "1" and input0_active_event_available == 0:
+                        new_input_event=Event(device_id=device_obj,device_name=device_obj.device_name,alarm_id=alarm_input0_object,alarm_name="Giriş--00 Aktif",start_time=datetime_now,event_active=True)
+                        new_input_event.save()
+                        print(f"new_input_event--1: f{new_input_event}")
+                        # event_list_view()
+                        # return redirect('/app_monitor/event_list_view') 
+                        # redirect('/app_monitor/scheduler_cihaz')
+                        print("redirect scheduler altı...")
+                    if input_no=="1" and  input1 == "1" and input1_active_event_available == 0:
+                        new_input_event=Event(device_id=device_obj,device_name=device_obj.device_name,alarm_id=alarm_input1_object,alarm_name="Giriş--01 Aktif",start_time=datetime_now,event_active=True)
+                        new_input_event.save()
+                        print(f"new_input_event--1: f{new_input_event}")
+                        # redirect('/app_monitor/scheduler_cihaz')
+                        print("redirect scheduler altı...")
+                    if input_no=="2" and  input2 == "1" and input1_active_event_available == 0:
+                        new_input_event=Event(device_id=device_obj,device_name=device_obj.device_name,alarm_id=alarm_input2_object,alarm_name="Giriş--02 Aktif",start_time=datetime_now,event_active=True)
+                        new_input_event.save()
+                        print(f"new_input_event--1: f{new_input_event}")
+                        # redirect('/app_monitor/scheduler_cihaz')
+                        print("redirect scheduler altı...")
+                    if input_no=="3" and input3 == "1" and input3_active_event_available == 0:
+                        new_input_event=Event(device_id=device_obj,device_name=device_obj.device_name,alarm_id=alarm_input3_object,alarm_name="Giriş--03 Aktif",start_time=datetime_now,event_active=True)
+                        new_input_event.save()
+                        print(f"new_input_event--1: f{new_input_event}")
+                        # redirect('/app_monitor/scheduler_cihaz')
+                        print("redirect scheduler altı...")
+                if input_no=="0" and input0 == "0" and input0_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
+                    print(f"input0 == 0 and input0_active_event_available !=0 girdi...")
+                    event_all_clear=Event.objects.filter(event_active=True,alarm_id=alarm_input0_object,device_id=device_obj) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                    for event in event_all_clear: 
+                        event.event_active=False
+                        event.finish_time=datetime.datetime.now()
+                        event.save()
+                    print("event clear RETURN event_list_view////")
+                    # return redirect('/app_monitor/scheduler_cihaz')
+                    # redirect('/app_monitor/scheduler_cihaz')
+                    print("redirect scheduler altı...clear")
+                if input_no=="1" and input1 == "0" and input1_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
+                    print(f"input1 == 0 and input1_active_event_available !=0 girdi...")
+                    event_all_clear=Event.objects.filter(event_active=True,alarm_id=alarm_input1_object,device_id=device_obj) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                    for event in event_all_clear: 
+                        event.event_active=False
+                        event.finish_time=datetime.datetime.now()
+                        # event.save)()
+                        event.save()
+                    print("event clear RETURN event_list_view////")
+                    # return redirect('/app_monitor/scheduler_cihaz')
+                    # redirect('/app_monitor/scheduler_cihaz')
+                    print("redirect scheduler altı...clear")
+                if input_no=="2" and input2 == "0" and input2_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
+                    print(f"input2 == 0 and input2_active_event_available !=0 girdi...")
+                    event_all_clear=Event.objects.filter(event_active=True,alarm_id=alarm_input2_object,device_id=device_obj) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                    for event in event_all_clear: 
+                        event.event_active=False
+                        event.finish_time=datetime.datetime.now()
+                        event.save()
+                    print("event clear RETURN event_list_view////")
+                    # return redirect('/app_monitor/scheduler_cihaz')
+                    # redirect('/app_monitor/scheduler_cihaz')
+                    print("redirect scheduler altı...clear")
+                if input_no=="3" and input3 == "0" and input3_active_event_available != 0: # alarm devam etmiyor ve aktif event varsa (count sayar)
+                    print(f"input3 == 0 and input3_active_event_available !=0 girdi...")
+                    event_all_clear=Event.objects.filter(event_active=True,alarm_id=alarm_input3_object,device_id=device_obj) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+                    for event in event_all_clear: 
+                        event.event_active=False
+                        event.finish_time=datetime.datetime.now()
+                        # event.save()
+                        event.save()
+                    print("event clear RETURN event_list_view////")
+                    ### INPUTLAR_ESP SONU
+
+        if payload_dict_type == "CIKISLAR_ESP":
             device_id= payload_dict["xid"]
             print(f"msg.payload: {msg.payload}, type: {type(msg.payload)}")
             print(f"device_id mqtt on_message: {device_id}")
@@ -69,7 +205,7 @@ def on_message(client, userdata, msg):
             'message': payload
             },
             )
-        if payload_dict_type == "CONN_ESP":
+        if payload_dict_type == "CONN_ESP": # esp ilk enerjilendiğinde gelen mesaj
             device_id= payload_dict["xid"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
@@ -149,6 +285,28 @@ def on_message(client, userdata, msg):
             # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
             # self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
 
+        if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj
+            device_id= payload_dict["device_id"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
+            print(f"cihaz kesildi wilmesajla alındı: {payload_dict['device_id']}")
+            new_outage_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
+            new_outage_event.save()
+            print(f"new_outage_event: {new_outage_event}")
+
+        if payload_dict_type == "online": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
+                                          # CONN_ESP de clear var, esp burada restart olmadığından, buradan clear gelmez. 
+                                          # mosquitto yeniden up olunca esp type:online mesajı gönderir.
+            device_id= payload_dict["device_id"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
+            event_all_clear=Event.objects.filter(event_active=True,device_id=device_id_obj,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+            for event in event_all_clear: 
+                event.event_active=False
+                event.finish_time=datetime.datetime.now()
+                event.save()
+
+
         print(f"on_message msg: {msg}")
         print(f"on_message msg.payload: {msg.payload}")
         print(f"on_message msg.payload.decode.loads() dictionary: {json.loads(msg.payload.decode('utf-8'))}")
@@ -161,7 +319,9 @@ def run():
     #client = mqtt.Client() # client yukarıda global nesneye dönüştü,bu şekilde consumer.py de erişebiliriz... 251014
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("mosquitto", 1883, 60) # service adı ile bağlantı
+    client.on_disconnect=on_disconnect #def on_disconnect çalışabilmesi için
+    client.connect("mosquitto", 1883, 10) # service adı ile bağlantı
+    # client.connect("mosquitto", 1883, 60) # service adı ile bağlantı
     # client.connect("172.19.0.3", 1883, 60) # service adı ile bağlantı
     # client.connect("192.168.43.10", 1883, 60) # service adı ile bağlantı
     # client.connect("localhost", 1883, 60) # service adı ile bağlantı
@@ -169,7 +329,8 @@ def run():
     # client.connect("localhost", 1884, 60) # service adı ile bağlantı
     print("def run icinde client.connect gecti...")
     client.loop_start()
-    print("def run icinde client.loop_start gecti...")
+    # client.loop_forever # Döngüyü başlat (bloklamayan)
+    print("def run icinde client.loop_forever gecti...")
 
 
 # MQTT istemcisini başlatma

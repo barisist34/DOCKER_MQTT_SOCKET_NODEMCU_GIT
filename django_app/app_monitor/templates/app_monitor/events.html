@@ -56,9 +56,19 @@
       {% comment %} setInterval(async () => {
         await fetch("https://jsonplaceholder.typicode.com/todos") 
     }, 100); {% endcomment %}
+</script>
 
-
-
+<script>
+var host_ip=window.location.host
+//var websocket_url=`ws://${host_ip}:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+//var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
+var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?device_id=${device_id_js}&client=browser`
+//const socket = new WebSocket('ws://localhost:8000/ws/yenile/');
+const socket = new WebSocket('ws://localhost:8000/event_yenile/');
+socket.onmessage = function(event) {
+    // Sayfayı yeniden yükle
+    location.reload();
+};
 </script>
 {% comment %} <p>events_ajax_number:{{events_ajax_number}} </p> {% endcomment %}
 <div>

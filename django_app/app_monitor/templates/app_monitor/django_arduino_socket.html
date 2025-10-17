@@ -835,7 +835,7 @@ message_object_message_object=JSON.parse(message_object_message)
     //if ( "CONNECTION" or "CIHAZ_ALL"  in message_object_message_object ){
     //if ( "CONNECTION" || "CIHAZ_ALL" || "CIKISLAR" in message_object_message ){
     //if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
-    if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
+    if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || ("CIHAZ_ALL" in message_object_message_json) || (message_object_message_json.type == "CIKISLAR_ESP") || (message_object_message_json.type == "INPUTLAR_ESP") ){
       console.log("CONNACK_MQTT_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
       var xid=message_object_message_object.xid;
       //var sid=message_object_message_object.xid;
@@ -879,9 +879,12 @@ message_object_message_object=JSON.parse(message_object_message)
       //if ( message_type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
-      if ( message_object_message_json.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
+      //if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") 
+      //if ( message_object_message_json.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır -- SON ESKI
+      if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
         //////////////////////////////
         {% include "js/output_soket_ajax.js" %} // CIKISLAR icin EVENT kayıdı ekleme için
+        console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)
 
         console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`)
         /////////////////////////////
@@ -1038,7 +1041,7 @@ message_object_message_object=JSON.parse(message_object_message)
         const time = new Date();
         const time_string= time.toLocaleTimeString();
         //console.log(`open_return:${open_return}`)
-        console.log("scheduler cihaz refresh oldu...")
+        //console.log("scheduler cihaz refresh oldu...")
         console.log(time_string)
 
 }; // mqttSocket.onmessage SONU
