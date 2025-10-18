@@ -182,13 +182,18 @@ class MqttConsumer(AsyncWebsocketConsumer):
         # client.publish("deneme_aaa", json.dumps(data))  # MQTT'ye gönderiyoruz
         # client.publish("deneme_aaa", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
         # client.publish("cihaz_tum", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
-        client.publish(f"cihaz/{device_id_scope}/BRW", json.dumps(data_dict))  # MQTT'ye gönderiyoruz
+        client.publish(f"cihaz/{device_id_scope}/BRW", json.dumps(data_dict))  # mosquitto ya gönderiyoruz, aşağıdaki receive kod kullanılmıyor...
         ##  WEBSOCKET BROWSER (consumer receive) -----------> MQTT
 
         # text_data_json = json.loads(text_data)
         # message = text_data_json["message"]
         # device_id_socket=Device.objects.get(device_id=1)
-        json_socket=json.loads(text_data)
+        dict_gecici=dict(
+            a=1,
+            b=2
+        )
+        # json_socket=json.loads(text_data)
+        json_socket=dict_gecici # browserdan pwm degeri gönderilince burada hata veriyor yukarı satır(önceki çalışan kod pure socket). 
         print(f"json_socket: {json_socket},type :{type(json_socket)}, ")
         # json_socket_sid=json_socket["sid"]
         if "CONN_ESP" in text_data: # cihaz-esp ilk bağlanınca gelir
@@ -422,3 +427,26 @@ class MqttConsumer(AsyncWebsocketConsumer):
         if reason:
             message["reason"] = reason
         super().send(message)
+
+################### EventYenileConsumer #################
+class EventYenileConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        print("EventYenileConsumer connect girdi...")
+        await self.channel_layer.group_add("event_yenileme", self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        print("EventYenileConsumer disconnect girdi...")
+        await self.channel_layer.group_discard("event_yenileme", self.channel_name)
+
+    async def group_message(self, event):
+        message = event['message']
+
+        # Bu client’a mesajı gönder
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+    async def yenile_mesaji(self, event):
+        print("EventYenileConsumer yenile_mesajı(receive) girdi...")
+        await self.send(text_data=json.dumps({"message": "event_yenile"}))

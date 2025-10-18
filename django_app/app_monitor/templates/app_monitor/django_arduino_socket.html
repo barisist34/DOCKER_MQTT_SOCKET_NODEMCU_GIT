@@ -315,9 +315,38 @@
     console.log(`json_outputs CIKISAYARLA(): ${JSON.stringify(json_outputs)}`)
 }
 
-function pwmAyarla(){
-  pwm0_deger=document.getElementById("pwm0-input").innerHTML
-  mqttSocket.send(JSON.stringify({"type":"pwm0","pwm0_deger":pwm0_deger }));
+function pwmAyarla(butonno){
+
+  //pwm0_deger=document.getElementById("pwm0-input").innerHTML
+  let pwm_id=`pwm${butonno}-input`;
+  console.log(`pwm_id: ${pwm_id}`)
+  //pwm_deger=document.getElementById(pwm_id).innerHTML
+  //pwm_deger=document.getElementById("pwm0-input").value  
+  pwm_deger=document.getElementById("pwm0-input").value  
+  console.log(`pwm_deger innerHTML: ${pwm_deger}`)
+  //mqttSocket.send(JSON.stringify({"type":"pwm0","pwm0_deger":pwm0_deger }));
+  json_outputs={
+
+  }
+  //let pwm_send_string=`{"type":"PWM","pwmno":${butonno},"pwm_deger":${pwm_deger} }`
+  //let pwm_send_string=`{type:"PWM",pwmno:${butonno},pwm_deger:${pwm_deger} }`
+  //let pwm_send_string=`{'type':'PWM','pwmno':${butonno},'pwm_deger':${pwm_deger} }`
+  //let pwm_send_string=`{"type":"PWM","pwmno":${butonno},"pwm_deger":${pwm_deger} }` // ÇALIŞIYOR (backtick ile kullanılacaksa " kullanımı zorunlu, ' sadece JSON.stringify() içinde doğrudan yazılacaksa geçerli.)
+  //let pwm_send_string_json= JSON.parse(pwm_send_string)
+  let pwm_obj={
+    type:"PWM",
+    pwmno:butonno,
+    pwm_deger:pwm_deger
+  }
+  //console.log(`pwm_send_string: ${pwm_send_string}`)
+  //console.log(`JSON.stringify(pwm_send_string): ${JSON.stringify(pwm_send_string)}`)
+  //mqttSocket.send(JSON.stringify(`{"type":"PWM","pwmno":${butonno},"pwm_deger":${pwm_deger} }`));
+  //mqttSocket.send(JSON.stringify("{\"type\":\"PWM\",\"pwmno\":0,\"pwm_deger\":5 }"));
+  //mqttSocket.send(JSON.stringify("{'type':'PWM','pwmno':0,'pwm_deger':5 }"));
+  //mqttSocket.send(JSON.stringify({'type':'PWM','pwmno':0,'pwm_deger':5 }));
+  //mqttSocket.send(JSON.stringify(pwm_send_string));
+  //mqttSocket.send(JSON.stringify(pwm_send_string_json));
+  mqttSocket.send(JSON.stringify(pwm_obj));
 }
 
 function reset_esp(){
@@ -423,6 +452,7 @@ function reset_esp(){
           <tr>
             <td>PWM-0</td>
             <td id="cihaz-pwm0">
+              {% comment %} <input id="pwm0-input"  type="number" placeholder="0 - 100"> {% endcomment %}
               <input id="pwm0-input"  type="number" placeholder="0 - 100">
               <button id="pwm0-buton" class="btn btn-primary btn-sm" onclick="pwmAyarla(0)">GÖNDER</button>
             </td>
@@ -835,7 +865,7 @@ message_object_message_object=JSON.parse(message_object_message)
     //if ( "CONNECTION" or "CIHAZ_ALL"  in message_object_message_object ){
     //if ( "CONNECTION" || "CIHAZ_ALL" || "CIKISLAR" in message_object_message ){
     //if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
-    if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || ("CIHAZ_ALL" in message_object_message_json) || (message_object_message_json.type == "CIKISLAR_ESP") || (message_object_message_json.type == "INPUTLAR_ESP") ){
+    if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || (message_object_message_json.type == "pwm") || (message_object_message_json.type == "CIKISLAR_ESP") || (message_object_message_json.type == "INPUTLAR_ESP") ){
       console.log("CONNACK_MQTT_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
       var xid=message_object_message_object.xid;
       //var sid=message_object_message_object.xid;

@@ -43,7 +43,7 @@
        $(document).ready(function () {
         //setInterval(fetchdata_perf, 10000);
         //fetchdata_perf();
-        setInterval(fetchdata_perf, 20000);
+        setInterval(fetchdata_perf, 60000);
       }); 
 
       {% comment %} $(document).ready(function () {
@@ -59,13 +59,15 @@
 </script>
 
 <script>
+//////////////////// EVENT YENILEME WEBSOCKET 
 var host_ip=window.location.host
 //var websocket_url=`ws://${host_ip}:8000/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
 //var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?${device_id_js}`
-var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?device_id=${device_id_js}&client=browser`
+//var websocket_url=`ws://${host_ip}/ws/app_monitor_2/esp8266/abc/?device_id=${device_id_js}&client=browser`
 //const socket = new WebSocket('ws://localhost:8000/ws/yenile/');
-const socket = new WebSocket('ws://localhost:8000/event_yenile/');
+const socket = new WebSocket(`ws://${host_ip}/ws/app_monitor_2/event_yenile/`);
 socket.onmessage = function(event) {
+    console.log(`on_message event: ${event}`)
     // Sayfayı yeniden yükle
     location.reload();
 };

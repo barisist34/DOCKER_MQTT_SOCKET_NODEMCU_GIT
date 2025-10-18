@@ -27,8 +27,8 @@ MQTT_PORT = 1883  # Mosquitto'nun varsayılan portu
 # MQTT_TOPIC = f"cihaz_{}"  # Göndereceğiniz konu adı
 # MQTT_TOPIC = "cihaz_#"  # Göndereceğiniz konu adı
 # MQTT_TOPIC = "cihaz_+"  # Göndereceğiniz konu adı
-MQTT_TOPIC = "cihaz/#"  # Göndereceğiniz konu adı
-
+# MQTT_TOPIC = "cihaz/#"  # Göndereceğiniz konu adı ,, "cihaz/{device_id_scope}/BRW" gelmesin diye yoruma alındı
+MQTT_TOPIC = "cihaz/+"
 
 client = mqtt.Client() # mosquitto serverın clientı
 
@@ -61,6 +61,7 @@ def on_message(client, userdata, msg):
         payload_dict_type=payload_dict["type"]
         print(f"payload_dict_type: {payload_dict_type}")
         print(f"MQTT mesajı alındı: {payload}")
+        channel_layer = get_channel_layer() # bütün channel_layer.group_send de geçerli
         # if "CONNECTION_BRW" in payload_dict:
         if payload_dict_type == "CONNACK_MQTT_BRW" or payload_dict_type == "INPUTLAR_ESP":
             device_id= payload_dict["xid"]
@@ -70,7 +71,6 @@ def on_message(client, userdata, msg):
 
             grup_adı=f"esp_group_{device_id}"
             # WebSocket'e mesaj gönder (tüm bağlantılara) MQTT-----------> WEBSOCKET BROWSER
-            channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
             # sync_to_async(channel_layer.group_send)(
             # "mqtt_group", # grup adı
@@ -83,6 +83,7 @@ def on_message(client, userdata, msg):
             'message': payload
             },
             )
+
             if payload_dict_type == "INPUTLAR_ESP":
                 ### INPUT EVENT OLUŞTURMA, CLEAR YAPMA
                 device_id= payload_dict["xid"]
@@ -182,7 +183,16 @@ def on_message(client, userdata, msg):
                         # event.save()
                         event.save()
                     print("event clear RETURN event_list_view////")
-                    ### INPUTLAR_ESP SONU
+                #### IKINCI BIR GRUBA SOKET MESAJ GONDERME 
+                async_to_sync(channel_layer.group_send)(
+                "event_yenileme", # grup adı
+                {
+                # 'type': 'group_message',
+                'type': 'yenile_mesaji',
+                'message': "{'type':'event_yenileme'}"
+                },
+                )
+                ### INPUTLAR_ESP SONU
 
         if payload_dict_type == "CIKISLAR_ESP":
             device_id= payload_dict["xid"]
@@ -192,7 +202,6 @@ def on_message(client, userdata, msg):
 
             grup_adı=f"esp_group_{device_id}"
             # WebSocket'e mesaj gönder (tüm bağlantılara) MQTT-----------> WEBSOCKET BROWSER
-            channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
             # sync_to_async(channel_layer.group_send)(
             # "mqtt_group", # grup adı
@@ -203,6 +212,15 @@ def on_message(client, userdata, msg):
             'type': 'group_message',
                     # 'message': message
             'message': payload
+            },
+            )
+            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (CIKISLAR_ESP)
+            async_to_sync(channel_layer.group_send)(
+            "event_yenileme", # grup adı
+            {
+            # 'type': 'group_message',
+            'type': 'yenile_mesaji',
+            'message': "{'type':'event_yenileme'}"
             },
             )
         if payload_dict_type == "CONN_ESP": # esp ilk enerjilendiğinde gelen mesaj
@@ -251,6 +269,16 @@ def on_message(client, userdata, msg):
 
                 newRecord.save() # CONNECTION TEMP kaydı
                 print(f"newRecord: {newRecord}")
+
+                #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (CONN_ESP), kesinti alarmı düzelir
+                async_to_sync(channel_layer.group_send)(
+                "event_yenileme", # grup adı
+                {
+                # 'type': 'group_message',
+                'type': 'yenile_mesaji',
+                'message': "{'type':'event_yenileme'}"
+                },
+                )
             except Exception as e:
                 print(f"conn_esp device: {device_id} için event,temperature kaydı oluşamadı")
                 print(f"Exception cinsi: {str(e)}")
@@ -293,6 +321,16 @@ def on_message(client, userdata, msg):
             new_outage_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             new_outage_event.save()
             print(f"new_outage_event: {new_outage_event}")
+
+            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (willmesaj), kesinti alarmı oluşur
+            async_to_sync(channel_layer.group_send)(
+            "event_yenileme", # grup adı
+            {
+            # 'type': 'group_message',
+            'type': 'yenile_mesaji',
+            'message': "{'type':'event_yenileme'}"
+            },
+            )
 
         if payload_dict_type == "online": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
                                           # CONN_ESP de clear var, esp burada restart olmadığından, buradan clear gelmez. 
