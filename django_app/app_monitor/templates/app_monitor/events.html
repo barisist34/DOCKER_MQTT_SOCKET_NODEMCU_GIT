@@ -43,7 +43,8 @@
        $(document).ready(function () {
         //setInterval(fetchdata_perf, 10000);
         //fetchdata_perf();
-        setInterval(fetchdata_perf, 60000);
+        //setInterval(fetchdata_perf, 60000);
+        setInterval(fetchdata_perf, 300000);
       }); 
 
       {% comment %} $(document).ready(function () {
@@ -69,7 +70,12 @@ const socket = new WebSocket(`ws://${host_ip}/ws/app_monitor_2/event_yenile/`);
 socket.onmessage = function(event) {
     console.log(`on_message event: ${event}`)
     // Sayfayı yeniden yükle
-    location.reload();
+    //location.reload();
+    setTimeout(function() {
+      console.log("1 saniye sonra çalıştı,event database bekleniyor");
+      fetchdata_perf();
+    }, 1000); // 1000 ms = 1 saniye
+    //fetchdata_perf();
 };
 </script>
 {% comment %} <p>events_ajax_number:{{events_ajax_number}} </p> {% endcomment %}
