@@ -12,16 +12,17 @@
 
   <div  class="row d-flex ">
         <div class="col-sm-12">
-            <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()" disabled>
+            {% comment %} <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()" disabled> {% endcomment %}
+            <input type="checkbox" class="btn-check" id="btn-check-all" onclick="buton_kontrol()">
             <label class="btn btn-secondary btn-sm my-2" for="btn-check-all">TOPLAM SAYI: {{events_total_count}} </label>
             <input type="checkbox" class="btn-check" id="btn-check-alarm1" onclick="buton_kontrol()" >
-            <label class="btn btn-danger btn-sm my-2" for="btn-check-alarm1">KESİNTİ: {{events_alarm1_count}} </label>
+            <label class="btn btn-danger btn-sm my-2" for="btn-check-alarm1">CRITICAL: {{events_alarm1_count}} </label>
             <input type="checkbox" class="btn-check" id="btn-check-alarm2" onclick="buton_kontrol()">
-            <label class="btn btn-info btn-sm text-white"  for="btn-check-alarm2">ÇIKIŞ ALARM: {{events_alarm2_count}} </label>
+            <label class="btn btn-info btn-sm text-white"  for="btn-check-alarm2">WARNING: {{events_alarm2_count}} </label>
             <input type="checkbox" class="btn-check" id="btn-check-alarm3" onclick="buton_kontrol()">
-            <label class="btn btn-info btn-sm text-white" style="background-color:orange" for="btn-check-alarm3">GİRİŞ ALARM: {{events_alarm3_count}} </label>
+            <label class="btn btn-info btn-sm text-white" style="background-color:orange" for="btn-check-alarm3">MAJOR: {{events_alarm3_count}} </label>
             <input type="checkbox" class="btn-check" id="btn-check-alarm-clear" onclick="buton_kontrol()" >
-            <label class="btn btn-success btn-sm" for="btn-check-alarm-clear">CLEAR ALARM: {{events_clear_count}} </label>
+            <label class="btn btn-success btn-sm" for="btn-check-alarm-clear">CLEAR: {{events_clear_count}} </label>
         </div>
       </div> 
 {% comment %} <p>events_ajax_number:{{events_ajax_number}} </p> {% endcomment %}
@@ -58,6 +59,8 @@
      {% if event.event_active and event.alarm_id.alarm_id is 8 %}style="background-color:#f57242"{% endif %} 
      {% if event.event_active and event.alarm_id.alarm_id is 9 %}style="background-color:#f57242"{% endif %} 
      {% if event.event_active and event.alarm_id.alarm_id is 10 %}style="background-color:#f57242"{% endif %} 
+     {% if event.event_active and event.alarm_id.alarm_id is 11 %}class="bg-info ps-5"{% endif %} 
+
      {% if not event.event_active  %}class="bg-success ps-5"{% endif %} 
      
      style="margin:20%" >

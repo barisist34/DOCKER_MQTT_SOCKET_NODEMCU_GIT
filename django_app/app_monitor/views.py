@@ -2150,7 +2150,7 @@ def scheduler_cihaz(request):
     events_total_count=Event.objects.all().count()
     events_alarm1_count=Event.objects.filter(alarm_id=1).filter(event_active=True).count()
     # events_alarm2_count=Event.objects.filter(alarm_id=2).filter(event_active=True).count()
-    events_alarm2_count=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True).count()
+    events_alarm2_count=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True).count()
     events_alarm3_count=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True).count()
     events_clear_count=Event.objects.filter(event_active=False).count()
     # completed_task_time=CompletedTask.objects.last().run_at
@@ -2180,17 +2180,20 @@ def event_list_view(request):
     # print(f"in event_list_view from CompletedTask.objects.last().run_at: {completed_task_time}")
 
     # print(f"events_alarm1_state:{events_alarm1_state},events_alarm3_state:{events_alarm3_state}, events_alarm_clear_state:{events_alarm_clear_state}")
-
+    # TOPLAM SAYI BUTONUNA BASILINCA
+    if events_total_state == "true" :
+        events_all=Event.objects.all()[::-1][:50]
+        print('events_total_state == "true"')
     # ilk 8 buton kontrolü (events_alarm3_state == "false")
     if events_alarm1_state == "true" and events_alarm2_state == "false" and events_alarm_clear_state == "false" and events_alarm3_state == "false":
         events_all=Event.objects.filter(alarm_id=1).filter(event_active=True)[::-1][:50]
         print('events_alarm1_state == "true" and events_alarm2_state == "false" and events_alarm_clear_state == "false":')
     if events_alarm1_state == "false" and events_alarm2_state == "true" and events_alarm_clear_state == "false" and events_alarm3_state == "false":
         # events_all=Event.objects.filter(alarm_id=2).filter(event_active=True)[::-1]
-        events_all=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)[::-1][:50]
+        events_all=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)[::-1][:50]
     if events_alarm1_state == "true" and events_alarm2_state == "true" and events_alarm_clear_state == "false" and events_alarm3_state == "false":
         events_1=Event.objects.filter(alarm_id=1).filter(event_active=True)
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_all=sorted(chain(events_2,events_1),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "false" and events_alarm2_state == "false" and events_alarm_clear_state == "true" and events_alarm3_state == "false":
         events_all=Event.objects.filter(event_active=False)[::-1][:50]
@@ -2199,12 +2202,12 @@ def event_list_view(request):
         events_clear=Event.objects.filter(event_active=False)[::-1]
         events_all=sorted(chain(events_clear,events_1),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "false" and events_alarm2_state == "true" and events_alarm_clear_state == "true" and events_alarm3_state == "false":
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_clear=Event.objects.filter(event_active=False)[::-1]
         events_all=sorted(chain(events_clear,events_2),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "true" and events_alarm2_state == "true" and events_alarm_clear_state == "true" and events_alarm3_state == "false":
         events_1=Event.objects.filter(alarm_id=1).filter(event_active=True)
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_clear=Event.objects.filter(event_active=False)[::-1]
         events_all=sorted(chain(events_clear,events_2,events_1),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "false" and events_alarm2_state == "false" and events_alarm_clear_state == "false" and events_alarm3_state == "false":
@@ -2220,12 +2223,12 @@ def event_list_view(request):
         print('events_alarm1_state == "true" and events_alarm2_state == "false" and events_alarm_clear_state == "false":')
     if events_alarm1_state == "false" and events_alarm2_state == "true" and events_alarm_clear_state == "false" and events_alarm3_state == "true":
         # events_all=Event.objects.filter(alarm_id=2).filter(event_active=True)[::-1]
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_3=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True)
         events_all=sorted(chain(events_3,events_2),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "true" and events_alarm2_state == "true" and events_alarm_clear_state == "false" and events_alarm3_state == "true":
         events_1=Event.objects.filter(alarm_id=1).filter(event_active=True)
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_3=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True)
         events_all=sorted(chain(events_3,events_2,events_1),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "false" and events_alarm2_state == "false" and events_alarm_clear_state == "true" and events_alarm3_state == "true":
@@ -2238,13 +2241,13 @@ def event_list_view(request):
         events_3=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True)
         events_all=sorted(chain(events_3,events_clear,events_1),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "false" and events_alarm2_state == "true" and events_alarm_clear_state == "true" and events_alarm3_state == "true":
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_clear=Event.objects.filter(event_active=False)[::-1]
         events_3=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True)
         events_all=sorted(chain(events_3,events_clear,events_2),key=attrgetter('id'),reverse=True)[:50]
     if events_alarm1_state == "true" and events_alarm2_state == "true" and events_alarm_clear_state == "true" and events_alarm3_state == "true":
         events_1=Event.objects.filter(alarm_id=1).filter(event_active=True)
-        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True)
+        events_2=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True)
         events_3=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True)
         events_clear=Event.objects.filter(event_active=False)[::-1]
         events_all=sorted(chain(events_3,events_clear,events_2,events_1),key=attrgetter('id'),reverse=True)[:50]
@@ -2299,7 +2302,7 @@ def event_list_view(request):
     events_total_count=Event.objects.all().count()
     events_alarm1_count=Event.objects.filter(alarm_id=1).filter(event_active=True).count()
     # events_alarm2_count=Event.objects.filter(alarm_id=2).filter(event_active=True).count()
-    events_alarm2_count=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)).filter(event_active=True).count()
+    events_alarm2_count=Event.objects.filter(Q(alarm_id=2)|Q(alarm_id=3)|Q(alarm_id=4)|Q(alarm_id=5)|Q(alarm_id=6)|Q(alarm_id=11)).filter(event_active=True).count()
     events_alarm3_count=Event.objects.filter(Q(alarm_id=7)|Q(alarm_id=8)|Q(alarm_id=9)|Q(alarm_id=10)).filter(event_active=True).count()
     events_clear_count=Event.objects.filter(event_active=False).count()
     context=dict(
@@ -2336,8 +2339,9 @@ def export_to_excel_event_all(request):
         # temp = Temperature.objects.filter(device_name=cihazadi)
     for event in events:
         try:
-            ws.append([event.id,event.device_name,event.device_id.device_id,event.alarm_id,event.alarm_name, event.event_active, event.start_time,event.finish_time,event.info])
-            # ws.append([temps.id,temps.device_name,temps.temperature, temps.humidity, temps.volcum])
+            # ws.append([event.id,event.device_name,event.device_id.device_id,event.alarm_id,event.alarm_name, event.event_active, event.start_time,event.finish_time,event.info])
+            ws.append([event.id,event.device_name,event.device_id.device_id,event.alarm_id.alarm_id,event.alarm_name, event.event_active, event.start_time,event.finish_time,event.info])
+            # event.alarm_id.alarm_id olacak,bu normal sayı döndürür, event.alarm_id ise nesne döndürür
         except AttributeError:
             print("AttributeError oluştu...")
 

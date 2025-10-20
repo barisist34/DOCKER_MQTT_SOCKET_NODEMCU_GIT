@@ -17,7 +17,8 @@ import datetime
 # MQTT_BROKER = "localhost"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "172.19.0.1"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "172.18.0.3"  # veya Mosquitto'nun IP adresi
-MQTT_BROKER = "mosquitto"  # veya Mosquitto'nun IP adresi
+# MQTT_BROKER = "mosquitto"  # veya Mosquitto'nun IP adresi
+MQTT_BROKER = "192.168.1.35"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "192.168.43.10"  # veya Mosquitto'nun IP adresi
 # MQTT_BROKER = "172.18.0.2"  # veya Mosquitto'nun IP adresi (PS C:\WINDOWS\system32> docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mosquitto)
 MQTT_PORT = 1883  # Mosquitto'nun varsayılan portu
@@ -344,6 +345,32 @@ def on_message(client, userdata, msg):
                 event.finish_time=datetime.datetime.now()
                 event.save()
 
+        if payload_dict_type == "PWM_ACK":
+            device_id= payload_dict["xid"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            pwm_no=payload_dict["xpwm_no"]
+            pwm_deger=payload_dict["xpwm_deger"]
+            alarm_pwm_object=Alarm.objects.get(alarm_id=11)
+            try:
+                event_pwm_clear=Event.objects.filter(event_active=True,device_id=device_id_obj,alarm_id=alarm_pwm_object)
+                for event in event_pwm_clear: # bu cihazda daha önceki pwm eventler clear yapılıyor
+                    event.event_active=False
+                    event.finish_time=datetime.datetime.now()
+                    event.save()
+            except:
+                print("aktif pwm eventi olmadığı için ilk pwm event aşağıda oluşturulacak...")
+            new_pwm_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_pwm_object,alarm_name=alarm_pwm_object.alarm_name,start_time=timezone.now(),event_active=True,info=f"PWM değeri:{pwm_deger}")
+            new_pwm_event.save()
+            print(f"new_pwm_event: {new_pwm_event}")
+
+            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (willmesaj), kesinti alarmı oluşur
+            async_to_sync(channel_layer.group_send)(
+            "event_yenileme", # grup adı
+            {
+            'type': 'yenile_mesaji',
+            'message': "{'type':'event_yenileme'}"
+            },
+            )
 
         print(f"on_message msg: {msg}")
         print(f"on_message msg.payload: {msg.payload}")
@@ -358,8 +385,8 @@ def run():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect=on_disconnect #def on_disconnect çalışabilmesi için
-    client.connect("mosquitto", 1883, 10) # service adı ile bağlantı
-    # client.connect("mosquitto", 1883, 60) # service adı ile bağlantı
+    # client.connect("mosquitto", 1883, 10) # service adı ile bağlantı
+    client.connect("mosquitto", 1883, 60) # service adı ile bağlantı
     # client.connect("172.19.0.3", 1883, 60) # service adı ile bağlantı
     # client.connect("192.168.43.10", 1883, 60) # service adı ile bağlantı
     # client.connect("localhost", 1883, 60) # service adı ile bağlantı

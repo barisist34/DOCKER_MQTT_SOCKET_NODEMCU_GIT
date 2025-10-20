@@ -51,9 +51,12 @@ services:
       - "9001:9001"
     volumes:
       - ./mosquitto/config:/mosquitto/config
+      - /etc/localtime:/etc/localtime:ro
+    # network_mode: host
     networks:
       - app_network
-
+    environment:
+      - TZ=Europe/Istanbul
 
   # redis:  # REDIS sadece master, proxy yok
   #   image: redis:alpine
@@ -77,6 +80,8 @@ services:
       - "6379:6379"
     networks:
       - app_network
+    environment:
+      - TZ=Europe/Istanbul
 
   redis-replica:
     image: redis:6.2
@@ -88,6 +93,8 @@ services:
       - redis-master
     networks:
       - app_network
+    environment:
+      - TZ=Europe/Istanbul
 
   haproxy:
     image: haproxy:2.4
@@ -100,6 +107,8 @@ services:
       - redis-replica
     networks:
       - app_network
+    environment:
+      - TZ=Europe/Istanbul
 
 #   web: # REDIS sadece master, proxy yok
 #     build: ./django_app
@@ -138,9 +147,12 @@ services:
       resources:
         limits:
           memory: 256M
+    # environment:
+    #   - TZ=Europe/Istanbul
+    #   - REDIS_URL: redis://haproxy:6379
     environment:
-      REDIS_URL: redis://haproxy:6379
-
+      - REDIS_URL=redis://haproxy:6379
+      - TZ=Europe/Istanbul
 
 networks:
   app_network:
