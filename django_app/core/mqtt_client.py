@@ -338,8 +338,8 @@ def on_message(client, userdata, msg):
                 
             # device_id= payload_dict["device_id"]
             device_id= payload_dict["xid"]
-            device_ip= payload_dict["device_ip"]
-            device_port= payload_dict["device_port"]        
+            device_ip= payload_dict["xip"]
+            device_port= payload_dict["xport"]        
             # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
             device_obj, created = Device.objects.update_or_create(
                 # email='test@example.com',
@@ -380,8 +380,8 @@ def on_message(client, userdata, msg):
                 
             # device_id= payload_dict["device_id"]
             device_id= payload_dict["xid"]
-            device_ip= payload_dict["device_ip"]
-            device_port= payload_dict["device_port"]        
+            device_ip= payload_dict["xip"]
+            device_port= payload_dict["xport"]        
             # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
             device_obj, created = Device.objects.update_or_create(
                 # email='test@example.com',
