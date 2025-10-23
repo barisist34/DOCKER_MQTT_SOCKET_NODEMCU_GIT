@@ -334,13 +334,34 @@ def on_message(client, userdata, msg):
             print(f"PERYODIK device_id:{device_id} için exception: {str(e)}")
 
     if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj,TOPIC:"cihaz/+/status"
-        device_id= payload_dict["device_id"]
-        device_id_obj=Device.objects.get(device_id=device_id)
-        alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
-        print(f"cihaz kesildi wilmesajla alındı: {payload_dict['device_id']}")
-        new_outage_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
-        new_outage_event.save()
-        print(f"new_outage_event: {new_outage_event}")
+        try:
+                
+            # device_id= payload_dict["device_id"]
+            device_id= payload_dict["xid"]
+            device_ip= payload_dict["device_ip"]
+            device_port= payload_dict["device_port"]        
+            # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
+            device_obj, created = Device.objects.update_or_create(
+                # email='test@example.com',
+                device_id=f"{device_id}",
+                defaults={
+                    "device_name": f"{device_name}",
+                    "device_ip": f"{device_ip}",
+                    "device_port": f"{device_port}",
+                }
+            )
+            print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
+
+            device_id= payload_dict["device_id"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
+            print(f"cihaz kesildi wilmesajla alındı: {payload_dict['device_id']}")
+            new_outage_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
+            new_outage_event.save()
+            print(f"new_outage_event: {new_outage_event}")
+
+        except Exception as e:
+            print(f"device_id: {device_id} için will kısım için exception: {str(e)}")
 
         #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (willmesaj), kesinti alarmı oluşur
         async_to_sync(channel_layer.group_send)(
