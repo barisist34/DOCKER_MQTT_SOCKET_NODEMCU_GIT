@@ -352,10 +352,11 @@ def on_message(client, userdata, msg):
     if payload_dict_type == "online": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
                                         # CONN_ESP de clear var, esp burada restart olmadığından, buradan clear gelmez. 
                                         # mosquitto yeniden up olunca esp type:online mesajı gönderir. TOPIC:"cihaz/+/status"
-        device_id= payload_dict["device_id"]
-        device_id_obj=Device.objects.get(device_id=device_id)
-        alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
         try:
+            device_id= payload_dict["device_id"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
+        
             event_all_clear=Event.objects.filter(event_active=True,device_id=device_id_obj,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
             for event in event_all_clear: 
                 event.event_active=False
@@ -363,7 +364,7 @@ def on_message(client, userdata, msg):
                 event.save()
                 print(f"CLEAR EVENT online_reconnect: {event}")
         except Exception as e:
-            print(f"event_all_clear için exception: {str(e)}")
+            print(f"device_id: {device_id} için online kısım event_all_clear için exception: {str(e)}")
         #### IKINCI BIR GRUBA SOKET MESAJ GONDERME
         async_to_sync(channel_layer.group_send)(
         "event_yenileme", # grup adı
