@@ -511,10 +511,13 @@ def devices_all(request):
     for device in devices_all:
         # if datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) < 360:
         #     devices_online.append(device.temperature_set.last().device_id.device_id)
-        if device.event_set.filter(alarm_id=1).last().event_active == False:
-            devices_online.append(device.device_id)
+        try:
+            if device.event_set.filter(alarm_id=1).last().event_active == False:
+                devices_online.append(device.device_id)
 
-            print(f"datetime_now- device.temperature_set.last.date() {device.temperature_set.last().device_id}: {datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) }")
+                print(f"datetime_now- device.temperature_set.last.date() {device.temperature_set.last().device_id}: {datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) }")
+        except Exception as e:
+            print(f"device_id:{device.device_id} için henüz kesinti alarmı (Alarm ID:1) oluşmamış: {str(e)}")        
     #     if timezone.now - device.temperature_set.last.date 
     print(f"online cihazlar: {devices_online}")
 

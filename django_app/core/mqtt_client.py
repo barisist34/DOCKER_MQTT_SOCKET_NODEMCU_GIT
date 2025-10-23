@@ -59,10 +59,13 @@ def on_message(client, userdata, msg):
     "online" -- esp ayaktayken mosquitto kesildiğinde,mosquitto yeniden up olunca gelen mesaj
     "PWM_ACK"-- esp den gelen pwm dönüş mesajı
     """
+    payload = msg.payload.decode() # GLOBAL
+    payload_dict=json.loads(payload) # GLOBAL
+    payload_dict_type=payload_dict["type"] # GLOBAL
+    device_id= payload_dict["xid"] # GLOBAL
+
     try:
-        payload = msg.payload.decode()
-        payload_dict=json.loads(payload)
-        payload_dict_type=payload_dict["type"]
+        
         print(f"payload_dict_type: {payload_dict_type}")
         print(f"MQTT mesajı alındı: {payload}")
         channel_layer = get_channel_layer() # bütün channel_layer.group_send de geçerli
@@ -400,7 +403,7 @@ def on_message(client, userdata, msg):
         print(f"Received message: {msg.payload.decode('utf-8')} on topic {msg.topic}")
         # return HttpResponse(f"Received message: {msg.payload.decode()} on topic {msg.topic}")
     except Exception as e:
-        print(f"mqtt on_message exception: {str(e)}")
+        print(f"device_id:{device_id} için mqtt on_message exception: {str(e)}")
 
 def run():
     #client = mqtt.Client() # client yukarıda global nesneye dönüştü,bu şekilde consumer.py de erişebiliriz... 251014
