@@ -352,10 +352,27 @@ def on_message(client, userdata, msg):
         },
         )
 
-    if payload_dict_type == "online": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
+    if payload_dict_type == "online_will": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
                                         # CONN_ESP de clear var, esp burada restart olmadığından, buradan clear gelmez. 
                                         # mosquitto yeniden up olunca esp type:online mesajı gönderir. TOPIC:"cihaz/+/status"
         try:
+                
+            # device_id= payload_dict["device_id"]
+            device_id= payload_dict["xid"]
+            device_ip= payload_dict["device_ip"]
+            device_port= payload_dict["device_port"]        
+            # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
+            device_obj, created = Device.objects.update_or_create(
+                # email='test@example.com',
+                device_id=f"{device_id}",
+                defaults={
+                    "device_name": f"{device_name}",
+                    "device_ip": f"{device_ip}",
+                    "device_port": f"{device_port}",
+                }
+            )
+            print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
+
             device_id= payload_dict["device_id"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
