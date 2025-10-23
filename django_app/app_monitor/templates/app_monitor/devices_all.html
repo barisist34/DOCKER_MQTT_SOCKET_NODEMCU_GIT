@@ -76,12 +76,12 @@
     <th>Cihaz Id</th>
     <th>Cihaz Port</th>
     <th>Cihaz IP</th>
-    <th>Cihaz Fonksiyonu</th>
     <th>Kayıt Sayısı</th>
     <th>Online</th>
-    <th>Son Durum</th>
+    <th>Kesinti Zamanı</th>
+    <th>Bağlantı Zamanı</th>
     <th>Süre</th>
-    <th>İlk bağlantı</th>
+    <th>Cihaz Fonksiyonu</th>
     {% for devices in devices_all %}
     <tr class="device-row">
         {% comment %} <td><a target="_blank" href="/app_monitor/cihazlar/{{devices.device_name}}/port={{devices.device_port}}/devid={{devices.device_id}}">{{devices.device_name}}</a>  </td> {% endcomment %}
@@ -92,10 +92,9 @@
         {% comment %} <td>{{devices.device_port}} </td> {% endcomment %}
         <td> <a href="/app_monitor/cihazlar/cihaz_port={{devices.device_port}}" target="_blank">{{devices.device_port}}</a></td>
         <td>{{devices.device_ip}} </td>
-        <td>{{devices.device_function}} </td>
         <td>{{devices.temperature_set.all.count}} </td>   <!-- device tan temperature modele geçiş, ana model**yardımcı model -->
         <td>    <!-- ONLINE KONTROLU-->
-
+            
             {% if  devices.device_id in devices_online %}
             <b class="b-online-check" style="background-color: green;padding: 5%;">ONLINE</b> 
             <script>
@@ -105,13 +104,30 @@
             {% else %}
             <b class="b-online-check" style="background-color: red;padding: 5%;">OFFLINE</b> 
             {% endif %}
-           
+            
         </td>   <!-- ONLINE KONTROLU-->
-        <td>{{devices.temperature_set.last.date|date:"d-m-Y"}} {{devices.temperature_set.last.date|time:"H:i:s"}} </td>   
+        {% comment %} {% if devices.event_set.filter(alarm_id=1).last().event_active is not False  %} {% endcomment %}
+        {% if devices|last_event_active:1  %} {% comment "KESINTI ZAMANI" %}{% endcomment %}
+        {% comment %} <td>{{devices.temperature_set.last.date|date:"d-m-Y"}} {{devices.temperature_set.last.date|time:"H:i:s"}} </td> {% endcomment %}
+        <td> {{devices|last_event_startdate:1}} </td>
+        {% else %}
+        <td> - </td>
+        {% endif %}   
         {% comment %} <td>{{devices.temperature_set.filter(device_name=devices.device_name).count}} </td> {% endcomment %}
-        <td>{{ devices.temperature_set.last.date|subtract_now_datetime }} </td>   
         {% comment %} <td>{{ devices.temperature_set.last.date|subtract_datetime:devices.temperature_set.first.date }} -- {{ devices.temperature_set.last.date|subtract_now_datetime }} </td>    {% endcomment %}
-        <td>{{devices.temperature_set.first.date|date:"d-m-Y"}} {{devices.temperature_set.first.date|time:"H:i:s"}} </td>   
+        {% comment %} <td>{{devices.temperature_set.first.date|date:"d-m-Y"}} {{devices.temperature_set.first.date|time:"H:i:s"}} </td>    {% endcomment %}
+        {% if devices|last_event_active:1  %} {% comment "BAĞLANTI ZAMANI" %}{% endcomment %}
+        <td> - </td> 
+        {% else %}  
+        <td> {{devices|last_event_finishdate:1}} </td>
+        {% endif %}  
+        {% if devices|last_event_active:1  %} {% comment "SURE" %}{% endcomment %}
+        <td> {{ devices|outage_device_duration:1 }} </td>  
+        {% else %}  
+        {% comment %} <td> {{ devices|last_event_duration:1 }} </td> {% endcomment %}
+        <td> {{ devices|active_device_duration:1 }} </td>
+        {% endif %}  
+        <td>{{devices.device_function}} </td>
     </tr>
     {% endfor %}
 </table>

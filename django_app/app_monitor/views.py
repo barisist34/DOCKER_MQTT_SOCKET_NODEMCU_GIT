@@ -493,10 +493,10 @@ def django_device_backtest(request):
     return HttpResponse(device_ip)
 
 def devices_all(request):
-    print(f"all sessions: {request.session}")
-    for key, value in request.session.items():
-        # print('{} => {}'.format(key, value))
-        print(f"key: {key} ")
+    # print(f"all sessions: {request.session}")
+    # for key, value in request.session.items():  # bu işleme burada gerek yok
+    #     # print('{} => {}'.format(key, value))
+    #     print(f"key: {key} ")  
     devices_all=Device.objects.all()
     datetime_now=datetime.now()
     devices_online=[]
@@ -509,12 +509,15 @@ def devices_all(request):
     # print(f"datetime.now(){datetime_now}")
     # print(f"timestamp now {datetime.timestamp(datetime_now)}")
     for device in devices_all:
-        if datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) < 360:
-            devices_online.append(device.temperature_set.last().device_id.device_id)
+        # if datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) < 360:
+        #     devices_online.append(device.temperature_set.last().device_id.device_id)
+        if device.event_set.filter(alarm_id=1).last().event_active == False:
+            devices_online.append(device.device_id)
 
             print(f"datetime_now- device.temperature_set.last.date() {device.temperature_set.last().device_id}: {datetime.timestamp(datetime_now) - datetime.timestamp(device.temperature_set.last().date) }")
     #     if timezone.now - device.temperature_set.last.date 
     print(f"online cihazlar: {devices_online}")
+
     context=dict(
         devices_all=devices_all,
         devices_online=devices_online,

@@ -114,15 +114,16 @@ socket.onmessage = function(event) {
 <table class="table table-hover" data-click-to-select="true">
     <thead>
        <tr class="bg-primary px-5">
-         <th class="ps-5" scope="col">id</th>
+         <th class="ps-5" scope="col">ID</th>
          <th scope="col">Cihaz Adı</th>
          <th scope="col">Cihaz ID</th>
          <th scope="col">Alarm ID</th>
-         <th scope="col">Alarm Name</th>
-         <th scope="col">Event Active</th>
-         <th scope="col">Start Time</th>
-         <th scope="col">Finish Time</th>
-         <th class="pe-5" scope="col">Info</th>
+         <th scope="col">Alarm Adı</th>
+         <th class="pe-5" scope="col">Bilgi</th>
+         <th scope="col">Aktif</th>
+         <th scope="col">Başlangıç</th>
+         <th scope="col">Bitiş</th>
+         <th scope="col">Süre</th>
        </tr>
      </thead>
    <tbody>
@@ -151,10 +152,11 @@ socket.onmessage = function(event) {
        <td >{{event.alarm_id}}</td>
        {% comment %} <td >{{event.alarm_name}}</td> {% endcomment %}
        <td >{{event.alarm_id.alarm_name}}</td>
-       <td > {{event.event_active}}</td> <!--  -->  
-       <td >{{event.start_time|date:"d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td>
-       <td >{{event.finish_time|date:"d.m.Y"}} {{event.finish_time|time:"H:i:s"}}</td>
        <td >{{event.info}}</td>
+       <td > {{event.event_active}}</td> <!--  -->  
+       <td >{{event.start_time|date:"d.m.Y"}} / {{event.start_time|time:"H:i:s"}}</td>
+       <td >{{event.finish_time|date:"d.m.Y"}} / {{event.finish_time|time:"H:i:s"}}</td>
+       <td > {{event.event_duration}}</td> 
      </tr>  
      {% endfor %}
    </tbody>

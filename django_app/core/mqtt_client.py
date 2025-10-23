@@ -30,6 +30,7 @@ MQTT_PORT = 1883  # Mosquitto'nun varsayılan portu
 # MQTT_TOPIC = "cihaz_+"  # Göndereceğiniz konu adı
 # MQTT_TOPIC = "cihaz/#"  # Göndereceğiniz konu adı ,, "cihaz/{device_id_scope}/BRW" gelmesin diye yoruma alındı
 MQTT_TOPIC = "cihaz/+"
+WILL_TOPIC="cihaz/+/status"
 
 client = mqtt.Client() # mosquitto serverın clientı
 
@@ -39,6 +40,7 @@ def on_connect(client, userdata, flags, rc):
     # client.subscribe("deneme_aaa")
     # client.subscribe("cihaz_tum")
     client.subscribe(MQTT_TOPIC)
+    client.subscribe(WILL_TOPIC)
     print(f"cihaz/+ topice abone olundu...")
 
 def on_disconnect(client, userdata, rc):
@@ -55,6 +57,7 @@ def on_message(client, userdata, msg):
     "PERYODIK" -- esp den 1dk peryotla gelen mesaj, Temperature database kayıt yapılır
     "willmesaj" -- esp kesildiğinde mosquittadan djangoya gelen mesaj
     "online" -- esp ayaktayken mosquitto kesildiğinde,mosquitto yeniden up olunca gelen mesaj
+    "PWM_ACK"-- esp den gelen pwm dönüş mesajı
     """
     try:
         payload = msg.payload.decode()
@@ -226,6 +229,24 @@ def on_message(client, userdata, msg):
             )
         if payload_dict_type == "CONN_ESP": # esp ilk enerjilendiğinde gelen mesaj
             device_id= payload_dict["xid"]
+            device_name=payload_dict["xname"]
+            device_ip=payload_dict["xip"]
+            device_port=payload_dict["xport"]
+            try:
+                # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
+                device_obj, created = Device.objects.update_or_create(
+                    # email='test@example.com',
+                    device_id=f"{device_id}",
+                    defaults={
+                        "device_name": f"{device_name}",
+                        "device_ip": f"{device_ip}",
+                        "device_port": f"{device_port}",
+                    }
+                )
+                print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
+            except Exception as e:
+                print(f"CONN_ESP girişinde cihaz güncelle veya oluştur exception: {str(e)}")
+
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
             try:
@@ -247,16 +268,6 @@ def on_message(client, userdata, msg):
                 xo02=payload_dict["xo02"]
                 xo03=payload_dict["xo03"]
 
-                device_obj, created = Device.objects.update_or_create(
-                    # email='test@example.com',
-                    device_id=f"{device_id}",
-                    defaults={
-                        "device_name": f"{device_name}",
-                        "device_ip": f"{device_ip}",
-                        "device_port": f"{device_port}",
-                    }
-                )
-                print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
                 # device_id_conn=Device.objects.get(device_id=device_id)
                 # device_id=Device.objects.get)(device_id=device_id) 
                 event_all_clear=Event.objects.filter(event_active=True,device_id=device_id_obj,alarm_id=alarm_kesinti_object) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
@@ -264,6 +275,7 @@ def on_message(client, userdata, msg):
                     event.event_active=False
                     event.finish_time=datetime.datetime.now()
                     event.save()
+                    print(f"CLEAR EVENT CONN_ESP: {event}")
 
                 # newRecord = Temperature)(temperature=temperature,humidity= humidity,volcum=volt, date=timezone.now(),device_name=device_name,device_id=device_id,input0=xi00,input1=xi01,input2=xi02,input3=xi03) #250610
                 newRecord = Temperature(temperature=temperature,humidity= humidity,volcum=volt, date=timezone.now(),device_name=device_name,device_id=device_id_obj,input00=xi00,input01=xi01,input02=xi02,input03=xi03,cikis0=xo0,cikis00=xo00,cikis01=xo01,cikis02=xo02,cikis03=xo03) #250610
@@ -314,7 +326,7 @@ def on_message(client, userdata, msg):
             # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
             # self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
 
-        if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj
+        if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj,TOPIC:"cihaz/+/status"
             device_id= payload_dict["device_id"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
@@ -335,7 +347,7 @@ def on_message(client, userdata, msg):
 
         if payload_dict_type == "online": # mosquitto kesilince esp de kesikse,esp mosquittodan önce aktif olursa,
                                           # CONN_ESP de clear var, esp burada restart olmadığından, buradan clear gelmez. 
-                                          # mosquitto yeniden up olunca esp type:online mesajı gönderir.
+                                          # mosquitto yeniden up olunca esp type:online mesajı gönderir. TOPIC:"cihaz/+/status"
             device_id= payload_dict["device_id"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
@@ -344,6 +356,16 @@ def on_message(client, userdata, msg):
                 event.event_active=False
                 event.finish_time=datetime.datetime.now()
                 event.save()
+                print(f"CLEAR EVENT online_reconnect: {event}")
+
+            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME
+            async_to_sync(channel_layer.group_send)(
+            "event_yenileme", # grup adı
+            {
+            'type': 'yenile_mesaji',
+            'message': "{'type':'event_yenileme'}"
+            },
+            )
 
         if payload_dict_type == "PWM_ACK":
             device_id= payload_dict["xid"]
@@ -363,7 +385,7 @@ def on_message(client, userdata, msg):
             new_pwm_event.save()
             print(f"new_pwm_event: {new_pwm_event}")
 
-            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (willmesaj), kesinti alarmı oluşur
+            #### IKINCI BIR GRUBA SOKET MESAJ GONDERME
             async_to_sync(channel_layer.group_send)(
             "event_yenileme", # grup adı
             {

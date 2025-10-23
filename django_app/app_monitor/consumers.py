@@ -133,6 +133,7 @@ class MqttConsumer(AsyncWebsocketConsumer):
         connected_users.discard(self.channel_name)
         print(f"Bağlantı kapandı: {self.channel_name}")
         print(f"Kalan bağlantılar: {connected_users}")
+        """ # mqtt çalışmaya başladıktan sonra aşağıdaki database işlemleri IPTAL oldu...
         if self.client == "esp": # sadece esp den gelen disconnect olayında, browser iptal
             new_input_event=await sync_to_async(Event)(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             await sync_to_async(new_input_event.save)()
@@ -146,6 +147,7 @@ class MqttConsumer(AsyncWebsocketConsumer):
             print(f"Kalan bağlantılar: {connected_users}")
             print(f"Aktif soket sayısı: {len(connected_users)}")
             print(f"self.group_name: {self.group_name} disconnect oldu...")
+        """
 
     async def group_message(self, event):
         message = event['message']
@@ -200,7 +202,7 @@ class MqttConsumer(AsyncWebsocketConsumer):
             alarm_kesinti_object=await sync_to_async(Alarm.objects.get)(alarm_id=1)
             # device_id_scope=int(self.scope['query_string'])
             device_id_scope=self.device_id
-            try:
+            """try: mqtt çalışmaya başladıktan sonra aşağıdaki database işlemleri IPTAL oldu...
                 print(f"connect try, device_id_scope={device_id_scope}")
                 device_ip_socket=json_socket["xip"]
                 # device_ip_socket=json_socket["xipppppppppppp"]
@@ -218,7 +220,7 @@ class MqttConsumer(AsyncWebsocketConsumer):
                 xo01_socket=json_socket["xo01"]
                 xo02_socket=json_socket["xo02"]
                 xo03_socket=json_socket["xo03"]
-                """
+                
                 if not await sync_to_async(Device.objects.filter(device_id=device_id_scope).exists)():
                     print(f" {device_id_scope}:  device_id database de olmayan blok girdi... ")
                     # device_id_request=request.GET.get("device_id")
@@ -229,7 +231,10 @@ class MqttConsumer(AsyncWebsocketConsumer):
                     await sync_to_async(new_device.save)()
                     print(f"new_device: {new_device}")
                     print(f"new device name: {new_device.device_name}") 
-                """
+                
+
+            
+
                 # device_obj, created = await sync_to_async(Device.objects.update_or_create)(
                 device_obj, created = await database_sync_to_async(Device.objects.update_or_create)(
                     # email='test@example.com',
@@ -289,8 +294,11 @@ class MqttConsumer(AsyncWebsocketConsumer):
             # self.send(text_data=json.dumps({"message": str(timezone.now())}))
             # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
             self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
-        if "INPUTLAR" in text_data:
-            """
+
+        
+        
+        # if "INPUTLAR" in text_data:
+             # mqtt çalışmaya başladıktan sonra aşağıdaki database işlemleri IPTAL oldu...
             json_socket_sid=int(json_socket['sid'])
             print(f"json_socket['sid']: {json_socket_sid},type :{type(json_socket_sid)} ")
             device_id_socket=Device.objects.get(device_id=json_socket["sid"])
@@ -303,7 +311,10 @@ class MqttConsumer(AsyncWebsocketConsumer):
             self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
             new_input_event=Event(device_id=device_id_socket,device_name=device_id_socket.device_name,alarm_id=alarm_input1_object,alarm_name="Giriş--01 Aktif",start_time=timezone.now(),event_active=True)
             new_input_event.save()
-            """
+            
+
+
+             # mqtt çalışmaya başladıktan sonra aşağıdaki database işlemleri IPTAL oldu...
             ### INPUT EVENT OLUŞTURMA
 
             # input0=request.GET.get("input0")
@@ -415,11 +426,15 @@ class MqttConsumer(AsyncWebsocketConsumer):
                 # return redirect('/app_monitor/scheduler_cihaz')
                 redirect('/app_monitor/scheduler_cihaz')
                 print("redirect scheduler altı...clear")
+
+
+            """
+
     # def close(self, code=None, reason=None):
     async def close(self, code=None, reason=None):
-        """
-        Closes the WebSocket from the server end
-        """
+        
+        # Closes the WebSocket from the server end
+        
         message = {"type": "websocket.close"}
         print("socket_close girdi...")
         if code is not None and code is not True:
