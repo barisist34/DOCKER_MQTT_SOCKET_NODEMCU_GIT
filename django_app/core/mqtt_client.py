@@ -199,7 +199,7 @@ def on_message(client, userdata, msg):
                 },
                 )
             except Exception as e:
-                print(f"INPUTLAR_ESP device_id:{device_id} için exception: {str(e)}")
+                print(f"EXCEPTION INPUTLAR_ESP device_id:{device_id} için exception: {str(e)}")
             ### INPUTLAR_ESP SONU
 
     if payload_dict_type == "CIKISLAR_ESP":
@@ -249,7 +249,7 @@ def on_message(client, userdata, msg):
             )
             print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
         except Exception as e:
-            print(f"device_id:{device_id} için CONN_ESP girişinde cihaz güncelle veya oluştur exception: {str(e)}")
+            print(f"EXCEPTION device_id:{device_id} için CONN_ESP girişinde cihaz güncelle veya oluştur exception: {str(e)}")
 
         device_id_obj=Device.objects.get(device_id=device_id)
         alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
@@ -297,7 +297,7 @@ def on_message(client, userdata, msg):
             },
             )
         except Exception as e:
-            print(f"conn_esp device: {device_id} için event,temperature kaydı oluşamadı")
+            print(f"EXCEPTION conn_esp device: {device_id} için event,temperature kaydı oluşamadı")
             print(f"Exception cinsi: {str(e)}")
             traceback.print_exc() # Hata detaylarını (traceback dahil) görmek için:
     
@@ -331,13 +331,14 @@ def on_message(client, userdata, msg):
             # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
             # self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
         except Exception as e:
-            print(f"PERYODIK device_id:{device_id} için exception: {str(e)}")
+            print(f"EXCEPTION PERYODIK device_id:{device_id} için exception: {str(e)}")
 
     if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj,TOPIC:"cihaz/+/status"
         try:
                 
             # device_id= payload_dict["device_id"]
             device_id= payload_dict["xid"]
+            device_name= payload_dict["xname"]
             device_ip= payload_dict["xip"]
             device_port= payload_dict["xport"]        
             # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
@@ -361,7 +362,7 @@ def on_message(client, userdata, msg):
             print(f"new_outage_event: {new_outage_event}")
 
         except Exception as e:
-            print(f"device_id: {device_id} için will kısım için exception: {str(e)}")
+            print(f"EXCEPTION device_id: {device_id} için will kısım için exception: {str(e)}")
 
         #### IKINCI BIR GRUBA SOKET MESAJ GONDERME (willmesaj), kesinti alarmı oluşur
         async_to_sync(channel_layer.group_send)(
@@ -380,6 +381,7 @@ def on_message(client, userdata, msg):
                 
             # device_id= payload_dict["device_id"]
             device_id= payload_dict["xid"]
+            device_name= payload_dict["xname"]
             device_ip= payload_dict["xip"]
             device_port= payload_dict["xport"]        
             # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
@@ -405,7 +407,7 @@ def on_message(client, userdata, msg):
                 event.save()
                 print(f"CLEAR EVENT online_reconnect: {event}")
         except Exception as e:
-            print(f"device_id: {device_id} için online kısım event_all_clear için exception: {str(e)}")
+            print(f"EXCEPTION: device_id: {device_id} için online kısım event_all_clear için exception: {str(e)}")
         #### IKINCI BIR GRUBA SOKET MESAJ GONDERME
         async_to_sync(channel_layer.group_send)(
         "event_yenileme", # grup adı
