@@ -302,33 +302,36 @@ def on_message(client, userdata, msg):
             traceback.print_exc() # Hata detaylarını (traceback dahil) görmek için:
     
     if payload_dict_type == "PERYODIK":
-        device_id= payload_dict["xid"]
-        device_id_obj=Device.objects.get(device_id=device_id)
-        device_name=payload_dict["xname"]
-        device_port=payload_dict["xport"]
-        temperature=payload_dict["xtemp"]
-        humidity=payload_dict["xhum"]
-        volt=payload_dict["xvolt"]
-        xi00=payload_dict["xi00"]
-        xi01=payload_dict["xi01"]
-        xi02=payload_dict["xi02"]
-        xi03=payload_dict["xi03"]
-        xo0=payload_dict["xo0"]
-        xo00=payload_dict["xo00"]
-        xo01=payload_dict["xo01"]
-        xo02=payload_dict["xo02"]
-        xo03=payload_dict["xo03"]
-        # device_id_socket=Device.objects.get(device_id=1)
-        # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name="Test",device_id=device_id_socket) #250610
-        # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
-        # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
-        newRecord = Temperature(temperature=temperature,humidity= humidity,volcum=volt, date=timezone.now(),device_name=device_name,device_id=device_id_obj,input00=xi00,input01=xi01,input02=xi02,input03=xi03,cikis0=xo0,cikis00=xo00,cikis01=xo01,cikis02=xo02,cikis03=xo03) #250610
-        newRecord.save()
-        print(f"newRecord: {newRecord}")
-        # self.send(text_data=json.dumps({"message": message}))
-        # self.send(text_data=json.dumps({"message": str(timezone.now())}))
-        # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
-        # self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
+        try: 
+            device_id= payload_dict["xid"]
+            device_id_obj=Device.objects.get(device_id=device_id)
+            device_name=payload_dict["xname"]
+            device_port=payload_dict["xport"]
+            temperature=payload_dict["xtemp"]
+            humidity=payload_dict["xhum"]
+            volt=payload_dict["xvolt"]
+            xi00=payload_dict["xi00"]
+            xi01=payload_dict["xi01"]
+            xi02=payload_dict["xi02"]
+            xi03=payload_dict["xi03"]
+            xo0=payload_dict["xo0"]
+            xo00=payload_dict["xo00"]
+            xo01=payload_dict["xo01"]
+            xo02=payload_dict["xo02"]
+            xo03=payload_dict["xo03"]
+            # device_id_socket=Device.objects.get(device_id=1)
+            # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name="Test",device_id=device_id_socket) #250610
+            # newRecord = Temperature(temperature=16,humidity=44 ,volcum=11, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            # newRecord = await sync_to_async(Temperature)(temperature=temperature_socket,humidity= humidity_socket,volcum=volt_socket, date=timezone.now(),device_name=device_name_socket,device_id=device_id_socket) #250610
+            newRecord = Temperature(temperature=temperature,humidity= humidity,volcum=volt, date=timezone.now(),device_name=device_name,device_id=device_id_obj,input00=xi00,input01=xi01,input02=xi02,input03=xi03,cikis0=xo0,cikis00=xo00,cikis01=xo01,cikis02=xo02,cikis03=xo03) #250610
+            newRecord.save()
+            print(f"newRecord: {newRecord}")
+            # self.send(text_data=json.dumps({"message": message}))
+            # self.send(text_data=json.dumps({"message": str(timezone.now())}))
+            # self.send(text_data=json.dumps({"message": str(timezone.localtime())}))
+            # self.send(text_data=json.dumps({"message": f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")} ve deger:{text_data} '}))
+        except Exception as e:
+            print(f"PERYODIK device_id:{device_id} için exception: {str(e)}")
 
     if payload_dict_type == "willmesaj": # mosquitto ayakteyken esp kesilince,mosquittodan gelen mesaj,TOPIC:"cihaz/+/status"
         device_id= payload_dict["device_id"]
