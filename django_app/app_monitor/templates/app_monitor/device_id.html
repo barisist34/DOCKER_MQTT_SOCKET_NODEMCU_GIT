@@ -166,7 +166,7 @@
                  <td >{{temp.volcum}}</td>
                  
                  <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
-                 <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
+                 <td > {{temp.date|date:'d-m-Y / H:i:s'}}</td> <!--  -->  
                  <td style="display: flex;text-align:start;vertical-align:middle"> {% comment "modal sürekli sola yaslı olacak,diğer sütunlar ortada" %}{% endcomment %}
                   <button type="button" data-bs-toggle="modal" data-bs-target="#modal{{temp.id}}" data-bs-toggle="modal">...</button>
                   <span class="d-inline-block text-truncate" style="max-width: 150px;" >{{temp.additionalText}}</span>

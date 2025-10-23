@@ -344,6 +344,7 @@ def on_message(client, userdata, msg):
             # DATABASE de yoksa cihazı ekle, bilgi değiştiyse güncelle 
             device_obj, created = Device.objects.update_or_create(
                 # email='test@example.com',
+                # device_id=f"{device_id}",
                 device_id=f"{device_id}",
                 defaults={
                     "device_name": f"{device_name}",
@@ -353,10 +354,9 @@ def on_message(client, userdata, msg):
             )
             print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
 
-            device_id= payload_dict["device_id"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
-            print(f"cihaz kesildi wilmesajla alındı: {payload_dict['device_id']}")
+            print(f"cihaz kesildi wilmesajla alındı: {device_id}")
             new_outage_event=Event(device_id=device_id_obj,device_name=device_id_obj.device_name,alarm_id=alarm_kesinti_object,start_time=timezone.now(),event_active=True)
             new_outage_event.save()
             print(f"new_outage_event: {new_outage_event}")
@@ -396,7 +396,6 @@ def on_message(client, userdata, msg):
             )
             print(f"güncellenen cihaz nesnesi: {device_obj}, yeni cihaz mı: {created}")
 
-            device_id= payload_dict["device_id"]
             device_id_obj=Device.objects.get(device_id=device_id)
             alarm_kesinti_object=Alarm.objects.get(alarm_id=1)
         

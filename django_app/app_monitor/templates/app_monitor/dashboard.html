@@ -173,7 +173,7 @@ const timer=() => {
                <td >{{temp.humidity}}</td>
                <td >{{temp.volcum}}</td>
                <!--  <td> {{temp.date}}</td>  ilk hali saniyesiz --> 
-               <td > {{temp.date|date:'Y-m-d H:i:s'}}</td> <!--  -->  
+               <td > {{temp.date|date:'d-m-Y / H:i:s'}}</td> <!--  -->  
                 {% if temp.input00 == "0" %} <td class="m-3" style="background-color:orange;margin:10px">{{temp.input00}}</td> {% else %} <td >{{temp.input00}}</td> {% endif %}
                 {% comment %} <td >{{temp.input0}}</td> {% endcomment %}
                 {% comment %} {% if temp.input01 == "0" %} <td class="m-3" style="background-color:orange;margin:10px">{{temp.input01}}</td> {% else %} <td >{{temp.input01}}</td> {% endif %} {% endcomment %}

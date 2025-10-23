@@ -73,8 +73,8 @@
        <td >{{event.info}}</td>
        <td > {{event.event_active}}</td> <!--  -->  
        {% comment %} <td >{{event.start_time|date:"D.d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td> {% endcomment %}
-       <td >{{event.start_time|date:"d.m.Y"}} {{event.start_time|time:"H:i:s"}}</td>
-       <td >{{event.finish_time|date:"d.m.Y"}} {{event.finish_time|time:"H:i:s"}}</td>
+       <td >{{event.start_time|date:"d.m.Y / H:i:s"}}</td>
+       <td >{{event.finish_time|date:"d.m.Y / H:i:s"}}</td>
        {% comment %} <td >{{event.event_duration}}  </td> {% endcomment %}
        <td >{{event.event_duration}}  </td>
        {% comment %} <td > {% if event.event_duration is not None  %} {{event.event_duration|time:"H:i:s"}} {% endif %}    </td> {% endcomment %}
