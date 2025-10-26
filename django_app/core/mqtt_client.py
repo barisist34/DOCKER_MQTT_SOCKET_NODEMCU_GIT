@@ -204,11 +204,50 @@ def on_message(client, userdata, msg):
 
     if payload_dict_type == "CIKISLAR_ESP":
         device_id= payload_dict["xid"]
+        cikis_no= payload_dict["xo_n"]
+        xo0=payload_dict["xo0"]
+        xo00=payload_dict["xo00"]
+        xo01=payload_dict["xo01"]
+        xo02=payload_dict["xo02"]
+        xo03=payload_dict["xo03"]
+        cikis_degeri="x" # aşağıda if bloğunda değeri belirleniyor
+        if cikis_no == "0":
+            alarm_output_object=Alarm.objects.get(alarm_id=2)
+            cikis_degeri=xo0
+        elif cikis_no == "1":
+            alarm_output_object=Alarm.objects.get(alarm_id=3)
+            cikis_degeri=xo00
+        elif cikis_no == "2":
+            alarm_output_object=Alarm.objects.get(alarm_id=4)
+            cikis_degeri=xo01
+        elif cikis_no == "3":
+            alarm_output_object=Alarm.objects.get(alarm_id=5)
+            cikis_degeri=xo02
+        elif cikis_no == "4":
+            alarm_output_object=Alarm.objects.get(alarm_id=6)
+            cikis_degeri=xo03
+
+        print(f"cikis_degeri:{cikis_degeri},cikis_no: {cikis_no} ")
+        device_obj=Device.objects.get(device_id=device_id)
+        datetime_now=datetime.datetime.now() #250513
         print(f"msg.payload: {msg.payload}, type: {type(msg.payload)}")
         print(f"device_id mqtt on_message: {device_id}")
 
         # EVENT outputlar için burada oluşturulacak.
         # Önceden django_arduino_socket.html içinde output_ajax.js ile kayıt oluşturuluyordu 251026
+        if cikis_degeri == 1:
+            new_output_event=Event(device_id=device_obj,device_name=device_obj.device_name,alarm_id=alarm_output_object,alarm_name=alarm_output_object.alarm_name,start_time=datetime_now,event_active=True)
+            new_output_event.save()
+            print(f"new_input_event--1: f{new_output_event}")
+        elif cikis_degeri == 0:
+            print(f"cıkıs_degeri == 0 girdi")
+            # event=Event.objects.get(event_active=True,alarm_id=alarm,device_id=device)
+            event_all_clear=Event.objects.filter(event_active=True,alarm_id=alarm_output_object,device_id=device_obj) # clear olmayan aynı alarm id li hatalı eventlar varsa hepsini clear yapar.
+            for event in event_all_clear:
+                event.event_active=False
+                event.finish_time=datetime_now
+                event.save()    
+
         grup_adı=f"esp_group_{device_id}"
         # WebSocket'e mesaj gönder (tüm bağlantılara) MQTT-----------> WEBSOCKET BROWSER
         async_to_sync(channel_layer.group_send)(

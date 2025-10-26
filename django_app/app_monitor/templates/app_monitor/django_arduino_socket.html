@@ -922,10 +922,11 @@ message_object_message_object=JSON.parse(message_object_message)
       if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
 
         //////////////////////////////
-        {% include "js/output_soket_ajax.js" %} // CIKISLAR icin EVENT kayıdı ekleme için
+        {% comment %} {% include "js/output_soket_ajax.js" %}  {% endcomment %}
+        // CIKISLAR icin EVENT kayıdı ekleme için
         console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)
 
-        console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`)
+        {% comment %} console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`) {% endcomment %}
         /////////////////////////////
       }
       if (xo0 == "1") {
