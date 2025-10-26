@@ -360,7 +360,7 @@ function reset_esp(){
 
 <div class="container">
   <div class="row">
-    <div class="col-7" style="height:95vh;overflow-y:auto">
+    <div class="col-sm-9" style="height:95vh;overflow-y:auto">
     {% comment %} <div style="height:600px; width:80%;overflow:scroll"> {% endcomment %}
       <div class="row" >
         {% comment %} <div  class="col-sm-6"><h2 id="device_name_baslik">{{device_name}} </h2></div> {% endcomment %}
@@ -540,51 +540,54 @@ function reset_esp(){
         {% comment %} <form id="form_refresh_page" action="/app_monitor/event_list_view" ></form> {% endcomment %}
         <form id="form_refresh_page" action="/app_monitor/scheduler_cihaz" ></form>
     </div>
-    <div class="col-5"> {% comment "svg cihaz görünümü" %}{% endcomment %}
+    <div class="col-sm-3"> {% comment "svg cihaz görünümü" %}{% endcomment %}
       <br>
 
       {% comment %} <h2>SVG script Element</h2> {% endcomment %}
   
+      {% comment %} <svg viewBox="0 0 500 500" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg"> {% endcomment %}
       <svg style="margin: 30px;" width="500" height="800" xmlns="http://www.w3.org/2000/svg">
+      {% comment %} <svg viewBox="0 0 200 200" width="100%" height="auto"> {% endcomment %}
           <!-- <rect width="200" height="100" x="10" y="10" rx="20" ry="20" fill="blue" /> -->
-          <rect width="200" height="500" x="200" y="0" fill="blue" />
-          <line x1="400" y1="30" x2="450" y2="30" style="stroke:black;stroke-width:2" />
-          <text x="330" y="30" fill="white" stroke="white" font-size="20">Çıkış-00</text>
+          <rect width="200" height="500" x="20" y="0" fill="blue" />
+          <line x1="220" y1="30" x2="270" y2="30" style="stroke:black;stroke-width:2" />
+          <text x="150" y="30" fill="white" stroke="white" font-size="20">Çıkış-00</text>
           {% comment %} <circle id="circle1" cx="460" cy="30" r="10" style="fill:red;" oncontextmenu="output_menu1()" />  {% endcomment %}
-          <circle id="circle1" cx="460" cy="30" r="10" style="fill:red;"  /> 
+          <circle id="circle1" cx="280" cy="30" r="10" style="fill:red;"  /> 
 
-          <line x1="400" y1="60" x2="450" y2="60" style="stroke:black;stroke-width:2" />
-          <text x="330" y="60" fill="white" stroke="white" font-size="20">Çıkış-01</text>
-          <circle id="circle2"  cx="460" cy="60" r="10" style="fill:red;" />
+          <line x1="220" y1="60" x2="270" y2="60" style="stroke:black;stroke-width:2" />
+          <text x="150" y="60" fill="white" stroke="white" font-size="20">Çıkış-01</text>
+          <circle id="circle2"  cx="280" cy="60" r="10" style="fill:red;" />
           
-          <line x1="400" y1="90" x2="450" y2="90" style="stroke:black;stroke-width:2" />
-          <a href="" onclick=""><text x="330" y="90" fill="white" stroke="white" font-size="20">Çıkış-02</text></a>
-          <circle id="circle3" cx="460" cy="90" r="10" fill="red" /> <!-- "fill" attribute olarak  kullanıldı -->
+          <line x1="220" y1="90" x2="270" y2="90" style="stroke:black;stroke-width:2" />
+          <a href="" onclick=""><text x="150" y="90" fill="white" stroke="white" font-size="20">Çıkış-02</text></a>
+          <circle id="circle3" cx="280" cy="90" r="10" fill="red" /> <!-- "fill" attribute olarak  kullanıldı -->
           
-          <line x1="400" y1="120" x2="450" y2="120" style="stroke:black;stroke-width:2" />
-          <text x="330" y="120" fill="white" stroke="white" font-size="20">Çıkış-03</text>
-          <circle id="circle4" cx="460" cy="120" r="10" style="fill:red;" /> <!-- "fill" style olarak  kullanıldı -->
+          <line x1="220" y1="120" x2="270" y2="120" style="stroke:black;stroke-width:2" />
+          <text x="150" y="120" fill="white" stroke="white" font-size="20">Çıkış-03</text>
+          <circle id="circle4" cx="280" cy="120" r="10" style="fill:red;" /> <!-- "fill" style olarak  kullanıldı -->
           {% comment %} <text x="230" y="250" fill="pink" stroke="blue" font-size="35">Cihaz-x</text> {% endcomment %}
           
-          <line x1="400" y1="380" x2="450" y2="380" style="stroke:black;stroke-width:2" />
-          <text x="330" y="380" fill="white" stroke="white" font-size="20">Giriş-00</text>
-          <circle id="circle5" cx="460" cy="380" r="10" style="fill:red;" />
+          <line x1="220" y1="380" x2="270" y2="380" style="stroke:black;stroke-width:2" />
+          <text x="150" y="380" fill="white" stroke="white" font-size="20">Giriş-00</text>
+          <circle id="circle5" cx="280" cy="380" r="10" style="fill:red;" />
 
-          <line x1="400" y1="410" x2="450" y2="410" style="stroke:black;stroke-width:2" />
-          <text x="330" y="410" fill="white" stroke="white" font-size="20">Giriş-01</text>
-          <circle id="circle6" cx="460" cy="410" r="10" style="fill:red;" />
+          <line x1="220" y1="410" x2="270" y2="410" style="stroke:black;stroke-width:2" />
+          <text x="150" y="410" fill="white" stroke="white" font-size="20">Giriş-01</text>
+          <circle id="circle6" cx="280" cy="410" r="10" style="fill:red;" />
 
-          <line x1="400" y1="440" x2="450" y2="440" style="stroke:black;stroke-width:2" />
-          <text x="330" y="440" fill="white" stroke="white" font-size="20">Giriş-02</text>
-          <circle id="circle7" cx="460" cy="440" r="10" style="fill:red;" />
+          <line x1="220" y1="440" x2="270" y2="440" style="stroke:black;stroke-width:2" />
+          <text x="150" y="440" fill="white" stroke="white" font-size="20">Giriş-02</text>
+          <circle id="circle7" cx="280" cy="440" r="10" style="fill:red;" />
 
-          <line x1="400" y1="470" x2="450" y2="470" style="stroke:black;stroke-width:2" />
-          <text x="330" y="470" fill="white" stroke="white" font-size="20">Giriş-03</text>
-          <circle id="circle8" cx="460" cy="470" r="10" style="fill:red;" />
+          <line x1="220" y1="470" x2="270" y2="470" style="stroke:black;stroke-width:2" />
+          <text x="150" y="470" fill="white" stroke="white" font-size="20">Giriş-03</text>
+          <circle id="circle8" cx="280" cy="470" r="10" style="fill:red;" />
           
-          <text x="250" y="250" fill="pink" stroke="blue" font-size="35">{{device_name.capitalize}}</text>
+          <text x="70" y="250" fill="pink" stroke="blue" font-size="35">{{device_name.capitalize}}</text>
           Sorry, your browser does not support inline SVG.
       </svg>
+      <br><br>
   
       {% comment %} <input type="button" value="Change Radius" onclick="changeRadius()" /> {% endcomment %}
 
@@ -867,6 +870,18 @@ message_object_message_object=JSON.parse(message_object_message)
     //if ( ("CONNECTION_BRW" in message_object_message_json) || ("CIHAZ_ALL" in message_object_message_json) || ("CIKISLAR" in message_object_message_json) ){
     if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || (message_object_message_json.type == "pwm") || (message_object_message_json.type == "CIKISLAR_ESP") || (message_object_message_json.type == "INPUTLAR_ESP") ){
       console.log("CONNACK_MQTT_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
+
+      var xo0=message_object_message_object.xo0;
+      var xo00=message_object_message_object.xo00;
+      var xo01=message_object_message_object.xo01;
+      var xo02=message_object_message_object.xo02;
+      var xo03=message_object_message_object.xo03;
+      var xi00=message_object_message_object.xi00;
+      var xi01=message_object_message_object.xi01;
+      var xi02=message_object_message_object.xi02;
+      var xi03=message_object_message_object.xi03;
+
+      //if (message_object_message_json.type == "CONNACK_MQTT_BRW"){
       var xid=message_object_message_object.xid;
       //var sid=message_object_message_object.xid;
       var xname=message_object_message_object.xname;
@@ -883,15 +898,7 @@ message_object_message_object=JSON.parse(message_object_message)
       var xvol=message_object_message_object.xvol;
       var xrssi=message_object_message_object.xrssi;
       var xutime=message_object_message_object.xutime;
-      var xo0=message_object_message_object.xo0;
-      var xo00=message_object_message_object.xo00;
-      var xo01=message_object_message_object.xo01;
-      var xo02=message_object_message_object.xo02;
-      var xo03=message_object_message_object.xo03;
-      var xi00=message_object_message_object.xi00;
-      var xi01=message_object_message_object.xi01;
-      var xi02=message_object_message_object.xi02;
-      var xi03=message_object_message_object.xi03;
+
 
       document.getElementById("cihaz-id").innerHTML=xid;
       document.getElementById("cihaz-adi").innerHTML=xname;
@@ -906,12 +913,14 @@ message_object_message_object=JSON.parse(message_object_message)
       document.getElementById("cihaz-voltaj").innerHTML=xvol;
       document.getElementById("cihaz-rssi").innerHTML=xrssi+" dBm";
       document.getElementById("cihaz-uptime").innerHTML=xutime;
+      //}
       //if ( message_type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
       //if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") 
       //if ( message_object_message_json.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır -- SON ESKI
       if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
+
         //////////////////////////////
         {% include "js/output_soket_ajax.js" %} // CIKISLAR icin EVENT kayıdı ekleme için
         console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)

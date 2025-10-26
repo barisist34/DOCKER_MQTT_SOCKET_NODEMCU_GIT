@@ -207,7 +207,8 @@ def on_message(client, userdata, msg):
         print(f"msg.payload: {msg.payload}, type: {type(msg.payload)}")
         print(f"device_id mqtt on_message: {device_id}")
 
-
+        # EVENT outputlar için burada oluşturulacak.
+        # Önceden django_arduino_socket.html içinde output_ajax.js ile kayıt oluşturuluyordu 251026
         grup_adı=f"esp_group_{device_id}"
         # WebSocket'e mesaj gönder (tüm bağlantılara) MQTT-----------> WEBSOCKET BROWSER
         async_to_sync(channel_layer.group_send)(
