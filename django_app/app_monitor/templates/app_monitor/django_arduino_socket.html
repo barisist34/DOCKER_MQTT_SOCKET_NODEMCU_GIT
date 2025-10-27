@@ -871,6 +871,7 @@ message_object_message_object=JSON.parse(message_object_message)
     if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") || (message_object_message_json.type == "pwm") || (message_object_message_json.type == "CIKISLAR_ESP") || (message_object_message_json.type == "INPUTLAR_ESP") ){
       console.log("CONNACK_MQTT_BRW || CIHAZ_ALL || CIKISLAR --- in message_object girdi")
 
+      if (message_object_message_json.type == "CONNACK_MQTT_BRW"){
       var xo0=message_object_message_object.xo0;
       var xo00=message_object_message_object.xo00;
       var xo01=message_object_message_object.xo01;
@@ -913,22 +914,30 @@ message_object_message_object=JSON.parse(message_object_message)
       document.getElementById("cihaz-voltaj").innerHTML=xvol;
       document.getElementById("cihaz-rssi").innerHTML=xrssi+" dBm";
       document.getElementById("cihaz-uptime").innerHTML=xutime;
+      
       //}
       //if ( message_type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output" ){ // gelen mesaj output ise ajax çalıştır
       //if ( message_object.message.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır
       //if ( (message_object_message_json.type == "CONNACK_MQTT_BRW") 
       //if ( message_object_message_json.type == "output_esp" ){ // gelen mesaj output ise ajax çalıştır -- SON ESKI
-      if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
-
+      //if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
+        var xo0=message_object_message_object.xo0;
+        var xo00=message_object_message_object.xo00;
+        var xo01=message_object_message_object.xo01;
+        var xo02=message_object_message_object.xo02;
+        var xo03=message_object_message_object.xo03;
+        var xi00=message_object_message_object.xi00;
+        var xi01=message_object_message_object.xi01;
+        var xi02=message_object_message_object.xi02;
+        var xi03=message_object_message_object.xi03;
         //////////////////////////////
         {% comment %} {% include "js/output_soket_ajax.js" %}  {% endcomment %}
         // CIKISLAR icin EVENT kayıdı ekleme için
-        console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)
 
         {% comment %} console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`) {% endcomment %}
         /////////////////////////////
-      }
+      
       if (xo0 == "1") {
           document.getElementById("cikis0-span").innerHTML= "Çıkış Açık";
           document.getElementById("cikis0-buton").innerHTML="Kapat";
@@ -1022,15 +1031,93 @@ message_object_message_object=JSON.parse(message_object_message)
           document.getElementById("circle8").style.fill="red"
           }
       console.log(`xid e.data dan : ${xid}, typeof: ${typeof xid}`)
-        }// IF CIHAZ_ALL in e.data
+        }// IF CONNACK_MQTT_BRW SONU
 
-        if("INPUTLAR_JS" in message_object){
+      if ( message_object_message_json.type == "CIKISLAR_ESP" ){ // gelen mesaj output ise ajax çalıştır
+        console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)
+        var xo0=message_object_message_object.xo0;
+        var xo00=message_object_message_object.xo00;
+        var xo01=message_object_message_object.xo01;
+        var xo02=message_object_message_object.xo02;
+        var xo03=message_object_message_object.xo03;
+        var xi00=message_object_message_object.xi00;
+        var xi01=message_object_message_object.xi01;
+        var xi02=message_object_message_object.xi02;
+        var xi03=message_object_message_object.xi03;
+        //////////////////////////////
+        {% comment %} {% include "js/output_soket_ajax.js" %}  {% endcomment %}
+        // CIKISLAR icin EVENT kayıdı ekleme için
+        console.log(`if ( message_object_message_json.type == "CIKISLAR_ESP" ) girdi...`)
+
+        {% comment %} console.log(`alarm_id:${alarm_id},output_no:${output_no},cikis_degeri:${cikis_degeri}`) {% endcomment %}
+        /////////////////////////////
+      
+      if (xo0 == "1") {
+          document.getElementById("cikis0-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis0-buton").innerHTML="Kapat";
+          {% comment %} document.getElementById("circle1").style.fill="green"; {% endcomment %}
+          }
+          else {
+          document.getElementById("cikis0-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis0-buton").innerHTML="Aç";            
+          {% comment %} document.getElementById("circle1").style.fill="green";{% endcomment %}
+          }
+      if (xo00 == "1") {
+          console.log("if xo00 girdi HIGH")
+          document.getElementById("cikis00-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis00-buton").innerHTML="Kapat";
+          document.getElementById("circle1").style.fill="green"
+          }
+          else {
+          console.log("if else xo00 girdi LOW")
+          document.getElementById("cikis00-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis00-buton").innerHTML="Aç";   
+          document.getElementById("circle1").style.fill="red"         
+          }
+      if (xo01 == "1") {
+          document.getElementById("cikis01-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis01-buton").innerHTML="Kapat";
+          document.getElementById("circle2").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis01-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis01-buton").innerHTML="Aç";  
+          document.getElementById("circle2").style.fill="red" 
+          }
+      if (xo02 == "1") {
+          document.getElementById("cikis02-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis02-buton").innerHTML="Kapat";
+          document.getElementById("circle3").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis02-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis02-buton").innerHTML="Aç"; 
+          document.getElementById("circle3").style.fill="red"           
+          }
+      if (xo03 == "1") {
+          document.getElementById("cikis03-span").innerHTML= "Çıkış Açık";
+          document.getElementById("cikis03-buton").innerHTML="Kapat";
+          document.getElementById("circle4").style.fill="green"
+          }
+          else {
+          document.getElementById("cikis03-span").innerHTML= "Çıkış Kapalı";
+          document.getElementById("cikis03-buton").innerHTML="Aç";   
+          document.getElementById("circle4").style.fill="red"         
+          }
+        } // IF CIKISLAR_ESP sonu
+
+    //if("INPUTLAR_JS" in message_object){
+      if ( message_object_message_json.type == "INPUTLAR_ESP" ){
           console.log("INPUTLAR if girdi...")
-          var si00=message_object.si00;
+          var xi00=message_object_message_object.xi00;
+          var xi01=message_object_message_object.xi01;
+          var xi02=message_object_message_object.xi02;
+          var xi03=message_object_message_object.xi03;
+          /*var si00=message_object.si00;
           var si01=message_object.si01;
           var si02=message_object.si02;
-          var si03=message_object.si03;
-      if (si00 == "1") {
+          var si03=message_object.si03;*/
+      if (xi00 == "1") {
           document.getElementById("giris00-span").innerHTML= "HIGH";
           document.getElementById("giris00-span").style.backgroundColor="green"
           document.getElementById("circle5").style.fill="green"
@@ -1040,7 +1127,7 @@ message_object_message_object=JSON.parse(message_object_message)
           document.getElementById("giris00-span").style.backgroundColor="red"
           document.getElementById("circle5").style.fill="red"
           }
-      if (si01 == "1") {
+      if (xi01 == "1") {
           document.getElementById("giris01-span").innerHTML= "HIGH";
           document.getElementById("giris01-span").style.backgroundColor="green"
           document.getElementById("circle6").style.fill="green"
@@ -1050,7 +1137,7 @@ message_object_message_object=JSON.parse(message_object_message)
           document.getElementById("giris01-span").style.backgroundColor="red"
           document.getElementById("circle6").style.fill="red"
           }
-      if (si02 == "1") {
+      if (xi02 == "1") {
           document.getElementById("giris02-span").innerHTML= "HIGH";
           document.getElementById("giris02-span").style.backgroundColor="green"
           document.getElementById("circle7").style.fill="green"
@@ -1060,7 +1147,7 @@ message_object_message_object=JSON.parse(message_object_message)
           document.getElementById("giris02-span").style.backgroundColor="red"
           document.getElementById("circle7").style.fill="red"
           }
-      if (si03 == "1") {
+      if (xi03 == "1") {
           document.getElementById("giris03-span").innerHTML= "HIGH";
           document.getElementById("giris03-span").style.backgroundColor="green"
           document.getElementById("circle8").style.fill="green"
@@ -1070,7 +1157,8 @@ message_object_message_object=JSON.parse(message_object_message)
           document.getElementById("giris03-span").style.backgroundColor="red"
           document.getElementById("circle8").style.fill="red"
           }
-        }
+        } // IF INPUTLAR_ESP SONU
+        
         //document.getElementById("form_refresh_page").submit()
         //var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris","popup");
         //var open_return=window.open("/app_monitor/scheduler_cihaz",target="baris");
@@ -1084,7 +1172,9 @@ message_object_message_object=JSON.parse(message_object_message)
         //console.log("scheduler cihaz refresh oldu...")
         console.log(time_string)
 
-}; // mqttSocket.onmessage SONU
+}; 
+} // mqttSocket.onmessage SONU
+
 mqttSocket.onclose = function () {
 console.log('WebSocket connection closed');
 };
